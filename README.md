@@ -5,5 +5,6 @@
 - crawling
 - git
 - markdown
+- python
 - terminal-command
 
