@@ -2,7 +2,7 @@
 
 ## 목차
 
-- 
+- algorithm
 - crawling
 - git
 - markdown
