@@ -91,7 +91,40 @@ issubclass(Professor , Person) 	# True
       return self.~ > other.~
   ```
 
-  
+
+
+
+`참고`
+
+- @property
+
+  : 메소드를 속성처럼 사용할 수 있게해줌
+
+```python
+class Point:
+    def __init__(self, x , y):
+        self.x = x
+        self.y = y
+        
+class Rectangle:
+    def __init__(self, p1, p2):
+        self.p1 = p1
+        self.p2 = p2
+        
+    def get_area(self):
+        return (p2.x-p1.x) * (p1.y-p2.y)
+    
+    @property
+    def get_perimeter(self):
+        return 2*((p2.x-p1.x) + (p1.y-p2.y))
+```
+
+```python
+r1 = Rectangle(Point(1,3, Point(3,1))
+r1.get_area() , r1.get_perimeter 
+```
+
+
 
 ## 클래스와 인스턴스
 
