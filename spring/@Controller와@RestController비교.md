@@ -43,6 +43,3 @@ public class DemoController {
 - @RestController => Data 반환
 
 
-
-근데 왜 유튜브에선 Controller로도 문자열이 잘 매핑이 된건지... 아마 이전 영상이라 버전 차이인가 보다..
-

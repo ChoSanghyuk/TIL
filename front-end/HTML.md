@@ -4,10 +4,25 @@
 
 ## 목차
 
+- 사전 작업
 - HTML 기본구조
 - HTML 문서 구조화
 
-`참고!  검색할 때, MDN 넣어서 검색 `
+
+
+## 사전 작업
+
+### HTML, CSS 검색
+
+​	: 검색 keyword와 함께 `MDN` 넣어서 검색
+
+
+
+### Visiual Studio Code 확장 프로그램
+
+- Open in brower
+- Auto rename tag
+- Highlight Matching Tag
 
 
 

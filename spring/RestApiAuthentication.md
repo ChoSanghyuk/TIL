@@ -223,5 +223,129 @@ public class DemoController {
 
 
 
-사용자 요청 => header안에 JWT => 유효한지 검사 
+​	또한 authenticationManager가 Autowired될 수 있게, SecurityConfig 파일에 해당 Bean을 추가해 줍니다. 
 
+```java
+	@Override
+	@Bean
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
+	}
+```
+
+- 여기서 super은 SecurityConfig가 extends하고 있는 `WebSecurityConfigurerAdapter` 클래스를 의미합니다. 
+
+
+
+## step 5. 해당 인증 endpoint에 사용자가 접근할 수 있게 설정
+
+​	인증에 "/authenticate" endpoint에서 실행되는데, 기타 설정 없이는 secuirty에 막혀 해당 endpoint까지 접근이 막혀있는 상태입니다. 사용자가 인증을 요청할 수 있게, 해당 endpoint로의 접근을 열어 줍니다. 
+
+​	SecurityConfig 파일에서 설정을 해줍니다.
+
+``` java
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		
+		http.csrf().disable()
+				.authorizeRequests().antMatchers("/authenticate").permitAll()
+				.anyRequest().authenticated();
+				
+	}
+```
+
+- "/authenticate" endpoint로의 접근은 모두 허용해 줍니다.
+- 다른 요청들은 인증을 실시합니다. 
+
+
+
+## step 6. 들어오는 모든 요청 검사하기
+
+​	이제 들어오는 모든 요청마다 header에서 JWT 토큰을 꺼내, 유효한지 확인하고, 해당 토큰을 등록해야 합니다. 이 작업을 위해서는 filter가 필요합니다.
+
+```java
+@Component
+public class JwtRequestFilter extends OncePerRequestFilter{
+	
+	@Autowired
+	private MyUserDetailsService userDetailsService;
+	
+	@Autowired
+	private JwtUtil jwtUtil;
+
+	@Override
+	protected void doFilterInternal(
+        			HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
+		
+		final String authorizationHeader = request.getHeader("Authorization");
+		
+		String username = null;
+		String jwt = null;
+		
+		if(authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+			jwt = authorizationHeader.substring(7);
+			username = jwtUtil.extractUsername(jwt);
+		}
+		
+		if(username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+			UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
+			if(jwtUtil.validateToken(jwt, userDetails)) {
+				
+				UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken 
+                    									= new UsernamePasswordAuthenticationToken(
+						userDetails, null, userDetails.getAuthorities());
+				
+				usernamePasswordAuthenticationToken.setDetails(
+						new WebAuthenticationDetailsSource().buildDetails(request));
+				
+				SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+						
+						
+			
+			}
+			
+		}
+		filterChain.doFilter(request, response);
+	}
+
+}
+```
+
+1. `OncePerRequestFilter` 클래스를 상속받는 클래스를 생성해 줍니다.
+2. 토큰 인증에 UserDetailsService와 JwtUtil 객체가 필요함으로 필드로 선언하고, autowired 해줍니다.
+3. doFilterInternal() 메소드를 override하고, 작성해 줍니다.
+   1. 요청 Header에서 "Authorization" 부분을 가져옵니다.
+   2. 해당 부분이 "Bearer" 로 시작하면 그 이후 부분을 저장합니다. (토큰 앞에 Bearer을 붙여서 요청보내기 때문) 또한 해당 토큰을 가지고 유저 이름을 받아옵니다.
+   3. SecurityContextHolder 에 유효한 인증 정보들을 저장시킵니다. (Spring Security의 Default 과정)
+   4. filterChain.doFileter() 을 통해 계속해서 filter을 수행합니다.
+
+
+
+## step 7. 필터 적용시키게 하기
+
+​	요청이 들어올 때 위의 필터를 적용시키게 설정합니다. 앞서 endpoint 설정했던 SecurityConfig 클래스의 configure 메소드에 설정을 추가해 줍니다.
+
+```java
+@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		
+		http.csrf().disable()
+				.authorizeRequests().antMatchers("/authenticate").permitAll()
+				.anyRequest().authenticated()
+				.and().sessionManagement()
+				.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		
+		http.addFilterBefore(jwtRequestFiler, UsernamePasswordAuthenticationFilter.class); // A가 B보다 먼저 호출
+		
+```
+
+- Security가 별도의 Session을 생성하지 않도록 설정합니다.
+- 위에서 생성한 jwtRequestFiler 가 Security의 UsernamePasswordAuthenticationFilter 보다 먼저 동작하도록 설정합니다.
+
+
+
+## 요청보내기
+
+1. 설정한 endpoint에 json 형태로 "username" 과 "password" 을 보내고 토큰을 받아옵니다.
+2. 이후 다른 endpoint에 접근 및 요청하고 싶을 시, header에 "Authorization" Key에 `Bareaer + 토큰`을 value로 넣어 보내줍니다.
