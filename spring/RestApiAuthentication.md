@@ -112,14 +112,114 @@ public class JwtUtil {
 
 
 
-## step 3. 
+## step 3. 인증요청 클래스와 인증응답 클래스 생성
 
-step 1
+​	인증 요청 클래스는 사용자 id와 password를 속성으로 가지며, 추후 인증 메서드에 입력 형태로 사용됩니다.
 
-A/authenticate Api endpoint
+```java
+package com.shHair.reservation.models;
 
-- Accepts user ID and password
-- Returns JWT as response
+// input structure
+public class AuthenticationRequest {
+
+	private String username;
+	private String password;
+
+	public AuthenticationRequest() {
+	}
+	
+	public AuthenticationRequest(String username, String password) {
+		this.username = username;
+		this.password = password;
+	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	
+}
+
+```
+
+​	인증 응답 클래스는 jwt 토큰만을 속성으로 가지고, 추후 인증 메서드에서 return 값이 됩니다.
+
+```java
+package com.shHair.reservation.models;
+
+// output structure
+public class AuthenticationResponse {
+
+	private final String jwt;
+
+	public AuthenticationResponse(String jwt) {
+		this.jwt = jwt;
+	}
+
+	public String getJwt() {
+		return jwt;
+	}	
+}
+```
+
+
+
+
+
+## step 4. "/authenticate"에 인증 토큰 생성 메소드 매핑
+
+"/authenticate" Api endpoint 을 생성하고, 해당 url에서 유저 정보를 받고 JWT 토큰을 반환하는 메소드를 만들어 줍니다. 이를 통해 사용자가 유효한지 검사 합니다.
+
+```java
+@RestController
+public class DemoController {
+	
+	@Autowired
+	private AuthenticationManager authenticationManager;
+	
+	@Autowired
+	private MyUserDetailsService userDetailsService;
+	
+	@Autowired
+	private JwtUtil jwtTokenUtil;
+	
+	@RequestMapping(value = "/authenticate", method = RequestMethod.POST)
+	public ResponseEntity<?> createAuthenticationToken(
+        			@RequestBody AuthenticationRequest authenticationRequest) throws Exception{
+		
+		try {
+			authenticationManager.authenticate(
+					new UsernamePasswordAuthenticationToken(
+                        authenticationRequest.getUsername(), authenticationRequest.getPassword())
+				);
+		} catch(BadCredentialsException e) {
+			throw new Exception("Incorrect username or password", e);
+		}
+		
+		final UserDetails userDetails = userDetailsService.loadUserByUsername(
+            													authenticationRequest.getUsername());
+		
+		final String jwt = jwtTokenUtil.generateToken(userDetails);
+		
+		return ResponseEntity.ok(new AuthenticationResponse(jwt));
+	}
+}
+
+```
+
+1. 방금 생성한 인증요청 클래스의 객체가 파라미터로 들어옵니다.
+2. authenticationManager 객체를 통해서, 해당 요청이 인증된 사용자인지 검증합니다. 만약 인증된 사용자가 아니라면 `BadCredentialsException` 이 발생됩니다.
+3. 인증이 통과된다면, `userDetailsService` 객체의 `.loadUserByUsername` 메소드에 username을 넣어, 유저 정보를 가져옵니다.
+4. 해당 유저 정보로 jwt 토큰을 생성합니다.
+5. 생성된 토큰을 인증응답 클래스 객체에 담아 return 합니다. 
 
 
 

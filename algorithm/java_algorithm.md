@@ -4,6 +4,7 @@
 
 - Array
 - ArrayList
+- Character
 - Comparable vs Comparator
 - Collections
 - Integer
@@ -50,6 +51,16 @@ arrLi.contains(ele) 		 // arrayList에 요소가 있으면 참 반환
 arrLi.indexOf(ele) 			 // arrayList에서 요소의 위치 반환. 없으면 음수
 
 ```
+
+
+
+## Charactor
+
+```java
+Character.isDigit( <char> )	// 해당 문자가 숫자인지 판단
+```
+
+
 
 
 
@@ -116,6 +127,16 @@ Collections.copy(dList, sList)							// dList // destination list , sList // sou
 
 
 ## Integer
+
+```java
+Integer.parseInt( <String> )
+```
+
+
+
+
+
+
 
 ## Map
 
