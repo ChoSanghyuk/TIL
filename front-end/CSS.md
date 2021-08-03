@@ -198,6 +198,7 @@
 
   - margin-right: auto;  => 왼쪽 정렬
   - margin-left: auto; margin-right: auto;  => 가운데 정렬
+  - 부모의 maximum 가로를 가지며 , content의 세로를 가진다.
 
 - 인라인 요소
 
