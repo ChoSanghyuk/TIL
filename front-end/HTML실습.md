@@ -94,4 +94,3 @@ rowspan="n"
 - required : 필수 입력
 - placeholder : 실제 값이 아닌 설명처럼 미리 채워져 있는 글자 설정
 - value : default 값 설정
-

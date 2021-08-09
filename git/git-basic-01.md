@@ -87,3 +87,18 @@ $ git clone <url>
 ```
 
   해당 url에 있는 내용들 모두다 받아옴
+
+
+
+```
+$ git push origin master:브랜치이름
+```
+
+​	해당 이름의 브랜치에 올림 (없으면 생성되고 올려짐)
+
+
+
+```
+$ git log --oneline
+```
+

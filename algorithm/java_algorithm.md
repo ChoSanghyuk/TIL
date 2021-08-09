@@ -27,14 +27,30 @@ arr.length
 Arrays.copyOfRange( arr, begin, end ) ;  // arr을 begin에서 end-1까지 
 ```
 
-  * arrayList -> array
+### arrayList -> array
+
 ```java
 String[] array = arrayList.toArray(new String[arrayList.size()]);
 ```
-  * array -> arrayList
+### array -> arrayList
+
 ```java
 ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(array))
 ```
+
+### 2차원 배열 정렬
+
+```java
+Arrays.sort(meetings, new Comparator<int[]>() {
+    @Override
+    public int compare(int[] a1, int[] a2) {
+
+        return Integer.compare(a1[1], a2[1]) ; 
+    }
+});
+```
+
+- 두번째 열을 기준으로 오름차순 정렬
 
 
 
