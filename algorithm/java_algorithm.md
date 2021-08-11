@@ -4,6 +4,7 @@
 
 - Array
 - ArrayList
+- BufferedReader
 - Character
 - Comparable vs Comparator
 - Collections
@@ -66,6 +67,66 @@ arrLi.remove(i) 			 // arrayList의 i번째 자리 요소를 없앰
 arrLi.contains(ele) 		 // arrayList에 요소가 있으면 참 반환
 arrLi.indexOf(ele) 			 // arrayList에서 요소의 위치 반환. 없으면 음수
 
+```
+
+
+
+## BufferedReader
+
+### 선언 및 입력 받기
+
+```java
+BufferedReader bf = new BufferedReader(new InputStreamReader(System.in)); 	//선언
+
+// 파일에서 입력
+FileReader fr = new FileReader("파일명");
+BufferedReader bf_f = new BufferedReader(fr);
+
+String s = bf.readLine(); 
+int i = Integer.parseInt(bf.readLine()); 
+
+```
+
+- 예외처리 필요함. 주로 `throws IOException`을 통해서 처리함
+
+
+
+### 공백단위 데이터 분리
+
+```java
+StringTokenizer st = new StringTokenizer(s); //StringTokenizer인자값에 입력 문자열 넣음
+int a = Integer.parseInt(st.nextToken()); 
+int b = Integer.parseInt(st.nextToken()); 
+```
+
+- `StringTokenizer`의 `nextToken()` => 공백 단위로 구분하여 순서대로 호출
+
+```java
+String array[] = s.split(" ");
+```
+
+- `String`의 `split()` 사용
+
+
+
+## BufferedWriter
+
+### 선언
+
+```java
+BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+```
+
+### 출력
+
+```java
+String s = "abcdefg";   //출력할 문자열
+
+bw.write(s+"\n");   	//버퍼에 있는 값 전부 출력
+bw.newLine();			// 개행
+    
+bw.flush();   			//남아있는 데이터를 모두 출력시킴 (close 전엔 수행)
+bw.close();   			//스트림을 닫음
 ```
 
 
