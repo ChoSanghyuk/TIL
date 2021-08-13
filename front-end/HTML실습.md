@@ -88,6 +88,9 @@ rowspan="n"
     </p>
     <input type = "submit">
 </form>
+<form action ="#">
+    <input name="date" type = "text" value = "{}">
+</form>
 ```
 
 - name : 데이터를 전송할 때 KEY 값

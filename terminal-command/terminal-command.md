@@ -20,21 +20,23 @@
 
 
 - `touch <filename>`  : 파일 생성
-
 - `start <filename>` : 파일 실행
-
 - `rm <filename>` : 파일 삭제
-
 - `mkdir <dirname>` : 폴더 생성
-
 - `rm -r <dirname>` : 지정한 폴더 및 파일 삭제
-
 - `rm - rf <dirname>` : 지정판 폴더 및 파일 강제 삭제
-
 - `ls` :  현재 위치한 폴더 내부의 파일/폴더 출력
-
 - `ls -a` : 현재 위차한 홀더 내부의 모든 파일 / 폴더 출력
-
 - `code . `  : 해당 디렉토리로 visual studio code 열기
+- `vim <filename>` : 파일 오픈 (없으면 파일 생성)
 
-  
+
+
+## Command Mode
+
+- :    명령 시작
+- i    수정
+- w  저장
+- q   종료
+- wq, x  저장 & 종료
+- q!  강제 종료 (저장x 종료)

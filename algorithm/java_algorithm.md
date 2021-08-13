@@ -206,12 +206,9 @@ Collections.copy(dList, sList)							// dList // destination list , sList // sou
 ## Integer
 
 ```java
-Integer.parseInt( <String> )
+Integer.parseInt( <String> ) ;
+Integer.toString( ~ );
 ```
-
-
-
-
 
 
 
@@ -306,12 +303,13 @@ str.replaceAll( a , b )  				// a -> b
 String[] array = str.split("#");
 str.startsWith( "~" ) ;
 str.matches( "~~" ) ;   				// ~~와 전부 일치하면 true nor false
-str.equals( str2 )  					// str이 null이면 exception
+str.equals( str2 )  					// str이 null이면 exception.
 str.equalIgnoreCase( str2 ) 
 str.compareTo( str2 ) 
 ```
 
-
+- == 연산은 메모리 참조가 같은지 물어봄. .equals()을 통해 값이 같은지 비교
+- 
 
 ## StringBuilder
 
