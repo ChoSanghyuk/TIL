@@ -20,7 +20,7 @@
 
 ### Visiual Studio Code 확장 프로그램
 
-- Open in brower
+- Open in browser
 - Auto rename tag
 - Highlight Matching Tag
 
@@ -63,7 +63,7 @@
 ### DOM(Document Object Model) 트리
 
 - 구조화된 표현을 제공 -> 문서 구조, 스타일 내용 등을 변경 할 수 있게 도움
-- 부모 관게, 형제 관계
+- 부모 관계, 형제 관계
 - Web page의 객체 지향 표현
 
 
@@ -160,7 +160,7 @@
 
 - <u>다양한 타입</u>을 가지는 데이터입력 데이터 필드
 - form 태그 안에 소속
-- `<lable>` : 서식 입력 요소의 캡션
+- `<label>` : 서식 입력 요소의 캡션
 - `<input>` 공통 속성
   - name, placeholder
   - required

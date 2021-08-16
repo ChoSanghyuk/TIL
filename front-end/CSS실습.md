@@ -133,7 +133,7 @@ display: inline;
     color:red;
 }
 ```
-- ssafy 클래스의 2번째 자식이 p 요소 ~> red 로 
+- ssafy id의 2번째 자식이 p 요소 ~> red 로 
 
 ```css
 #ssafy > p:nth-of-type(2){
