@@ -26,7 +26,10 @@ queue.clear() ; 	// queue 초기화
 
 ## Stack
 
- **후입선출**
+### 특징
+
+- 선형구조
+- 후입선출
 
 ``` java
 Stack<타입 > stack = new Stack<>();
