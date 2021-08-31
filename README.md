@@ -5,6 +5,7 @@
 - algorithm
 - algorthm_records
 - crawling
+- django
 - front-end
 - git
 - jsp

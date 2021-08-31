@@ -226,9 +226,9 @@ Map<String, String> languages = new HashMap<>();
 ~.values()
 ~.remove(key) 
 ~.remove(key, value) 					// 해당 키의 value 내용을 지움
-~.replace(key value) 					// 키의 값을 value로 전환. 전환되면 true nor false
+~.replace(key, value) 					// 키의 값을 value로 전환. 전환되면 true nor false
 ~.replace(key, value1 , value2) 		// 키의 value1을 value2로 전환.
-~.getOrDefault( key , default value ) 	// ~에 키값이 있으면 키값의 value nor default value 반환
+~.getOrDefault( key , defaultvalue ) 	// ~에 키값이 있으면 키값의 value nor default value 반환
 
 ```
 
@@ -334,7 +334,7 @@ str.lastIndexOf("/")
 str.replaceAll( a , b )  				// a -> b
 String[] array = str.split("#");
 str.startsWith( "~" ) ;
-str.matches( "~~" ) ;   				// ~~와 전부 일치하면 true nor false
+str.matches( "regex" ) ;   				// 정규표현식과 전부 일치하면 true nor false
 str.equals( str2 )  					// str이 null이면 exception.
 str.equalIgnoreCase( str2 ) 
 str.compareTo( str2 ) 
