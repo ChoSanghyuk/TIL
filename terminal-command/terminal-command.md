@@ -23,6 +23,7 @@
 - `start <filename>` : 파일 실행
 - `rm <filename>` : 파일 삭제
 - `mkdir <dirname>` : 폴더 생성
+- `mkdir -p <dirname1/dirname2>` : 중간 폴더도 같이 생성
 - `rm -r <dirname>` : 지정한 폴더 및 파일 삭제
 - `rm - rf <dirname>` : 지정판 폴더 및 파일 강제 삭제
 - `ls` :  현재 위치한 폴더 내부의 파일/폴더 출력
