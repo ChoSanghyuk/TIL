@@ -337,7 +337,7 @@ str.startsWith( "~" ) ;
 str.matches( "regex" ) ;   				// 정규표현식과 전부 일치하면 true nor false
 str.equals( str2 )  					// str이 null이면 exception.
 str.equalIgnoreCase( str2 ) 
-str.compareTo( str2 ) 
+str.compareTo( str2 ) 					// 같으면 0, str이 작으면 음수, 크면 양수
 ```
 
 - == 연산은 메모리 참조가 같은지 물어봄. .equals()을 통해 값이 같은지 비교
