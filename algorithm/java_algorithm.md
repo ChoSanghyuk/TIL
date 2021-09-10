@@ -204,6 +204,24 @@ Collections.copy(dList, sList)							// dList // destination list , sList // sou
 
 
 
+## Heap
+
+```java
+PriorityQueue<Integer> pq = new PriorityQueue<>();
+PriorityQueue<Integer> maxPq = new PriorityQueue<>(Collections.reverseOrder());
+
+pq.add(~);			// ~ 추가 , 성공시 true 반환
+pq.offer(~) ; 		// ~ 추가 
+pq.peek() ; 		// 첫번째 값 참조
+pq.poll() ; 		// 첫번째 값 반환하고 제거
+pq.remove() ; 		// 첫번째 값 제거
+pq.clear() ; 		// queue 초기화
+```
+
+
+
+
+
 ## Integer
 
 ```java
