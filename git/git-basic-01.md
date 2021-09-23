@@ -89,24 +89,17 @@ $ git clone <url>
   해당 url에 있는 내용들 모두다 받아옴
 
 ```
-$ git push origin master:브랜치이름
+$ git clone <url> <폴더이름>
 ```
 
-​	해당 이름의 브랜치에 올림 (없으면 생성되고 올려짐)
+  해당 url에 있는 내용들을 해당 폴더를 생성하여 모두 다 받아옴
+
+
+
+
 
 ```
 $ git log --oneline
 ```
 
-
-
-```
-$ git switch master (혹은 branch이름)
-```
-
-작업하려는 곳을 바꿈
-
-```
-$ git merge <branch>
-```
 
