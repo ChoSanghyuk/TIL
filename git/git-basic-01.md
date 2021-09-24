@@ -61,6 +61,12 @@ $ git remote add <name> <URL>
 
  보통 이름에 origin 을 많이 사용
 
+```
+$ git remote remove <name>
+```
+
+​	remote 취소
+
 
 ```
 $ git push <name> <branch>
@@ -101,5 +107,4 @@ $ git clone <url> <폴더이름>
 ```
 $ git log --oneline
 ```
-
 
