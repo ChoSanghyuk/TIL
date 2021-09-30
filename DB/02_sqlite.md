@@ -127,16 +127,16 @@ UPDATE classmates SET name = '홍길동', address = '제주도' WHERE id=5;
   - 쿼리에서 반환된 행에 대한 특정 검색 조건을 지정
   - 논리 연산 : AND, OR
   - `SELECT id, name, address FROM classmates WHERE address="서울";`
+  - `WHERE ANIMAL_TYPE IN ("Cat", "Dog")`
+  - `WHERE HOUR(DATETIME) BETWEEN 9 AND 20`
 - Distinct
   - 조회 결과에서 중복행을 제거
-  - DISTINCT 절은 SELECT 키워드 바로 뒤에 작성
+  - DISTINCT 절은 속성 바로 앞에 작성
   - `SELECT DISTINCT age FROM classmates;`
 
 
 
 ## Clause
-
-
 
 ### aggregate functions
 
@@ -199,11 +199,113 @@ SELECT last_name, COUNT(*) FROM users GROUP BY last_name;
 
 
 
+## JOIN
+
+#### LEFT JOIN
+
+```MYSQL
+SELECT *
+FROM 테이블1 AS T1 LEFT JOIN 테이블2 AS T2 ON T1.KEY = T2.KEY
+```
+
+- 테이블1을 기준으로 KEY에 대해서 T1과 값이 같은 T2의 행들을 추가함
+- 테이블1과 테이블2가 같은 속성명을 가지고 있을 경우, `테이블.속성` 으로 접근
+
+
+
+### FULL OUTER JOIN
+
+- LEFTJOIN 결과와 RIGHTJOIN 결과를 UNION 함으로써 도출
+
+
+
+## UNION
+
+- 횡단 병합
+- 합치는 두 테이블은 `컬럼명`이 모두 같아야 함
+- 컬럼명이 다를 경우 수정해서 합침
+
+### 중복 제거 결과 출력
+
+``` MYSQL
+(SELECT 컬럼1, 컬럼2 FROM 테이블1)
+UNION
+(SELECT 컬럼1, 컬럼2 FROM 테이블2)
+```
+
+
+
+### 중복 포함 결과 출력
+
+``` MYSQL
+(SELECT 컬럼1, 컬럼2 FROM 테이블1)
+UNION ALL
+(SELECT 컬럼1, 컬럼2 FROM 테이블2)
+```
 
 
 
 
 
+## 기타
+
+### String Slice
+
+- 왼쪽에서 문자열 자르기
+  - left( 컬럼명 or 문자열 , 왼쪽에서 자를 문자열 길이)
+- 오른쪽에서 문자열 자르기
+  - right( 컬럼명 or 문자열 , 오른쪽에서 자를 문자열 길이)
+- 중간에서 문자열 자르기
+  - substring(컬럼명 or 문자열 , 시작위치, 길이)  # 시작위치는 1부터 시작
+
+
+
+### String -> int
+
+문자열 + 0 하면 해당 숫자로 바뀜
+
+
+
+### DATETIME
+
+- HOUR( date )
+
+  : 시간만 반환
+
+- 
+
+
+
+### WITH RECURSIVE
+
+- 재귀 커리를 이용하여 메모리 상에 가상의 테이블을 저장
+
+```mysql
+WITH RECURSIVE 테이블명 AS (
+	SELECT 초기값 AS 컬럼명1
+    UNION ALL
+    SELECT 컬럼명1 계산식 FROM 테이블명 WHERE 제어문
+
+)
+```
+
+
+
+### IF 문
+
+- IF
+
+```MYSQL
+SELECT IF( 조건 , 참값 , 거짓값) AS 이름
+FROM 테이블;
+```
+
+- IFNULL
+
+```MYSQL
+SELECT IFNULL(속성, NULL대체값 ) AS 이름
+FROM 테이블;
+```
 
 
 
