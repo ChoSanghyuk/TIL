@@ -172,7 +172,8 @@ UPDATE classmates SET name = '홍길동', address = '제주도' WHERE id=5;
   SELECT * FROM 테이블 WHERE 컬럼 LIKE '와일드패턴'
   ```
 
-
+- 기본적으로 대소문자 구분 없이 검색함
+  - binary 형식일 경우 구분 함으로, `WHERE BINARY(컬럼) LIKE '와일드패턴'`으로 구별
 
 ### ORDER BY
 
@@ -272,7 +273,14 @@ UNION ALL
 
   : 시간만 반환
 
-- 
+- DATEFORMAT
+
+  ```mysql
+  DATE_FORMAT(DATETIME, '%Y-%m-%d %h-%i-%s')
+  ```
+
+  - M : 달 이름, m : 달 숫자
+  - D : 요일 이름, d : 요일 숫자
 
 
 
