@@ -67,7 +67,6 @@ arrLi.set( i , ele) 		 // arrayList의 i번째 자리에 요소를 대체함
 arrLi.remove(i) 			 // arrayList의 i번째 자리 요소를 없앰
 arrLi.contains(ele) 		 // arrayList에 요소가 있으면 참 반환
 arrLi.indexOf(ele) 			 // arrayList에서 요소의 위치 반환. 없으면 음수
-
 ```
 
 
@@ -262,6 +261,7 @@ Math.floorMod(26,10) 		//나머지 6
 Math.pow( 밑 , 지수 )		  //제곱
 Math.ceil(~)				//올림
 Math.floor(~)				//내림
+Math.round(~)				//반올림
 ```
 
 

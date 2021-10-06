@@ -89,9 +89,9 @@ sqlite> .schema <table>
 sqlite> SELECT * FROM <table>;
 ```
 
- 	 : 출력 옵션
- 		 `sqlite> .headers on`
- 	 	`sqlite> .mode column`
+ : 출력 옵션
+ 		`sqlite> .headers on`
+ 		`sqlite> .mode column`
 
 -	INSERT
 
