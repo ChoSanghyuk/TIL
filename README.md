@@ -4,7 +4,9 @@
 
 - algorithm
 - algorthm_records
+- aws
 - crawling
+- db
 - django
 - front-end
 - git
