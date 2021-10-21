@@ -366,7 +366,7 @@ str.compareTo( str2 ) 					// 같으면 0, str이 작으면 음수, 크면 양�
 ```java
 StringBuilder sb = new StringBuilder() ; 
 
-sb.appned(~) ; 
+sb.append(~) ; 
 sb.reverse() ;
 sb.toString() ; 
 sb.charAt( i ) ; 

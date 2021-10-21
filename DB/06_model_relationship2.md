@@ -64,7 +64,7 @@ class Doctor(models.Model):
 class Patient(models.Model):
     name = models.TextField()
     # ManyToManyField 작성
-    doctors = models.ManyToManyField(Doctor, through='Reservation')
+    doctors = models.ManyToManyField(Doctor)
 
     def __str__(self):
         return f'{self.pk}번 환자 {self.name}'
