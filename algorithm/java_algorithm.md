@@ -190,10 +190,10 @@ class MyComparator implements Comparator<Point>{
 ```java
 import java.util.Collections
 
-Collections.shuffle( ( <Collection>)	 				// 리스트 섞어줌
-Collections.min(( <Collection>);
-Collections.max(( <Collection>);
-Collections.swap(( <Collection>, i , j )  				// 리스트에서 i랑 j 번째 요소 위치 바꿔줌
+Collections.shuffle( <Collection> )	 				// 리스트 섞어줌
+Collections.min(<Collection>);
+Collections.max(<Collection>);
+Collections.swap(<Collection>, i , j )  				// 리스트에서 i랑 j 번째 요소 위치 바꿔줌
 Collections.sort(ArrayList, Collections.reverseOrder());// 역순으로
 Collections.copy(dList, sList)							// dList // destination list , sList // source list
 														// shallow copy로 복사 진행.
@@ -359,7 +359,8 @@ str.compareTo( str2 ) 					// 같으면 0, str이 작으면 음수, 크면 양�
 ```
 
 - == 연산은 메모리 참조가 같은지 물어봄. .equals()을 통해 값이 같은지 비교
-- 
+
+
 
 ## StringBuilder
 
