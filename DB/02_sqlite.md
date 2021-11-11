@@ -293,7 +293,6 @@ WITH RECURSIVE 테이블명 AS (
 	SELECT 초기값 AS 컬럼명1
     UNION ALL
     SELECT 컬럼명1 계산식 FROM 테이블명 WHERE 제어문
-
 )
 ```
 
