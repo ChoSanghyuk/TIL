@@ -31,7 +31,7 @@ $ git config --global user.email <email>
 
 
 
-## command
+## 연결
 
 ```
 $ git init
@@ -42,6 +42,26 @@ $ git init
 - 해당 폴더에  .git 이라는 하위 디렉토리를 생성하는데,  .git 디렉토리에는 저장소에 필요한 뼈대 파일들이 들어있음
 
 
+
+
+```
+$ git remote add <name> <URL>
+```
+
+- `<url>` 을 이름이 `<name>` 인 변수에 담아 관리함.   + 해당 폴더(로컬)를 원격 저장소에 연동시킴
+- 보통 이름에 origin 을 많이 사용
+
+
+
+```
+$ git remote remove <name>
+```
+
+-  remote 취소
+
+
+
+## 업로드
 
 
 ```
@@ -61,21 +81,12 @@ $ git commit -m "<commit message>"
 
 
 
-
 ```
-$ git remote add <name> <URL>
-```
-- `<url>` 을 이름이 `<name>` 인 변수에 담아 관리함.   + 해당 폴더(로컬)를 원격 저장소에 연동시킴
-
-- 보통 이름에 origin 을 많이 사용
-
-
-
-```
-$ git remote remove <name>
+$ git commit -am "<commit message>"
 ```
 
--  remote 취소
+- add와 commit 동시에
+- 단, 이전에 commit 했었던 대상에 한해서
 
 
 
@@ -89,22 +100,7 @@ $ git push <name> <branch>
 
 
 
-
-```
-$ git log 
-```
-- git 수행 history를 불러옴
-
-
-
-
-```
-$ git status
-```
-
--  현재 git의 상태를 알려줌
-
-
+## 다운로드
 
 ```
 $ git clone <url>
@@ -122,7 +118,48 @@ $ git clone <url> <폴더이름>
 
 
 
+## 내역 취소
 
+```
+$ git reset --hard HEAD^
+```
+
+- 옵션
+  - --hard HEAD^ : 수정한 내용까지 모두
+  - --mixed HEAD^ : add한 내용까지 취소 (default)
+  - --soft HEAD^ : commit한 내용까지 취소
+- ^
+  - 가장 최근 커밋으로부터 하나 전으로 되돌림
+  - ex) ^^ : 두개 전으로 되돌림
+
+
+
+```
+$ git revert <commit hash>
+```
+
+- 해당 commit 내용으로 되돌림
+- 다음 commit 내역이 과거의 commit이 됨
+  - reset의 경우, 이력 삭제
+
+
+
+## 상태
+
+
+```
+$ git log 
+```
+- git 수행 history를 불러옴
+
+
+
+
+```
+$ git status
+```
+
+-  현재 git의 상태를 알려줌
 
 
 
