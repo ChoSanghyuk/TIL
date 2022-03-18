@@ -21,6 +21,8 @@ $ git config --global user.name <이름>
 
  서명에 사용할 이름 설정
 
+
+
 ```
 $ git config --global user.email <email>
 ```
@@ -40,10 +42,14 @@ $ git init
   해당 폴더에  .git 이라는 하위 디렉토리를 생성하는데,  .git 디렉토리에는 저장소에 필요한 뼈대 파일들이 들어있음
 
 
+
+
 ```
 $ git add .
 ```
    디렉토리 내의 모든 파일이 Git으로 관리되도록 추가해줌
+
+
 
 
 ```
@@ -54,6 +60,8 @@ $ git commit -m "<commit message>"
   commit을 통해서 폴더 안에서 일어난 변경사항들을 확정
 
 
+
+
 ```
 $ git remote add <name> <URL>
 ```
@@ -61,11 +69,15 @@ $ git remote add <name> <URL>
 
  보통 이름에 origin 을 많이 사용
 
+
+
 ```
 $ git remote remove <name>
 ```
 
 ​	remote 취소
+
+
 
 
 ```
@@ -76,10 +88,14 @@ $ git push <name> <branch>
  보통 `<branch>` 는 master 사용
 
 
+
+
 ```
 $ git log 
 ```
    git 수행 history를 불러옴
+
+
 
 
 ```
@@ -88,17 +104,23 @@ $ git status
 
   현재 git의 상태를 알려줌
 
+
+
 ```
 $ git clone <url>
 ```
 
   해당 url에 있는 내용들 모두다 받아옴
 
+
+
 ```
 $ git clone <url> <폴더이름>
 ```
 
   해당 url에 있는 내용들을 해당 폴더를 생성하여 모두 다 받아옴
+
+
 
 
 
