@@ -95,8 +95,16 @@ $ git commit -am "<commit message>"
 $ git push <name> <branch>
 ```
 -  확정된 변경 사항을 원격 저장소에 밀어넣음
-
 -  보통 `<branch>` 는 master 사용
+
+
+
+
+```
+$ git push -u <name> <branch>
+```
+
+- 디폴트 설정 : 앞으로 git push만 해도 해당 이름의 브랜치로 push(pull) 됨
 
 
 
@@ -115,6 +123,22 @@ $ git clone <url> <폴더이름>
 ```
 
 - 해당 url에 있는 내용들을 해당 폴더를 생성하여 모두 다 받아옴
+
+
+
+```
+$ git pull origin master
+```
+
+- origin을 내 repository로 가지고 와 합침 (merge)
+
+
+
+```
+$ git fetch origin master
+```
+
+- merge 없이, origin을 일단 가지고만 옴
 
 
 
@@ -141,6 +165,43 @@ $ git revert <commit hash>
 - 해당 commit 내용으로 되돌림
 - 다음 commit 내역이 과거의 commit이 됨
   - reset의 경우, 이력 삭제
+
+
+
+## 비교
+
+
+
+```
+$ git diff <비교대상 commit hash> <기준 commit hash>
+```
+
+- 비교대상 commit에 비해 기분 commit은 무엇이 달라졌는가
+
+
+
+```
+$ git diff HEAD HEAD^
+```
+
+- 최신 commit과 그 전 commit 비교
+- ^개수만큼 이전 commit
+
+
+
+```
+$ git diff HEAD
+```
+
+- 이전 commit과 현재 수정된 내용 비교
+
+
+
+```
+$ git diff <비교대상 branch 이름> <기준 branch 이름>
+```
+
+- 브랜치간 비교  
 
 
 
