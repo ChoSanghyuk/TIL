@@ -139,6 +139,19 @@
     - center
     - flex-end
   - align-content
+- 크기 설정
+  - flex-basis
+    - flex-item의 기본 너비값을 px, % 등의 단위로 정함
+    - 기본값 auto
+  - flex-grow
+    - 개별 요소에 적용시킴 (container x)
+    - 메인축에서 **남은 공간**을 각 항목에게 분배 (숫자별 비율로)
+  - flex-shrink
+    - flex item의 너비에 대한 축소 인자를 지정
+    - 숫자값으로 조정 ( 0보다 큰 값 => flex-basis보다 작아짐)
+    - 기본값 1
+    - 0으로 세팅 시 flex-basis보다 작아지지 않음
+
 - 기타
   - flex-wrap : 요소를 강제로 한줄로 배치할 지 
     - nowrap : 넘쳐도 한 줄로
@@ -146,9 +159,6 @@
     - wrap-reverse : 넘치면 위칸
   - flex-flow : flex-direction & flex-wrap의 shorthand
     - column wrap : column 방항으로  wrap 적용
-  - flex-grow
-    - 개별 요소에 적용시킴 (container x)
-    - 메인축에서 **남은 공간**을 각 항목에게 분배 (숫자별 비율로)
   - order
     - 개별 요소에 적용시킴 (container x)
     - 정렬 순서를 숫자로 지정 (오름차순 정렬)
@@ -234,6 +244,55 @@
   - ex) `offset-4` ,  `offset-md-4`
 - Nesting
   - row -> col-* -> row -> col-* 의 방식으로 중첩 사용 가능
+
+
+
+### grid 크기 지정 속성
+
+- `grid-template-rows` , `grid-template-columns`
+
+```css
+.flex-container {
+    /* grid-template-columns: 200px 200px 500px; */ 
+        grid-template-columns: 1fr 1fr 1fr;
+    /* grid-template-columns: repeat(3,1fr) */
+    /* grid-template-columns: 200px 1fr */
+    /* grid-template-columns: 100px 200pxauto */
+
+    /* grid-template-rows: 200px 200px500px; */
+        grid-template-rows : 1fr 1fr 1fr
+    /* grid-template-rows: repeat(3, 1fr)*/
+    /* grid-template-rows: 200px 1fr */
+    /* grid-template-rows: 100px 200px auto*/
+}
+```
+
+- fr
+  - fraction
+  - 숫자 비율대로 크기를 나눔
+- repeat
+  - 반복되는 값을 자동으로 처리
+- min, max로 최소값, 최대값 지정 가능
+- auto-fil , auto-fit을 사용하면  column 의 개수를 정하지 않고 너비가 허용되는 한 최대한 셀을 채울 수 있음
+
+
+
+### 셀 간격
+
+```css
+.grid-container {
+    row-gap: 10px;
+    /* row의 간격을 10px로 */
+    
+    column-gap: 20px;
+    /* column의 간격을 20px로 */
+}
+
+```
+
+- 하나로 묶어서 `gap : 10px 20px`  또는 `gap : 20px` 식으로 사용 O
+
+
 
 
 

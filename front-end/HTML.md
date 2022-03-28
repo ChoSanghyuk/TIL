@@ -136,14 +136,49 @@
 
 ### 텍스트 관련 요소
 
-- `<a>`
-- `<b>` vs `<strong>`
+- `<a>`  : 페이지 이동
+- `<b> </b>`  vs `<strong> </strong>` vs `<em> </em>`
   - b : 표현상 굵게
-  - strong : 강조
+  - em : 강조 (이탤릭체로)
+  - strong : 강한 강조 (볼드)
 - `<i>` vs `<em>`
+  - i : 이탤릭체로
+
 - `<span>`, `<br>`, `<img>`
   - span : 인라인 요소
   - div : 블록 요소
+
+- `<br> </br>` : 줄바꿈
+
+
+
+### 이미지
+
+- `<img src='~~'> ` 
+- width , height로 크기 조절
+
+
+
+### table
+
+- 테이블 태그
+  - `<table></table>` 
+  - `<tr> </tr>`
+  - `<th> </th>` : 제목 셀
+  - `<td> </td>`  : 데이터 셀
+- 속성
+  - width
+  - height
+  - border
+  - cellspacing
+    - 셀 사이 간격
+    - 픽셀 혹은 %로 지정
+  - cellpadding
+    - 셀 안의 간격
+  - rowspan
+    - 행 통합
+  - colspan
+    - 열 통합
 
 
 
@@ -151,6 +186,8 @@
 
 - `<form>` : 서버에서 처리될 데이터를 제공
 - 기본 속성
+  - name
+    - form 태그에 이름 부여
   - action : 어디로
   - method
 
@@ -165,4 +202,16 @@
   - name, placeholder
   - required
   - autofocust
+- input 컨트롤 종류
+  - button
+  - checkbox
+  - file
+  - hidden
+  - image
+  - password
+  - radio
+  - reset
+  - submit
+  - text
+
 
