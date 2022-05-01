@@ -28,10 +28,24 @@
 - `rm - rf <dirname>` : 지정판 폴더 및 파일 강제 삭제
 - `ls` :  현재 위치한 폴더 내부의 파일/폴더 출력
 - `ls -a` : 현재 위차한 홀더 내부의 모든 파일 / 폴더 출력
+  - `ls -al ./폴더` : 대상 폴더 내부 확인
+
 - `code . `  : 해당 디렉토리로 visual studio code 열기
 - `vim <filename>` : 파일 오픈 (없으면 파일 생성)
 
 
+
+### maven 실행
+
+- mvn 실행
+  - `mvn --version` : 버전 확인
+  - `mvn spring-boot:run -Dspring-boot.run.jvmArguments='-Dserver.port=9003'` : maven 프로젝트를 해당 port로 실행함
+- jar 파일 사용
+  - `mvn clean` : 기존 빌드 정보 삭제 => target 폴더 없어짐
+  - `mvn compile package` : compile 후 packaging => target 다시 생성됨 (jar 생성)
+  - `java -jar -Dserver.port=9004 ./target/user-service-0.0.1-SNAPSHOT.jar`
+- 종료
+  - crtl + c
 
 ## Command Mode
 
