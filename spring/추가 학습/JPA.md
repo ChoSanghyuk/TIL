@@ -82,3 +82,9 @@
   - name = '~' 으로 외래키의 컬럼명 지정 O 
 - `@Transient`
   - 컬럼으로 매핑 X 변수
+- `@OneToMany`
+  - 1:N 관계에서 1임을 명시
+  - mappedBy = "N인 Entity의 변수명" 으로 주인 명시
+
+- `@ManyToOne`
+  - 1:N 관계에서 N(주인)임을 명시
