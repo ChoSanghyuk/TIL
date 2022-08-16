@@ -78,6 +78,14 @@
 
 
 
+### grep
+
+- **grep "john" | grep -v "[[:graph:]]john\|john[[:graph:]]"**
+  - john 이라는 정확히 단어가 일치하는 것만 찾음
+  - john이 포함된 행을 찾고, john 앞뒤로 공백을 제외한 문자가 있을 때 제외
+
+
+
 ### 압축
 
 - gz
