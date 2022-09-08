@@ -12,4 +12,3 @@ findstr /s /i "문자열"  파일양식
 
 dir 파일이름 /s
 
-spqs
