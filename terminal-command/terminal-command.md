@@ -97,9 +97,11 @@
   - f : file
 - `-regextype` : 정규표현식 타입
   - posix-extended 로 지정
-
 - `-regex` : 정규표현식 사용
 - `-path` : 경로 형식 지정
+- 예제
+  - `find / \(-name "*.pc" -or -name "*.cpp" -or -name "*.gc" \) -and \( -not -path "*backup*" -and -not -path "*PIF" \) | xargs grep -r -i -a "테이블" 2>/dev/null`
+
 
 ### grep
 
@@ -118,7 +120,7 @@
 - -n : 줄의 번호와 내용을 같이 출력
 - -v : 문자가 포함되지 않는 행 출력
 - -w : 문자와 한 단어로 일치해야 출력
-- -l : 문자가 들어간 파일 이름 출력
+- -l (소문자 엘) : 문자가 들어간 파일 이름만 출력
 - -r : 하위 디렉토리에서도 문자를 찾음
 - -A : 특정문자 아래 추가로 여러 행 출력
 - -B : 특정 문자 위 추가로 여러 행 출력
@@ -136,6 +138,7 @@
 
   - grep
     - -a : 
+- `find / \(-name "*.pc" -or -name "*.cpp" -or "*.gc" \) -and \(-not -path "*.backup*" -and -not -path "*PIF*" \) 2>/dev/null |xargs grep -l -r -i -a "테이블" 2>/dev/null |xargs grep -i -a "컬럼" `
 
 
 
