@@ -201,7 +201,7 @@
 - `<input>` 공통 속성
   - name, placeholder
   - required
-  - autofocust
+  - autofocus
 - input 컨트롤 종류
   - button
   - checkbox
@@ -213,5 +213,4 @@
   - reset
   - submit
   - text
-
 

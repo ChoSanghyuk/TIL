@@ -71,6 +71,10 @@ $ git switch master (혹은 branch이름)
 
 - 작업하려는 곳을 바꿈
 
+- :bulb: checkout
+  - switch ||  restore
+  - 더 이상 사용 권장 X
+
 
 
 ## branch 생성

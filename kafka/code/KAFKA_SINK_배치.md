@@ -156,6 +156,7 @@ public class MyObjService {
                         break;
                     case UPD:
                         myObjDao.updateIFDI(vo);
+                        break;
                     case DEL:
                         myObjDao.deleteIFDI(vo);
                         break;
@@ -183,16 +184,6 @@ public class MyObjService {
     }
 }
 ```
-
-
-
-### Sink
-
-
-
-### sql
-
-
 
 
 
