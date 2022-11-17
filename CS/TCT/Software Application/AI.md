@@ -193,6 +193,132 @@
 
 
 
+## 5. 과거의 경험을 통해 현재를 배우는 인공지능
+
+
+
+### RNN (Recurrent Neural Network)
+
+- 누적된 과거 정보를 가지고 예측
+- 장점
+  - 과거 처리 내역 반영 => 더 나은 결정
+  - 가변 길이의 데이터 처리 O
+  - 다양한 구성의 모델
+    - 1:1 ~ 多 : 多
+    - 입력 데이터 정보 누적 (인코딩) + 결과 출력(디코딩)
+
+- 단점
+  - 느린 연산 속도
+    - 병렬 처리 X. 순차적으로 데이터 처리
+  - 불안정한 학습
+    - Timestep이 길수록 문제 발생 확률 :arrow_up:
+    - Gradient Exploding : 인공 신경망이 학습해야 할 값이 폭발적으로 증가
+    - Gradient Vanishing : 과거의 이력이 현재 추론에 거의 영향 X
+  - 실질적으로 과거 정보 잘 활용 X
+    - 장기 종속성 / 의존성 문제 (Long-term dependency)
+    - 먼 과거 정보 여러번 압축 + 누적 => 영향 :arrow_double_down:
+
+
+
+### 보안책
+
+- LSTM (Long-Short Term Memory)
+  - 과거 정보 중 가중치
+  - 구성 : 3 Gate
+    1. Forget Gate
+       - 불필요 정보 폐기
+    2. Input Gate
+       - 현재 정보 반영 정보 결정
+    3. Output Gate
+       - 현재 시점 최종 정보를 다음 시점에 얼마나 넘길지 결정
+  - 단점 : 느린 속도
+  - GRU(Gated Recurrent Unit) 과 유사
+
+
+
+:bulb: 전통적인 머신러닝 기법에서는 ARIMA 기법을 통해 데이터 정보 흐름을 파악하고, 주기적으로 반복되는 패턴을 반영하여 분석함
+
+
+
+## 6. 헛똑똑이 인공지능 제대로 가르치기
+
+
+
+### AI Process
+
+- Offline Process = Training Pipeline
+
+  - 과거 데이터 가공
+    - Generate Features (데이터 정제 및 필요 부분 확보)
+    - Collect Labels (라벨링)
+  - Trani Modles
+    - Validate & Select Moldes (좋은 성능 도달까지 학습)
+    - 튜닝 (실험 Experiment 반복)
+
+  - Pulish Model
+    - 배포 선택
+
+- Online Process
+
+  - 머신/딥러닝 < 개발 영역 (Application)
+
+  - Load Model
+
+    - AI를 운영 환경에 띄움
+
+  - Live Data
+
+    - 기존 정리된 데이터 X
+
+      
+
+### 오버피팅과 일반화 성능
+
+- Generalization
+
+  - 이전에 본적 없는 데이터에 대해서도 잘 수행하는 능력
+
+- Overfitting
+
+  - 훈련 시에만 정상 동작
+
+    
+
+### Training, Validation, Test
+
+- 811 622
+- Training Set
+  - 모델 학습에 이용 데이터
+  - 최적화
+- Validation Set
+  - 튜닝에 이용
+  - 일반화 성능 판단
+- Test Set
+  - 학습에 어떤 식으로도 전형 관여 X.
+  - 모델 최종 성능 평가 
+
+
+
+### 학습 곡선 (Learning Curve)
+
+- 학습이 진행됨에 따라 모델의 성능을 기록
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
