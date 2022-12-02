@@ -303,21 +303,27 @@
 
 - 학습이 진행됨에 따라 모델의 성능을 기록
 
+- Training Set과 Validaiton Set의 학습 곡선 확인으로 오버피팅 확인
 
 
 
+### Regularization
 
+- 정규화
 
+- 일반화 성능 향상
 
+- 방식
 
+  - 데이터 증강 (Data Augmentation)
+    - 과도한 변형 주의
+  - Capacity 줄이기
+    - 모델의 복잡도 :arrow_down:
+    - 필요 이상의 Capacity ~> 데이터 암기
 
-
-
-
-
-
-
-
+  - 조기 종료 (Early Stopping)
+  - 드롭아웃 (Dropout)
+    - 학습 과정에서 일정 비율 p 만큼의 노드(인공뉴런) 무작위 끔
 
 
 
