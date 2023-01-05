@@ -23,7 +23,9 @@ https://jforj.tistory.com/257
 
 
 
+### 230104
 
+- Redis Cache 서버 채번 사용
 
 
 
