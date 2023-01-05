@@ -84,11 +84,9 @@
 
 - 기본 점화식
 
-  ![image-20230103130234715](C:\Users\조상혁\AppData\Roaming\Typora\typora-user-images\image-20230103130234715.png)
+  ![image-20230103130234715](img/image-20230103130234715.png)
 
   
-
- 
 
 ## 모듈러 증명
 
