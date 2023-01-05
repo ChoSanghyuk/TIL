@@ -84,7 +84,21 @@
 
 - 기본 점화식
 
-  ![image-20230103130234715](C:\Users\조상혁\AppData\Roaming\Typora\typora-user-images\image-20230103130234715.png)
+
+
+
+### LCS
+
+- Longest Common Subsequence. 가장 긴 공통 부분수열.
+
+- 기본 점화식
+  $$
+  f(i,j)=f(i-1, j-1)+1\quad if \quad w1_i = w2_j
+  $$
+
+  $$
+  f(i,j)= max(f(i-1, j), f(i,j-1))\quad if \quad w1_i \neq w2_j
+  $$
 
   
 
