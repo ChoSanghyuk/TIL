@@ -60,12 +60,22 @@
 
 
 
-### Functional Interface인 객체
+### Functional Interface
 
 - `@FunctionalInterface`
-- 여러개의 `default`, `static` 메소드가 있더라도 추상 메서드가 오직 한 개
-- lambda 식의 argument list 와 매핑되는 메소드 실행됨
-- `Collections.sort( employess, ( e1, e2) ->  o1.getName().compareTo(o2.getName()));`
+  - 여러개의 `default`, `static` 메소드가 있더라도 추상 메서드가 오직 한 개
+  - lambda 식의 argument list 와 매핑되는 메소드 실행됨
+  - `Collections.sort( employess, ( e1, e2) ->  o1.getName().compareTo(o2.getName()));`
+
+- java.util.function
+  - 자바 제공 FunctionalInterface
+  - Supllier<T>
+  - Consumer<T>
+  - Function<T,R>
+  - Predicate<T>
+    - 추상 메소드 : `Boolean test(T t)`
+    - 
+
 
 
 
