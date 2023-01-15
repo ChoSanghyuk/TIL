@@ -66,15 +66,38 @@
   - 여러개의 `default`, `static` 메소드가 있더라도 추상 메서드가 오직 한 개
   - lambda 식의 argument list 와 매핑되는 메소드 실행됨
   - `Collections.sort( employess, ( e1, e2) ->  o1.getName().compareTo(o2.getName()));`
-
 - java.util.function
   - 자바 제공 FunctionalInterface
-  - Supllier<T>
+  - Supplier<T>
+    - 추상 메소드 : `T get() `
   - Consumer<T>
+    - 추상 메소드 : `void accept(T t) `
   - Function<T,R>
+    - 추상 메소드 : `R apply(T t)`
   - Predicate<T>
     - 추상 메소드 : `Boolean test(T t)`
-    - 
+    - `Predicate <Integer> predicate = n -> n < 50 ; `
+    - 구현 메소드
+      - and 
+        - 두 개의 predicate 결과 &&
+        - `predicate1.and(predicate2).test(7))`
+      - or
+        - 두 개의 predicate 결과 ||
+        - `predicate1.or(predicate2).test(7))`
+      - isEqual
+        - 일치 여부 반환
+        - `Predicate<Integer> predicate = Predicate.isEqual(5);`
+- Chaining
+- bifunction - chainging 안됨?
+
+| Inteface  | Functional Method | Number of Arguments | Returns a value | Can be chained |
+| --------- | ----------------- | ------------------- | --------------- | -------------- |
+| Consumer  | accept()          | 1 or 2(Bi)          | No              | Yes            |
+| Supplier  | get()             | 0                   | Yes             | No             |
+| Predicate | test()            | 1 or 2(Bi)          | Yes             | Yes            |
+| Function  | apply()           | 1 or 2(Bi)          | Yes             | Ye             |
+
+
 
 
 
