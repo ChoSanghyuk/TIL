@@ -146,6 +146,25 @@
     Stream<String> parallelStream = list.parallelStream(); // 병렬 처리 스트림
     ```
 
+- 스트림 초기화
+
+  - `Stream.of()` 사용
+
+    ```java
+    Stream<String> stream1 = Stream.of("el1", "el2", "el3");
+    ```
+
+- 스트림 연결
+
+  - `Stream.concat()` 사용
+
+    ```java
+    Stream<String> concat = Stream.concat(stream1, stream2);
+    ```
+
+    
+
+
 
 
 ### 가공
@@ -161,21 +180,48 @@
 - sorted
   - 정렬
   - `Stream<T> sorted(Comparator<? super T> comparator);`
+  
+- peek()
+
+  - 결과에 영향 X, 특정 연산 수행
+
+  - 주로 중간 결과 확인용으로 사용
+
+  - `Stream<T> peek(Consumer<? super T> action);`
+
+    
 
 
 
 
+### 기타 메소드
 
-참고자료 
+- distinct()
+- count()
+
+
+
+### method reference
+
+- Special type of lambda expression
+- 표현 간결해짐
+- 종류
+  - Static methods
+  - Instance methods of particular objects
+  - Instance methods of an arbitrary object of a particular type
+  - Constructor
+- 예시
+  - `System.out::println`
+
+
+
+:bulb: 참고자료 
 
 https://futurecreator.github.io/2018/08/26/java-8-streams/
 
 
 
 
-
-- method reference
-- stream
 
 
 
