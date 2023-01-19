@@ -189,7 +189,105 @@
 
   - `Stream<T> peek(Consumer<? super T> action);`
 
+
+- flatmap()
+
+  - 새로운 스트림을 생성해서 리턴
+
+  - 중첩 구조를 한 단계 제거하고 단일 컬렉션으로 만들어줌
+
+  - `<R> Stream<R> flatMap(Function<? super T, ? extends Stream<? extends R>> mapper);`
+
+    ```java
+    // 여러 department에 나누어져 있던 employee들을 하나로 묶어서 처리 
+    departments.stream().
+        .flatMap(department -> department.getEmployees().stream()) 
+        .peek(System.out::println)
+    ```
+
+
+
+### 결과 만들기
+
+- collect
+
+  - Collector 타입의 인자 받아서 처리
+
+  - Collectors.toList()
+
+    - 스트림에서 작업한 결과 리스트로 반환
+
+      ```java
+      List<String> collectorCollection =  productList.stream()
+          										.map(Product::getName)
+          										.collect(Collectors.toList());
+      ```
+
+  - Collectors.groupingBy()
+
+    - 값을 기준으로 요소들을 그룹핑 => Map 반환
+
+      ```java
+      Map<Integer, List<Product>> collectorMapOfLists =
+       productList.stream()
+        .collect(Collectors.groupingBy(Product::getAmount));
+      ```
+
+  - Collectors.partitioningBy()
+
+    - 조건식 결과를 기준으로 요소들을 그룹핑 => Map 반환
+
+      ```java
+      Map<Boolean, List<Product>> mapPartitioned = 
+        productList.stream()
+        .collect(Collectors.partitioningBy(el -> el.getAmount() > 15));
+      // true, false로 Map key 구성됨
+      ```
+
+      
+
+- reduce
+
+  - 파라미터
+
+    - accumulator : 각 요소를 처리하는 계산 로직 (요소 오면 중간 결과 생성)
+    - identity : 계산을 위한 초기값
+    - combiner : 병령 스트림에서 나눠 계산한 결과 하나로 합침
+
+  - 파라미터 개수별 위치
+
+    ```java
+    // 1개 (accumulator)
+    Optional<T> reduce(BinaryOperator<T> accumulator);
     
+    // 2개 (identity, accumulator)
+    T reduce(T identity, BinaryOperator<T> accumulator);
+    
+    // 3개 (identity, accumulator)
+    <U> U reduce(U identity,
+      BiFunction<U, ? super T, U> accumulator,
+      BinaryOperator<U> combiner);
+    
+    // BinaryOperator : 같은 타입의 인자 두개 받아서 같은 타입 결과 반환하는 함수형 인터페이스
+    ```
+
+  - 예시
+
+    ```java
+    Integer reducedParallel = Arrays.asList(1, 2, 3)
+      .parallelStream()			// 병렬 스트림
+      .reduce(10,				// 초기값
+              Integer::sum,		// accumulator
+              (a, b) -> {		// combiner
+                System.out.println("combiner was called");
+                return a + b;
+              });
+    ```
+
+    1. 1,2,3이 각각 병렬로 실행
+    2. 각각 초기값 10과 더해짐
+    3. combiner로 병렬 스트림 결과값 합쳐짐
+    4. 11 + 12+ 13 = 36
 
 
 
