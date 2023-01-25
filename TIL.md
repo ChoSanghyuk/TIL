@@ -35,7 +35,7 @@ https://jforj.tistory.com/257
 
 
 
-
+- java에서 db 조회 시, fetchSize 설정하면 성능 Up. 
 
 
 
