@@ -32,6 +32,7 @@
   - arrow token
   
   - body
+    - 한줄일 경우, `return`, `{}`, `;` 생략 가능
     - body에 여러 라인 작성 시 {} 및 ; 필요
   
 
@@ -66,9 +67,9 @@
 - `@FunctionalInterface`
   - 여러개의 `default`, `static` 메소드가 있더라도 추상 메서드가 오직 한 개
   - lambda 식의 argument list 와 매핑되는 메소드 실행됨
-  - `Collections.sort( employess, ( e1, e2) ->  o1.getName().compareTo(o2.getName()));`
+  - `Collections.sort( employees, ( e1, e2) ->  e1.getName().compareTo(e2.getName()));`
 - java.util.function
-  - 자바 제공 FunctionalInterface
+  - 자바 제공 Functional Interface
   - Supplier<T>
     - 추상 메소드 : `T get() `
   - Consumer<T>
@@ -318,6 +319,93 @@
 https://futurecreator.github.io/2018/08/26/java-8-streams/
 
 
+
+
+
+## 실습
+
+```java
+package stream.challenge1;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+public class Lambda1 {
+
+    public static void main(String[] args){
+
+        // Challenge1
+        Runnable runnable = () -> {
+            String myString = "Let's split this up into an array";
+            String[] parts = myString.split(" ");
+            for(String part : parts){
+                System.out.println(part);
+            }
+        };
+
+        // Challenge2
+        Function<String, String> lambda = source -> {
+
+            StringBuilder returnVal = new StringBuilder();
+            for(int i = 0; i < source.length() ; i++){
+                if(i % 2 == 1){
+                    returnVal.append(source.charAt(i));
+                }
+            }
+            return returnVal.toString();
+        };
+
+        // Challenge3
+        lambda.apply("1234567890");
+
+        // Challenge4
+        String num = "1234567890";
+
+        // Challenge5
+        System.out.println(everySecondCharacter(lambda, num));
+
+        // Challenge6
+        Supplier<String> iLoveJava = () -> "I Love Java";
+
+        // Challenge7
+        String supplierResult = iLoveJava.get();
+        System.out.println(supplierResult);
+
+        // Challenge8
+        // Functional Interface
+
+        // Challenge9
+        List<String> topNames2015 = Arrays.asList(
+                "Amelia",
+                "Olivia",
+                "emily",
+                "Isla",
+                "Ava",
+                "oliver",
+                "Jack",
+                "Charlie",
+                "harry",
+                "Jacob"
+        );
+        
+        topNames2015.stream().map(name -> name.substring(0,1).toUpperCase() + name.substring(1))
+                .sorted()
+                .peek(System.out::println);
+
+
+
+    }
+
+    // Challenge5
+    public static String everySecondCharacter(Function<String, String> func , String str){
+        return func.apply(str);
+    }
+
+}
+
+```
 
 
 
