@@ -203,7 +203,7 @@
     // 여러 department에 나누어져 있던 employee들을 하나로 묶어서 처리 
     departments.stream().
         .flatMap(department -> department.getEmployees().stream()) 
-        .peek(System.out::println)
+        .peek(System.out::println) // stream의 경우 뒤에 마무리가 되어야 동작
     ```
 
 
@@ -290,6 +290,12 @@
     3. combiner로 병렬 스트림 결과값 합쳐짐
     4. 11 + 12+ 13 = 36
 
+- Iterating
+  - forEach
+    - 요소를 돌면서 최종작업
+
+
+
 
 
 
@@ -323,6 +329,8 @@ https://futurecreator.github.io/2018/08/26/java-8-streams/
 
 
 ## 실습
+
+- Udemy Java Promgramming Masterclass updated to Java 17 실습
 
 ```java
 package stream.challenge1;
@@ -376,7 +384,7 @@ public class Lambda1 {
         // Challenge8
         // Functional Interface
 
-        // Challenge9
+        // Challenge9, 10, 11
         List<String> topNames2015 = Arrays.asList(
                 "Amelia",
                 "Olivia",
@@ -389,12 +397,31 @@ public class Lambda1 {
                 "harry",
                 "Jacob"
         );
-        
+
+
+
         topNames2015.stream().map(name -> name.substring(0,1).toUpperCase() + name.substring(1))
-                .sorted()
-                .peek(System.out::println);
+                .sorted(String::compareTo)
+                .forEach(System.out::println);
+
+        // Challenge 12
+        long cnt = topNames2015.stream().map(name -> name.substring(0,1).toUpperCase() + name.substring(1))
+                .filter( name -> name.startsWith("A"))
+                .count();
+        System.out.println(cnt);
 
 
+        // Challenge 13
+        // Nothing
+
+        // Challenge 14
+        String comment = topNames2015
+                .stream()
+                .map(name -> name.substring(0,1).toUpperCase() + name.substring(1))
+                .peek(System.out::println)
+                .filter( name -> name.startsWith("A"))
+                .reduce( "Name which starts with A :", (s1, s2) -> s1 +" " + s2 );
+        System.out.println(comment);
 
     }
 
