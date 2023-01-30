@@ -5,7 +5,7 @@
 ## Java
 
 - [ ] Enum
-- [ ] Stream
+- [x] Stream
 - [ ] Thread
 - [ ] Synchronized
 - [x] Generics
