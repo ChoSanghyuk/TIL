@@ -20,9 +20,67 @@
 
 
 
-- 기본적으로 thread의 실행 순서 보장 X
+### Multi Thread
 
-  - 우선순위 설정 O
+- 시분할 방식
+  - **하나의 프로세서는 한번에 스레드 1개만 실행 가능**
+  - 여러 쓰레드를 번갈아 처리 => 병렬 처리와 같은 느낌을 줌
+- 독립적인 프로세스에 비해, 스레드는 자원과 데이터를 공유
+  - 데이터 전송에 있어 이점
+- 적용 조건
+  - 병행성 (concurrency) : 다수 스레드 생성 방법 O
+  - 동기화 (synchronization) : 작업에 방해 X, 각 스레드 동기화 방법 O
+  - 통신 (communication) : 서로 다른 스레드가 정보 교환 방법 O
+
+
+
+
+| 용어 | 멀티 프로세싱                                | 멀티 태스킹                             | 멀티 스레드                               |
+| ---- | -------------------------------------------- | --------------------------------------- | ----------------------------------------- |
+| 관점 | 시스템 관점                                  | 프로그램 외부 과점                      | 프로그램 내부 관점                        |
+| 의미 | CPU 여러개에서 동시에 여러개의 프로세스 수행 | CPU 1개에서 동시에 여러 프로그램을 실행 | processor 1개가 동시에 여러 스레드를 실행 |
+
+
+
+## 사용
+
+
+
+### 생성
+
+- 생성자
+  - Thread()
+  - Thread(Runnable target)
+
+- Thread 클래스 상속받아 생성
+
+  ```java
+  public class Test01 extends Thread{
+      @Override
+      public void run(){
+          // 실행 코드
+      }
+  }
+  ```
+
+- `Runnable 인터페이스 구현하여 생성`
+
+  ```java
+  public class Test02 implements Runnable{
+      @Override
+      public void run(){
+          // 실행 코드
+      }
+  }
+  ```
+
+  - 이점
+    - Functional Interface  => lambda 식으로 생성 O
+    - 다른 클래스 상속에 있어서 이점
+
+
+
+### 재사용불가
 
 - Thread instance는 재사용 X
 
@@ -34,17 +92,50 @@
     }.start();
     ```
 
-- Runnable Interface
-  - Functional Interface
-    - lambda 식으로 생성 O
-  - 다른 클래스 상속에 있어서 이점
-- Thread 이름 설정
-  - setName
-- run vs start
-  - run은 현재 실행 중인 스레드 실행 의미
-  - start를 해야지 생성된 thread 실행 O
+- Thread start 시, null이 아니라면 IllegalThreadStateException 
 
 
+
+### run vs start
+
+- start
+  - Thread를 새로 생성하여 start.
+  - Thread start 시 run() 호출됨
+- run
+  - 단순히 run 메서드만 실행
+  - 싱글쓰레드 환경에서 동작
+
+
+
+### 쓰레드 이름 설정
+
+- 생성 시
+  - `Thread(String name)`
+  - `Thread(Runnable target, String name)`
+- `setName(String name)` 메소드 활용
+
+
+
+### 실행순서
+
+
+- 기본적으로 thread의 실행 순서 보장 X
+
+- 우선순위 설정 O
+
+  
+
+### Interrupt & Join
+
+
+- interrupt
+  - 다른 쓰레드의 작업에 개입
+  - 어떠한 스레드에게, 지금 그 스레드가 하고 있는 일을 멈추고 다른 일을 하라고 명령
+  - 주로 스레드 작업 중지 명령
+- join
+  - 하나의 스레드가 다른 스레드의 완료를 기다림
+  - 현재 스레드(A)에서 타 스레드(B)를 기다리고자 한다면, `B.join();`
+  - B.join( 5000)과 같이 최대 대기 시간 설정 O
 
 
 
