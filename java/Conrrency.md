@@ -139,6 +139,66 @@
 
 
 
+## Synchronization
+
+
+
+### synchronized
+
+- 고유 락 (Intrinsic Lock)
+
+  - 자바의 모든 객체가 소유
+  - Primitive Type은 없음
+
+- 메소드 적용 
+
+  ```java
+  public synchronized void doSth(){
+      //
+  }
+  ```
+
+  - 한 스레드가 해당 메소드를 종료하기 전까지 다른 스레드는 사용 X
+  - 메소드 level의 Synchronized는 한 Class 내에 정의된 메소드들에 동일하게 적용됨
+  - constructor에는 사용 X
+
+- Thread safe
+  - critical point가 모두 synchronized
+  - synchronized 수는 absolutely minimun으로 유지해야 성능 up
+
+
+
+### wait, notify, notifyAll
+
+- wait()
+  - lock을 소유한 thread가 자신의 제어권을 양보 => WAITING or TIMED_WAITING 상태에서 대기
+  - lock을 소유하고 있어야만 실행 O
+- notify()
+  - WAIT SET에서 대기중인 다른 한 개의 Thread 깨움
+  - 깨어난 Thread는 다시 Runnable 상태로 변경되어 실행
+- nofifyAll()
+  - WAIT SET에서 대기중인 모든 Thread 깨움
+
+:bulb: 스레드 메소드 X, Object의 메소드 O
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
