@@ -143,12 +143,37 @@
 
 
 
+### 동기화
+
+- 베타적 실행
+  - 락
+- 스레드간 안정적 통신
+  - 동기화없이는 한 스레드가 만든 온전한 변화를 다른 스레드에서 확인 X
+
+
+
+### 원자적 연산
+
+- 중단이 불가능한 연산
+  - 하나의 연산을 위해 바이트 연산을 할 때, 다른 스레드가 끼어들어 연산의 결과가 올바르지 않다면, 원자적 연산 X
+- primitive 타입 수정은 기본적으로 원자적 연산
+  - 예외
+    - long, double
+    - var++
+
+
+:bulb: JVM 실행 비트수는 32비트. 64비트인 long과 double은 원자적 데이터 X => volatile 필요
+
+:bulb:원자적 데이터라도 한 스레드의 수정이 완전히 반영된 값을 얻는다고 보장하지 않음 => 동기화 필요
+
+
+
 ### synchronized
 
 - 고유 락 (Intrinsic Lock)
 
   - 자바의 모든 객체가 소유
-  - Primitive Type은 없음
+  - Primitive Type은 없음 (long, double 제외)
 
 - 메소드 적용 
 
@@ -162,9 +187,21 @@
   - 메소드 level의 Synchronized는 한 Class 내에 정의된 메소드들에 동일하게 적용됨
   - constructor에는 사용 X
 
+- 변수 적용
+
+  ```java
+  synchronized(var1){
+      //
+  }
+  ```
+
+  
+
 - Thread safe
   - critical point가 모두 synchronized
   - synchronized 수는 absolutely minimun으로 유지해야 성능 up
+
+
 
 
 
@@ -183,9 +220,32 @@
 
 
 
+## Lock
 
 
 
+### ReentrantLock
+
+- ReentrantLock 변수를 통해서 동기화 구현 가능
+
+- 사용
+
+  ```java
+  Reentrantlock reentrantlock = new Reentrantlock();
+  reentrantlock.lock();
+  try{
+    	// do something
+  } finally{
+      reentrantlock.unlock();
+  }
+  ```
+
+- 장점 (vs Synchronized)
+
+  - 코드가 단일 블록 형태를 넘어가는 경우에도 사용 O
+  - Lock Polling 지원
+  - Condition을 적용해 선별적인 스레드 wake가능
+  - 타임아웃 지정 O
 
 
 
