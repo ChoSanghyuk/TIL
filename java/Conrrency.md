@@ -247,7 +247,65 @@
   - Condition을 적용해 선별적인 스레드 wake가능
   - 타임아웃 지정 O
 
+- try-finally 구문으로 unlock 보장
 
+- Fairness
+
+  - `Reentrantlock reentrantlock = new Reentrantlock(true);` 
+  - 생성자에서 `true` 지정 시, fairness 보장
+  - 가장 오래 기다린 thread에게 lock 배정
+
+- methods
+
+  - `public boolean tryLock()`
+    - lock을 사용할 수 있다면, lock을 가지면서 true 반환
+    - fairness와 상관없이 lock이 이용가능하다면 쟁취
+
+  - `public boolean tryLock(long timeout, TimeUnit unit) throws InterruptedException`
+    - 일정 시간 동안 lock을 사용할 수 있다면, lock을 가지면서 true 반환
+    - fairness 지킴
+
+  - `public final int getQueueLength()`
+    - 해당 락을 차지하기 위해 기다리는 thread 수 반환
+
+
+
+
+## Thread Pool
+
+
+
+### Thread Pool
+
+- 작업 처리에 사용되는 thread 수를 제한된 개수만큼 정해두고, 작업 큐에 들어오는 작업들을 하나씩 thread가 맡아서 처리
+
+  ```java
+  ExecutorService executorService = Executors.newFixedThreadPool(3);
+  
+  executorService.execute(runnable1);
+  executorService.execute(runnable2);
+  executorService.execute(runnable3);
+  
+  executorService.shutdown()
+  ```
+
+- methods
+
+  - `public void execute(Runnable r)`
+    - thread 생성하여 작업 실행.
+    - 지정된 thread 수가 차있다면, 작업 대기
+  - `public void shutdown()`
+    - 동작중인 thread들의 처리가 모두 끝난 후 executorService 종료
+  - `public void shutdownnow()`
+    - 동작중과 상관없이 executorService 종료
+
+
+
+### Future
+
+
+
+### ArrayBlockingQueue
 
 
 
