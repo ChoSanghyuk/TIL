@@ -184,7 +184,10 @@
   ```
 
   - 한 스레드가 해당 메소드를 종료하기 전까지 다른 스레드는 사용 X
-  - 메소드 level의 Synchronized는 한 Class 내에 정의된 메소드들에 동일하게 적용됨
+  - method를 소유한 객체를 `mutex`로 사용  (Mutual Exclusion)
+    - `syncronized(this) { ... }` 처럼 동작됨
+    - 해당 객체의 syncronized된 다른 메소드에 대해서도 lock이 생성
+    - `it acquires a lock on the object that the method is a part of. This lock ensures that only one thread can execute the synchronized method of that object at a time` 
   - constructor에는 사용 X
 
 - 변수 적용
@@ -329,6 +332,16 @@
 ### Future
 
 
+
+### Dead Lock
+
+- two or more threads are blocked indefinitely, waiting for each other to release a resource
+- each thread holds a resource that the other thread wants to access
+- both threads wait for each other to release the resource they are holding, creating a cycle of waiting
+
+
+
+### Starvation
 
 
 
