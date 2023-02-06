@@ -270,6 +270,31 @@
 
 
 
+### ArrayBlockingQueue
+
+- 생성자
+
+  `ArrayBlockingQueue(int capacity)`
+
+  - capacity를 넘어서는 `put` 수행 시 block처리됨
+
+- methods
+
+  - `boolean add(E e)`
+    - 성공 시, `true` 반환. Full 일 경우, `IllegalStateException` 발생
+  - `void put(E e)`
+    - Full 일 경우, 대기
+  - `E peek()`
+    - Retrieves but not remove. empty시 `null` 반환
+
+  - `E take()`
+    - Retrieves and remove. 
+
+- 특징
+
+  - thread-safe
+  - :bulb: thread-safe임에도, 구간을 lock을 잡기 위해서는 `synchronized` 필요
+
 
 ## Thread Pool
 
@@ -304,8 +329,6 @@
 ### Future
 
 
-
-### ArrayBlockingQueue
 
 
 

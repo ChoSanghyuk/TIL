@@ -39,9 +39,13 @@ https://jforj.tistory.com/257
 
 
 
+- Stream은 재사용 불가
 
 
 
+
+
+- a,, 일 경우 ,로 split 해도 길이는 1
 
 
 
