@@ -341,9 +341,89 @@
 
 
 
+## Starvation
+
+
+
 ### Starvation
 
+- 여러 Thread가 자원을 가질 동안 특정 Thread가 가지지 못하는 경우
 
+
+
+### 우선순위
+
+- CPU는 단순 참고자료로만 사용.
+
+  ```java
+  Thread t1 = new Tread( runnable);
+  t1.setPriority(10);
+  ```
+
+- setPriority(int n)
+
+  - 1~10까지의 숫자 부여
+
+  - 높은 숫자일 수록 높은 우선순위
+
+
+
+### Fair Lock
+
+- First come, First Served로 Thread에게 자원(락) 양도
+
+- 성능 다소 감소시킴
+
+  ```java
+  ReentrantLock lock = ReentrantLock(true); // true 시 Fair Lock
+  lock.lock();
+  try{
+      // do something
+  } finally {
+      lock.unlock();
+  }
+      
+  ```
+
+
+
+## 기타 이슈
+
+
+
+### Live Lock
+
+- 타 Thread가 활성화 되어 있으면, 해당 자원 양도  => 반복적인 양도로 작업 수행 X 경우
+- two or more processes are actively trying to change each other's state and neither is able to proceed
+
+
+
+### Slipped Conditon
+
+- 멀티 스레드 환경에서 thread가 접근한 자원이 true 상태였지만, 더 이상 자원을 들고 있는게 없는 경우
+- multiple processes or threads compete to modify the same data or resource, leading to unpredictable outcomes.
+
+
+
+### Atomic Action
+
+- 실행 도중 지연되지 않고 한번에 실행
+- 완벽하게 끝내거나 실행되지 않거나만 존재
+- 경우
+  - Reading and writing reference variables
+  - Reading and writing primitive variables (except long and double)
+  - Reading and writing all variables declared `volatile`
+
+
+
+### Volatile vs Synchronization
+
+- Volatile은 main-memory에 저장된 값이 최신 값임을 보장
+  - 멀티 스레드 환경에서 한 스레드만 수정을 할 경우, 모든 스레드들이 최신 데이터 사용 O
+- Synchronization은 한번에 한 스레드만 자원에 접근함을 보장
+  - 멀티 스레드 환경에서 여러 스레드가 수정을 할 경우, 한 스레드가 작업을 끝마쳐야 다른 스레드가 접근 O
+
+:bulb:java.util.concurrent.atomic package에서 atomic 변수 제공 
 
 
 
