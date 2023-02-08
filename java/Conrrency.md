@@ -265,9 +265,12 @@
     - fairness와 상관없이 lock이 이용가능하다면 쟁취
 
   - `public boolean tryLock(long timeout, TimeUnit unit) throws InterruptedException`
-    - 일정 시간 동안 lock을 사용할 수 있다면, lock을 가지면서 true 반환
-    - fairness 지킴
+    
+    - timeout 안으로 lock을 사용할 수 있다면, lock을 가지면서 true 반환
 
+    - timeout 안에 lock을 가질 수 없다면, false 반환
+    - fairness 지킴
+    
   - `public final int getQueueLength()`
     - 해당 락을 차지하기 위해 기다리는 thread 수 반환
 
@@ -423,7 +426,19 @@
 - Synchronization은 한번에 한 스레드만 자원에 접근함을 보장
   - 멀티 스레드 환경에서 여러 스레드가 수정을 할 경우, 한 스레드가 작업을 끝마쳐야 다른 스레드가 접근 O
 
-:bulb:java.util.concurrent.atomic package에서 atomic 변수 제공 
+
+
+### Atomic Variable
+
+- java.util.concurrent.atomic package에서 atomic 변수 제공
+
+- boolean, integer, integer array, long, long array, object reference, double 
+
+- compareAndSet : 유용함
+
+
+
+:bulb: synchronize는 `성능상` 최소한의 코드 블록에만 적용될 것을 권장.
 
 
 
@@ -431,7 +446,113 @@
 
 
 
+## 실습
 
+
+
+```java
+package concurrency;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class BankAccount {
+
+    private double balance;
+    private String accountNumber;
+    ReentrantLock lock;
+    public BankAccount(String accountNumber, double initialBalance){
+        this.accountNumber = accountNumber;
+        this.balance = initialBalance;
+        this.lock = new ReentrantLock();;
+    }
+
+    // Challenge 2 : synchronize method
+    // Challenge 2 : synchronize method by using Reentrant Lock
+    public void deposit(double amount){
+//        synchronized (this){
+//            balance += amount;
+//        }
+
+        try {
+            if(lock.tryLock(1000, TimeUnit.MILLISECONDS)){
+                try{
+                    balance += amount;
+                }finally {
+                    lock.unlock();
+                }
+            } else {
+                System.out.println("Could not get the lock");
+            }
+        } catch (InterruptedException e) {
+            
+        } 
+    }
+
+    public void withdraw(double amount){
+//        synchronized (this){
+//            balance -= amount;
+//        }
+        // Challenge 6 : make status variable thread-safe => Local variable is thread-safe itself
+        boolean status = false;
+
+        try {
+            if(lock.tryLock(1000, TimeUnit.MILLISECONDS)){
+                try{
+                    balance -= amount;
+                    status = false;
+                } finally {
+                    lock.unlock();
+                }
+            } else {
+                System.out.println("Could not get the lock");
+            }
+        } catch (InterruptedException e) {
+            
+        }
+        System.out.println("Transaction status = " + status);
+    }
+
+    public String getAccountNumber(){
+        return this.accountNumber;
+    }
+
+    public void printAccountNumber(){
+        System.out.println("Account Number : " + accountNumber);
+    }
+}
+
+```
+
+
+
+```java
+package concurrency;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+public class ConcurrencyExec
+{
+    public static void main(String[] args){
+
+        final BankAccount account = new BankAccount("12345-678", 1000.00);
+
+        // Challenge 1 : create thread
+        new Thread( () -> {
+
+            account.deposit(300.00);
+            account.withdraw(50);
+
+        }).start();
+        new Thread( () -> {
+            account.deposit(203.75);
+            account.withdraw(100.00);
+        }).start();
+
+
+    }
+}
+```
 
 
 
