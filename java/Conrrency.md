@@ -184,7 +184,10 @@
   ```
 
   - 한 스레드가 해당 메소드를 종료하기 전까지 다른 스레드는 사용 X
-  - 메소드 level의 Synchronized는 한 Class 내에 정의된 메소드들에 동일하게 적용됨
+  - method를 소유한 객체를 `mutex`로 사용  (Mutual Exclusion)
+    - `syncronized(this) { ... }` 처럼 동작됨
+    - 해당 객체의 syncronized된 다른 메소드에 대해서도 lock이 생성
+    - `it acquires a lock on the object that the method is a part of. This lock ensures that only one thread can execute the synchronized method of that object at a time` 
   - constructor에는 사용 X
 
 - 변수 적용
@@ -262,9 +265,12 @@
     - fairness와 상관없이 lock이 이용가능하다면 쟁취
 
   - `public boolean tryLock(long timeout, TimeUnit unit) throws InterruptedException`
-    - 일정 시간 동안 lock을 사용할 수 있다면, lock을 가지면서 true 반환
-    - fairness 지킴
+    
+    - timeout 안으로 lock을 사용할 수 있다면, lock을 가지면서 true 반환
 
+    - timeout 안에 lock을 가질 수 없다면, false 반환
+    - fairness 지킴
+    
   - `public final int getQueueLength()`
     - 해당 락을 차지하기 위해 기다리는 thread 수 반환
 
@@ -330,6 +336,109 @@
 
 
 
+### Dead Lock
+
+- two or more threads are blocked indefinitely, waiting for each other to release a resource
+- each thread holds a resource that the other thread wants to access
+- both threads wait for each other to release the resource they are holding, creating a cycle of waiting
+
+
+
+## Starvation
+
+
+
+### Starvation
+
+- 여러 Thread가 자원을 가질 동안 특정 Thread가 가지지 못하는 경우
+
+
+
+### 우선순위
+
+- CPU는 단순 참고자료로만 사용.
+
+  ```java
+  Thread t1 = new Tread( runnable);
+  t1.setPriority(10);
+  ```
+
+- setPriority(int n)
+
+  - 1~10까지의 숫자 부여
+
+  - 높은 숫자일 수록 높은 우선순위
+
+
+
+### Fair Lock
+
+- First come, First Served로 Thread에게 자원(락) 양도
+
+- 성능 다소 감소시킴
+
+  ```java
+  ReentrantLock lock = ReentrantLock(true); // true 시 Fair Lock
+  lock.lock();
+  try{
+      // do something
+  } finally {
+      lock.unlock();
+  }
+      
+  ```
+
+
+
+## 기타 이슈
+
+
+
+### Live Lock
+
+- 타 Thread가 활성화 되어 있으면, 해당 자원 양도  => 반복적인 양도로 작업 수행 X 경우
+- two or more processes are actively trying to change each other's state and neither is able to proceed
+
+
+
+### Slipped Conditon
+
+- 멀티 스레드 환경에서 thread가 접근한 자원이 true 상태였지만, 더 이상 자원을 들고 있는게 없는 경우
+- multiple processes or threads compete to modify the same data or resource, leading to unpredictable outcomes.
+
+
+
+### Atomic Action
+
+- 실행 도중 지연되지 않고 한번에 실행
+- 완벽하게 끝내거나 실행되지 않거나만 존재
+- 경우
+  - Reading and writing reference variables
+  - Reading and writing primitive variables (except long and double)
+  - Reading and writing all variables declared `volatile`
+
+
+
+### Volatile vs Synchronization
+
+- Volatile은 main-memory에 저장된 값이 최신 값임을 보장
+  - 멀티 스레드 환경에서 한 스레드만 수정을 할 경우, 모든 스레드들이 최신 데이터 사용 O
+- Synchronization은 한번에 한 스레드만 자원에 접근함을 보장
+  - 멀티 스레드 환경에서 여러 스레드가 수정을 할 경우, 한 스레드가 작업을 끝마쳐야 다른 스레드가 접근 O
+
+
+
+### Atomic Variable
+
+- java.util.concurrent.atomic package에서 atomic 변수 제공
+
+- boolean, integer, integer array, long, long array, object reference, double 
+
+- compareAndSet : 유용함
+
+
+
+:bulb: synchronize는 `성능상` 최소한의 코드 블록에만 적용될 것을 권장.
 
 
 
@@ -337,8 +446,113 @@
 
 
 
+## 실습
 
 
+
+```java
+package concurrency;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class BankAccount {
+
+    private double balance;
+    private String accountNumber;
+    ReentrantLock lock;
+    public BankAccount(String accountNumber, double initialBalance){
+        this.accountNumber = accountNumber;
+        this.balance = initialBalance;
+        this.lock = new ReentrantLock();;
+    }
+
+    // Challenge 2 : synchronize method
+    // Challenge 2 : synchronize method by using Reentrant Lock
+    public void deposit(double amount){
+//        synchronized (this){
+//            balance += amount;
+//        }
+
+        try {
+            if(lock.tryLock(1000, TimeUnit.MILLISECONDS)){
+                try{
+                    balance += amount;
+                }finally {
+                    lock.unlock();
+                }
+            } else {
+                System.out.println("Could not get the lock");
+            }
+        } catch (InterruptedException e) {
+            
+        } 
+    }
+
+    public void withdraw(double amount){
+//        synchronized (this){
+//            balance -= amount;
+//        }
+        // Challenge 6 : make status variable thread-safe => Local variable is thread-safe itself
+        boolean status = false;
+
+        try {
+            if(lock.tryLock(1000, TimeUnit.MILLISECONDS)){
+                try{
+                    balance -= amount;
+                    status = false;
+                } finally {
+                    lock.unlock();
+                }
+            } else {
+                System.out.println("Could not get the lock");
+            }
+        } catch (InterruptedException e) {
+            
+        }
+        System.out.println("Transaction status = " + status);
+    }
+
+    public String getAccountNumber(){
+        return this.accountNumber;
+    }
+
+    public void printAccountNumber(){
+        System.out.println("Account Number : " + accountNumber);
+    }
+}
+
+```
+
+
+
+```java
+package concurrency;
+
+import java.util.concurrent.locks.ReentrantLock;
+
+public class ConcurrencyExec
+{
+    public static void main(String[] args){
+
+        final BankAccount account = new BankAccount("12345-678", 1000.00);
+
+        // Challenge 1 : create thread
+        new Thread( () -> {
+
+            account.deposit(300.00);
+            account.withdraw(50);
+
+        }).start();
+        new Thread( () -> {
+            account.deposit(203.75);
+            account.withdraw(100.00);
+        }).start();
+
+
+    }
+}
+```
 
 
 
