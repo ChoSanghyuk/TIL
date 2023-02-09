@@ -198,8 +198,6 @@
   }
   ```
 
-  
-
 - Thread safe
   - critical point가 모두 synchronized
   - synchronized 수는 absolutely minimun으로 유지해야 성능 up
@@ -210,9 +208,12 @@
 
 ### wait, notify, notifyAll
 
+- `synchronized` 블록 안에서 사용됨.
+
 - wait()
   - lock을 소유한 thread가 자신의 제어권을 양보 => WAITING or TIMED_WAITING 상태에서 대기
   - lock을 소유하고 있어야만 실행 O
+  - 소유하고 있는 모든 lock을 푸는 것 X. 해당 블록에 대한 lock만 해제
 - notify()
   - WAIT SET에서 대기중인 다른 한 개의 Thread 깨움
   - 깨어난 Thread는 다시 Runnable 상태로 변경되어 실행
@@ -263,16 +264,16 @@
   - `public boolean tryLock()`
     - lock을 사용할 수 있다면, lock을 가지면서 true 반환
     - fairness와 상관없이 lock이 이용가능하다면 쟁취
-
   - `public boolean tryLock(long timeout, TimeUnit unit) throws InterruptedException`
     
     - timeout 안으로 lock을 사용할 수 있다면, lock을 가지면서 true 반환
-
+  
     - timeout 안에 lock을 가질 수 없다면, false 반환
     - fairness 지킴
-    
   - `public final int getQueueLength()`
     - 해당 락을 차지하기 위해 기다리는 thread 수 반환
+
+​	:bulb:같은 Lock 객체를 공유하는 객체들에 대해서만 lock이 적용됨
 
 
 
@@ -338,9 +339,21 @@
 
 ### Dead Lock
 
-- two or more threads are blocked indefinitely, waiting for each other to release a resource
-- each thread holds a resource that the other thread wants to access
-- both threads wait for each other to release the resource they are holding, creating a cycle of waiting
+- 개념
+
+  - two or more threads are blocked indefinitely, waiting for each other to release a resource
+
+  - each thread holds a resource that the other thread wants to access
+
+  - both threads wait for each other to release the resource they are holding, creating a cycle of waiting
+
+
+- 해결 Tip
+  - a set of locks가 여러 스레드에 의해서 서로 다른 순서로 소유되는 경우 => 같은 순서대로 lock들을 소유하게 정리
+  - over-synchronizing 되어진 코드 정리
+  - 순환 참조 패턴을 깰 코드를 다시 작성
+  - Reentrant Lock이 도움이 되는가
+
 
 
 
