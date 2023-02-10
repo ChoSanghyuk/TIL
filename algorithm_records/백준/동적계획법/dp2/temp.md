@@ -10,7 +10,8 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static int[] lis;
+    static int[] arr;
+    static int[][] dp;
 
     public static void main(String[] args) throws IOException {
 
@@ -20,11 +21,24 @@ public class Main {
        for(int t = 0; t < c ; t++){
 
            int n = Integer.parseInt(bf.readLine());
-           int[] arr = new int[n];
+           arr = new int[n+1];
+           dp = new int[n+1][n+1];
 
            StringTokenizer st = new StringTokenizer(bf.readLine(), " ");
-           for(int i = 0; i < n ; i++){
+           for(int i = 1; i <= n ; i++){
                arr[i] = Integer.parseInt(st.nextToken());
+           }
+           for(int i = n ; i > 0 ; i--){
+               for(int j = n ; j>=i ; j--){
+
+                   int min = Integer.MAX_VALUE;
+                   for(int s = j ; s >=i ; s--){
+                       min = Math.min(min, dp[i][s] + dp[i +(j-s)][j]);
+                   }
+
+                   dp[i][j]= simpleSum(i,j) + min;
+
+               }
            }
 
 
@@ -34,7 +48,7 @@ public class Main {
 
     }
 
-    public static int simpleSum(int[] arr, int i , int j){
+    public static int simpleSum(int i , int j){
         int sum = 0;
         for(int x = i ; x <=j; x++){
             sum += arr[x];
@@ -42,10 +56,10 @@ public class Main {
         return sum;
     }
 
-    public static int dpSum(int[][] dp, int i, int j, int d){
-        int sum = 0;
+    public static int dpSum(int i, int j, int s){
 
-        for(int x = i-)
+        return dp[i][s] + dp[s+1][j];
+
 
     }
 
