@@ -6,12 +6,13 @@
 
 - [ ] Enum
 - [x] Stream
-- [ ] Thread
-- [ ] Synchronized
+- [x] Thread
+- [x] Synchronized
 - [x] Generics
-- [ ] Volatile
+- [x] Volatile
 - [ ] abstract
 - [ ] 이펙티브 자바 (책)
+- [ ] TDD
 
 
 
@@ -31,11 +32,6 @@
 - [ ] Cloud ( AWS or Naver)
 
 
-
-## Algorithm
-
-- [ ] DP
-- [ ] 
 
 
 
