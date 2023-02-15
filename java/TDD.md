@@ -21,6 +21,50 @@
 
 
 
+## General Rules
+
+
+
+### Rules of TDD
+
+1. Start with failing test
+   -  새로 추가한 테스트가 테스트 케이스에 제대로 들어갔는지 확인
+
+2. Test the expected outcome of an example
+3. Don't pre-judge design. Let your tests drive it
+4. Write the mininum code required to get you tests to pass
+5. Each test should validate one single piece of logic
+
+
+
+### Rules of Testing
+
+- test one item of functionality only
+  - one `assert` for each test
+- test business logic, not methods
+- tests must be repeatable, and consistent
+  - 코드가 변경되었다면, 이전 테스트들까지 재실행
+  - 테스트 결과는 언제 실행되어도 결과가 동일해야 함
+- test must be thorough
+  - 모든 조건을 테스트할 수 있어야 함
+
+
+
+### What tests should I write
+
+- What should the logic be?
+- What is the opposite to that logic?
+- Are there any edge cases?
+- Are there any error conditions?
+
+
+
+:bulb: Extra Tip
+
+- 테스트 케이스(Input)의 종류별로 메소드를 새로 생성하는 것이 오류 발견 지점 찾기 쉬움
+
+
+
 ## JUnit
 
 
@@ -54,18 +98,6 @@
    - 이름 설정
 
      :bulb: Class under test : 선택한 클래스의 모든 메소드 Test로 선택됨. TDD가 아닌 개발 완료 후 테스트 시 유용
-
-
-
-### Rules of TDD
-
-1. Start with failing test
-   -  새로 추가한 테스트가 테스트 케이스에 제대로 들어갔는지 확인
-
-2. Test the expected outcome of an example
-3. Don't pre-judge design. Let your tests drive it
-4. Write the mininum code required to get you tests to pass
-5. Each test should validate one single piece of logic
 
 
 
@@ -115,15 +147,38 @@
       }
   ```
 
-  
+
+
+
+### Extra JUnit Asserts
+
+- `assertEqual()`
+- `assertNull(T t)`
+- `assertNotNull(T t)`
 
 
 
 
 
+## Refactoring
 
 
 
+### :large_blue_circle: Optimize Code
+
+- 우선 모든 Test를 다 통과하게끔 코드를 설계 후, 코드 최적화 진행
+
+  => Refactoring 후 Test 재실행으로 코드 보장 O
+
+
+
+## Stubs
+
+
+
+Test code which has dependencies on third party
+
+Third Party(databse, website)의 상태에 따라서 test 결과가 달라질 수 있음 (consistency X)
 
 
 
