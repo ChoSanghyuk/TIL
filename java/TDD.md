@@ -182,9 +182,52 @@ Third Party(databse, website)의 상태에 따라서 test 결과가 달라질 �
 
 
 
+### Stub
+
+- 가짜 함수 = 속이 빈 함수
+- 단위 테스트 中 사용 케이스
+  - 구현되지 않은 함수 or 라이브러리 제공 함수
+  - 함수가 반환되는 값을 임의 설정
+  - 복잡한 논리 흐름 속, 로직을 단순화
 
 
 
+### Mock
+
+- 진짜 객체와 비슷하게 동작. But, 프로그래머가 직접 행동을 관리
+- DB 및 외부 API 테스트 시, 동작을 예측하여 구현 => API / DAO 등 구현 X 테스트 O
+
+
+
+### Mockito
+
+- Mock 객체를 쉽게 만들고, 관리하고, 검증할 수 있는 방법을 제공하는 프레임워크
+- 공식 사이트
+  - `site.mokito.org` 
+- Dependency 추가
+  - jar 필요 추가 => lib 등록
+  - Spring 프로젝트 시, `spring-boot-start-test` dependency 추가 시 자동 등
+  - :bulb: java 9 이상 버전 사용 시, `module-info.java` 파일 설정 필
+
+
+
+### Mockito 사용
+
+when, lookup, thenReturn
+
+
+
+### Mockito Methods
+
+- Mock 생성
+  - `Myclass myClass = mock(Myclass.class);`
+- 
+
+```java
+whem(myClass.myMethod(params)).thenReturn(retrun-value);
+
+Verify(myClass, times(?)).myMethod(params); 
+```
 
 
 
