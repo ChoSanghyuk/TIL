@@ -237,5 +237,194 @@ Verify(myClass, times(?)).myMethod(params);
 
 
 
+`Verify(myClass, atMost(?)).myMethod(params); `
+
+times(1)이 디폴트 값. `Verify(myClass).myMethod(params); ` = `verify(myClass, times(1)).myMethod(params); `
+
+params에 any(MyOtherClass.class) 지정 O
+
+
+
+| 특징                                                | Stubs | Mocks |
+| --------------------------------------------------- | ----- | ----- |
+| Override external dependencies                      | Y     | Y     |
+| Used to test data (Validate the return and outcome) | Y     |       |
+| Used to test behavior (Check object is being used)  |       | Y     |
+
+
+
+### Fakes & Dummies
+
+- when u need to override the thing that you are not interested in 
+
+
+
+### Dummy
+
+- 가장 기본적인 테스트 더블
+- 객체 필요 but 내부 기능 필요 X
+- ex) 테스트 중 파라리터로 전달 필요 but 내부에서 사용X 경우
+
+
+
+### Fakes
+
+- 객체의 단순화된 버전
+- 동작의 구현은 되어 있지만, 프로덕션 시 사용 X
+- ex) DAO 지만 DB 접근한 결과가 아닌, 임의 객체 생성하여 반환
+
+
+
+### Stub
+
+- Dummy 데이터가 실제로 동작하도록 만들어둔 객체
+- 미리 정의된 데이터를 보유하고, 테스트 호출 시에 응답
+- `when`을 사용하여 반환할 데이터 미리 정의
+
+
+
+### Spy
+
+- Stub 역할 + 정보 기록
+- ex) 예상된 메소드의 호출 여부 및 호출 횟수 등 기록
+
+
+
+### Mock
+
+- 행위 검증
+- `verify` 사용하여 Stub의 상태 검증
+
+
+
+
+
+### 기본 어노테이션
+
+- `@Test`
+
+  - Test 메소드로 인식
+  - 접근 제한자 `public` or `default`
+
+  ```java
+  @Test
+  void test() {
+      Study study = new Study();
+      assertNotNull(study);
+  }
+  ```
+
+- `@BeforeAll`
+
+  - 해당 테스트 클래스를 초기화시, 딱 `1`회 수행
+  - static으로 선언
+
+  ```java
+  @BeforeAll
+  static void beforeAll() {
+      System.out.println("@BeforeAll");
+  }
+  ```
+
+- `@BeforeEach`
+
+  - 매 테스트 메서드 실행 이전에 수행
+
+  ```java
+  @BeforeEach
+  void beforeEach() {
+      System.out.println("@BeforeEach");
+  }
+  ```
+
+  - 사용 객체를 클래스 필드로 정의하고, `@BeforeEach`에서 Initiate 한다면, 매 testcase에서 새로 생성 필요 X
+
+- `@AfterAll`
+
+  - 해당 테스트 클래스 내 테스트 메서드 모두 실행 후 딱 `1`회 수행
+  - static 선언
+
+  ```java
+  @AfterAll
+  static void afterAll() {
+      System.out.println("@AfterAll");
+  }
+  ```
+
+- `@AfterEach`
+
+  - 매 테스트 메서드 실행 이후에 수행
+
+  ```java
+  @AfterEach
+  void afterEach() {
+      System.out.println("@AfterEach");
+  }
+  ```
+
+- `@Disables`
+
+  - 테스트 메소드 무시
+
+  ```java
+  @Disabled
+  @Test
+  void disabled() {
+      System.out.println("It would be Skipped");
+  }
+  ```
+
+
+
+
+
+### Tautology
+
+- 어떤 해석에 있어서도 항상 참이 되는 논리식 or 진실
+
+- 본 코드의 반복이 Test 코드에 있을 경우, 에러 찾기 어려움
+
+  => Test에는 어떠한 로직도 들어가 있어서는 X
+
+
+
+## Handling Legacy Code
+
+
+
+
+
+
+
+import static
+
+@Spy
+
+spy(new Myclass());
+
+
+
+`doReturn(return_value).when(spy_object).method_call(params);`
+
+- object의 나머지를 intact로 두면서, single method만 제어 O
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
