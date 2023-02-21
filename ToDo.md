@@ -4,7 +4,7 @@
 
 ## Java
 
-- [ ] Enum
+- [x] Enum
 - [x] Stream
 - [x] Thread
 - [x] Synchronized
@@ -19,17 +19,19 @@
 ## TCT
 
 - [ ] 데이터 모델링 실습
-- [ ] 프로세스 모델링 실습
+- [x] 프로세스 모델링 실습
 - [ ] 기출 문제 풀이
 
 
 
 ## Server
 
-- [ ] Debugging
+- [x] Debugging
 - [ ] Junit Test
-- [ ] 프로젝트 패키징
+- [x] 프로젝트 패키징
 - [ ] Cloud ( AWS or Naver)
+- [ ] Doker
+- [ ] Kubernetes
 
 
 

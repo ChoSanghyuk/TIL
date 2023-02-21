@@ -172,13 +172,16 @@
 
 
 
-## Stubs
+## Test With Dependencies
 
 
 
-Test code which has dependencies on third party
+### Test Dependency
 
-Third Party(databse, website)의 상태에 따라서 test 결과가 달라질 수 있음 (consistency X)
+- Test code which has dependencies on third party
+
+- Third Party(databse, website)의 상태에 따라서 test 결과가 달라질 수 있음 (consistency X)
+- Third Party 접근 객체 구현 전 테스트 가능하게 하기 위해 Stub, Mock 활용
 
 
 
@@ -220,22 +223,89 @@ when, lookup, thenReturn
 ### Mockito Methods
 
 - Mock 생성
+
+  - `mock` 메소드 
+
   - `Myclass myClass = mock(Myclass.class);`
-- 
 
-```java
-whem(myClass.myMethod(params)).thenReturn(retrun-value);
+  - myClass의 필드 값은 primitive type은 기본값, 이외 값에는 null 입력
 
-Verify(myClass, times(?)).myMethod(params); 
-```
+    => Mock 객체의 메서드가 알맞은 값을 리턴하는 스텁을 만들 수 있는 기능을 제공
+
+- 특정 상황 설정
+
+  - `when`
+  - ex) ViewModel이 Repository로부터 더미 데이터를 받아올 때
+
+- 해당 상황에서의 Mock 객체의 행동을 설정
+
+  - `thenReturn`
+
+    - 해당 상황에서, 특정 값 반환
+    - `when(myClass.myMethod(params)).thenReturn(retrun-value);`
+
+  - `thenThrow`
+
+    - 해당 상황에서, 특정 예외 발생
+
+  - `thenAnswer`
+
+    - 유연하게 Stub
+    - 직접 Mock 동작 방식을 구현
+
+    ```java
+    // getNextId()가 호출 될 때 마다, 1씩 증가된 값 반환
+    when(mockedGenerator.getNextId()).thenAnswer(new Answer<Integer>() {
+        private int nextId = 0;
+        public Integer answer(InvocationOnMock invocation) throws Throwable {
+            return new Integer(++nextId);
+        }
+    });
+    ```
+
+    ```java
+    // 파라미터로 전달 값 사용 경우 InvocationOnMock 객체 활용
+    when(authenticator.authenticate(anyString(), anyString())).thenAnswer(new Answer<Object> (){
+        public Object answer(InvocationOnMock invocation) throws Throwable {
+            Object[] arguments = invocation.getArguments();
+            String userId = (String) arguments[0];
+            String password = (String) arguments[1];
+            Object authObject = null;
+            // ...
+            return authObject;
+        }
+    });
+    ```
+
+    
+
+- 검증하기
+
+  - `verify` 메소드
+  - 특정 횟수만큼 호출 되었는가
+    - `verify(myClass, times(?)).myMethod(params);`
+
+  - 호출되지 않았는가
+    - `verify(myClass, never()).myMethod(params);`
+
+  - 최소 몇번 호출 되었는가
+    - `verify(myClass, atLeast()).myMethod(params);`
+
+  - 최대 몇번 호출 되었는가
+    - `verify(myClass, atMost()).myMethod(params);`
+
+  - 오직 해당 함수만 실행되었는가
+    - `verify(myClass, only()).myMethod(params);`
 
 
 
 
 
 
+### Argument Matcher을 이용한 인자 매칭
 
-
-
-
-
+- 인자 중 한가지라도 Argument Matcher 이용했다면, 나머지 인자에 대해서도 Matcher 사용 필수
+- 임의 값 Matcher
+  - `anyInt()`, `anyString()`, `anyDouble()`, `anyLong()`, `anyList()`, `anyMap()` etc
+- 특정 값 Matcher : `eq() Matcher`
+  - ex) `eq("sample")`
