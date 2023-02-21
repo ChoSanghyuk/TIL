@@ -13,6 +13,7 @@ public class Main {
     static int ballCnt;
     static int[] balls;
     static boolean[] dp;
+    static int maxW;
 
 
 
@@ -24,46 +25,45 @@ public class Main {
         weights = new int[weightCnt+1];
 
         StringTokenizer st = new StringTokenizer(bf.readLine(), " ");
-        for(int i =0; i < weightCnt ; i++){
+        for(int i =1; i <= weightCnt ; i++){
             weights[i] = Integer.parseInt(st.nextToken());
         }
 
         ballCnt = Integer.parseInt(bf.readLine());
         balls = new int[ballCnt];
 
-        int maxW = 0;
+        maxW = 0;
 
         st = new StringTokenizer(bf.readLine(), " ");
-        for(int i =0; i < weightCnt ; i++){
+        for(int i =0; i < ballCnt ; i++){
             balls[i] = Integer.parseInt(st.nextToken());
             maxW = Math.max(balls[i], maxW);
         }
 
         dp = new boolean[maxW+1];
 
-        dpSearch(-1,0);
+        dpSearch(0,0);
 
         StringBuilder sb = new StringBuilder();
         for(int ball : balls){
-            sb.append(dp[ball]).append(" ");
+            sb.append(dp[ball] ? "Y" : "N" ).append(" ");
         }
 
         System.out.println(sb.toString());
-
 
     }
 
     public static void dpSearch(int idx, int w){
 
-        if(idx == weightCnt) return;
+        if(w <= maxW ){
+            dp[w] = true;
+        }
 
-        System.out.println(w);
-        dp[w] = true;
-
-        dpSearch(idx+1, w+weights[idx+1]);
-        dpSearch(idx+1, w);
-        dpSearch(idx+1, Math.abs(w-weights[idx+1]));
-
+        if(++idx <= weightCnt){
+            dpSearch(idx, w+weights[idx]);
+            dpSearch(idx, w);
+            dpSearch(idx, Math.abs(w-weights[idx]));
+        }
 
     }
 
