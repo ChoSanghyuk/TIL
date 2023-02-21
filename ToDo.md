@@ -12,7 +12,7 @@
 - [x] Volatile
 - [ ] abstract
 - [ ] 이펙티브 자바 (책)
-- [ ] TDD
+- [x] TDD
 
 
 
@@ -27,7 +27,7 @@
 ## Server
 
 - [x] Debugging
-- [ ] Junit Test
+- [x] Junit Test
 - [x] 프로젝트 패키징
 - [ ] Cloud ( AWS or Naver)
 - [ ] Doker
