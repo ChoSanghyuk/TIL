@@ -237,6 +237,13 @@
   }
   ```
 
+- `ExtendWith(MyExtension.Class)`
+  - extension 등록에 사용
+  - add additional behavior to your tests or manipulate the test execution environment
+- `@SpringBootTest`
+  - application context 전부 로딩
+  - Test가 무겁고 느려짐
+
 
 
 ## Refactoring
