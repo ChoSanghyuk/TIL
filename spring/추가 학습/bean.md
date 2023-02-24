@@ -119,7 +119,27 @@ TestSerive testService = (TestSerive) BeanUtils.getBean("testService");
 
 
 
+## Bean 명칭으로 가져오기
 
+
+
+### BeanUtils
+
+```java
+BeanClass samplebean = (BeanClass) BeanUtils.getBean("빈이름")
+```
+
+- BeanUtils를 사용하여 bean 직접적으로 참조 가능
+
+
+
+### 빈 이름 등록
+
+```java
+@Service("빈이름")
+```
+
+- Bean 등록 시에 어노테이션과 함께 이름 등록 가능
 
 
 
