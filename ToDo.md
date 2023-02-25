@@ -16,6 +16,13 @@
 
 
 
+## Rust
+
+- [ ] 초급 강의
+- [ ] 중급 강의
+
+
+
 ## TCT
 
 - [ ] 데이터 모델링 실습
@@ -33,18 +40,26 @@
 - [ ] Doker
 - [ ] Kubernetes
 
+- [ ] jenkins
+
+- [x] maven 명령어
+
+- [ ] 디자인 패턴
+
+- [ ] redis
+
+
+
+## 개인 프로젝트
+
+- [ ] JPA + DB
+- [ ] 인증 (TIL Spring 참조)
+- [ ] TDD
+- [ ] MSA
+- [ ] 도커
 
 
 
 
 
-
-jenkins
-
-maven 명령어
-
-디자인 패턴
-
-
-
-redis
+:bulb: checkbox 생성 시, 편집 모드 => `- [ ] `입력
