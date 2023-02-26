@@ -248,13 +248,259 @@ fn do_stuff(param1: f64, param2: f64) -> f64{
 
 
 
+## Primitive Types & Control Flow
 
 
 
+### Scalar Types
+
+- Integer Types
+
+  | Unsigned(부호 없는) | Signed (부호있는) |
+  | :-----------------: | :---------------: |
+  |         u8          |        i8         |
+  |         u16         |        i16        |
+  |         u32         |   i32 (default)   |
+  |         u64         |        i64        |
+  |        u128         |       i128        |
+  |        usize        |       isize       |
+
+  - u/i size
+
+    - 메모리 크기와 연관될 때 사용
+      - 객체의 크기, 벡터의 인덱싱 등
+    - 32bit 환경 => 4byte / 64bit 환경 => 8byte
+
+  - 진법
+
+    |    Decimal    | 1000000 |
+    | :-----------: | :-----: |
+    |      Hex      |  0x~~   |
+    |     Octal     |  0o~~   |
+    |    Binary     |  0b~~   |
+    | Byte(u8 only) |  b'A'   |
+
+  - 특징
+
+    - 중간 _ 넣어도 무시됨
+
+- Float
+
+  - f32
+  - f64 (default)
+    - 64bit 미만 환경에서는 많이 느려짐
+
+- Floating Point Literals
+
+  - statndard :IEEE-754
+  - suffix는 필요 없지만, `.` 앞에 숫자 필요
+
+:bulb: Numerical Numbers는 suffix로 타입 명시 O. 
+
+- 다음 두 식 중 선택 O
+  - `let x: u16 = 5;`  
+  - `let x = 5u16;` or `let x = 5_u16;`
+
+- Boolean
+
+  - type 명시 : `bool`
+  - 값 : `true`, `false`
+
+- Character
+
+  - type 명시 이름 x
+
+    - `' '`으로 initiate
+
+  - 크기
+
+    - 4 bytes (32 bits)
+
+      => make array of characters `USC-4` or `UTF-32` string
+
+      => String은 거의 `utf-8` 이기 때문에, character 타입 쓸 일 거의 X
 
 
 
+### Compound Types
 
+- 여러 타입의 값들을 하나의 타입으로 모임
+- Tuple
+  - stores multiple values of any type
+  - 선언
+    - `let info = (1, 3.3, 999);`
+    - `let info: (u8, f64, i32) = (1, 3.3, 999);`
+  - 값 접근
+    - dot syntax
+      - `let var1 = info.0;`
+    - destructure
+      - `let (var1, var2, var3) = info;`
+  - 최대 크기
+    - `12` 를 넘어가면, 사용은 가능하지만 제한된 기능 사용
+
+- array
+
+  - stores multiple values of same type
+  - 선언
+    - `let arr = [1,2,3];`
+    - `let arr = [0;3];` 
+      - 값;개수
+  - 접근
+    - `let var1 = arr[0];`
+
+  - 최대 크기
+    - `32` 를 넘어가면, 사용은 가능하지만 제한된 기능 사용
+
+- Vec
+
+
+
+### Control Flow
+
+- 조건문
+
+  - if문 사용시 `( )` 필요 X. `if`와 `{}` 사이가 조건식
+  - 조건식에는 `boolean` 타입만 허용 (type coercion X)
+  - if문은 `expression` 취급 (statement X)
+
+      ```rust
+      msg = if num == 5 {
+          "five"
+      } else if num == 4 {
+          "four"
+      } else {
+          "other"
+      };
+      ```
+
+      1. `;` 생략으로 return 표현
+      2. return 사용 불가
+         - return은 function body에만 사용되기에 사용 시 현재 function에서 return out
+      3. 모든 block은 같은 type return
+      4. 마지막에 `;`
+        - if문의 값을 사용할 경우에만 `;` 필요
+     
+     :bulb: statement는 return 하지 X
+     
+  - `{ }` 는 필수
+
+  - 삼항 연산자 없음
+
+
+- unconditional loop
+
+  ```rust
+  loop {
+      loop {
+          break;
+      }
+  }
+  ```
+
+  - 특정 loop 지정으로 `break` 또는 `continue` 할 loop도 선택 O
+
+  ```rust
+  `bob: loop {
+      loop {
+          break `bob;
+      }
+  }
+  ```
+
+- conditional loop
+
+  ```rust
+  while 조건 {
+      
+  }
+  ```
+
+- for loop
+
+  - iterate : `.iter()`
+  	  ```rust
+      for num in [7,8,9].iter() {
+  	  
+      }
+      ```
+
+    - collection이 ordered라면 순서대로, 아닐 시 랜덤
+
+  - destructure 가능
+
+    ```rust
+    let array = [(1,2), (3,4)];
+    for (x,y) in array.iter(){
+        // do sth
+    }
+    ```
+
+  - range : `..`
+
+    ```rust
+    for num in 0..50{
+        // 0 ~ 49
+    }
+    ```
+
+    - = 명시시, inclusive
+      - `0..=50` 
+
+
+
+### String
+
+- at least 6 types in standard library, but 2 are most used
+- str
+  - called as string slice. In most case, called as borrowed string slice
+  - 비교 (vs String)
+    - cannot be modified`&str`
+  - String type으로 변환
+    - `str변수.to_string()` 메소드
+    - `String::from(str변수)`
+  - 구조
+    - ptr (pointer)
+    - len
+
+- String
+
+  - can be modified
+
+  - 구조
+
+    - ptr
+    - len
+    - capacity
+
+    :bulb: str은 String의 subset구조
+
+- 공통점
+
+  - Valid UTF-8
+  - can not be indexed by character position (like `my_string[3]`)
+    - 서로 다른 언어에서 공통적으로 indexing 하는 것이 불가능
+      - grapheme(자소)의 존재 정확하게 byte로 나누기 X
+
+- 인덱싱
+
+  - `~.bytes()` 
+
+    - String을 byte array로 전환
+    - ASC2 인 영어라면 사용성 O
+
+  - `~.chars()`
+
+    - Unicode scalars iterate
+
+  - package : `unicode-segmentation`
+
+    - `graphemes(문자열, true)`
+      - return iterators that handle graphemes of various types
+
+    :bulb: 인덱싱만 가능하다면, fase, constant-time operation O
+
+  - iterator method : `.nth(숫자)`
+    - String의 index 대신 사용
 
 
 
