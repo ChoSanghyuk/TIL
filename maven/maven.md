@@ -42,20 +42,19 @@
   - Plugin Goal 실행
     - `mvn groupId:artifactId:version:goal`
     - `mvn plugin:goal`
-
 - Phases
 
   - one or many goals
   - Part of lifecycle
     - Phase는 의존 관계를 가짐 => 해당 Phase 수행 전 이전 단계 Phase 모두 수행
-
 - Lifecycle
 
   - start to finish collection of phases
   - different based on packaging type
   - executes all phases up to specific phase
 
-  
+
+
 
 ### Phase 종류
 
@@ -88,99 +87,55 @@
 
 
 
-### Reason Why Using Command Line
 
-- provide common interface
-- online help
-- good learning tool
-  - can know what's going on
-- provides debugging / troubleshooting
+
+## Maven 설징 파일
 
 
 
-### Core Concepts
+### settings.xml
 
-- Convention over Configuration
-- Project Object Model (POM)
-- Dependency Resolution
-- Maven Repository
-- Lifecycle, Phases, and Goals
-- Plugin Architecture
+- 메이븐 빌드 툴과 관련한 설정 파일
+- MAVEN_HOME/conf 디렉토리에 위치 
 
 
 
-### Convention Over Configuration
+### pom.xml
 
-- approach that can provide useful functionality with little / no configuration
-- achieved by pre-scripted conventions
-- Best Practices
-- Reasonable Defaults
-  - 패키지 구조
-- Override when required
+- POM
+  - Project Object Model
+  - Object-based representation of a build
+- 역할
+  - Project meta data
+    - modelVersion : POM model 버전
+    - parent : 프로젝트 계층 정보
+    - groupId : 프로젝트 생성하는 조직의 고유 ID (일반적으로 도메인 이름 거꾸로)
+    - artifactId
+      - 파일 대표 이름
+      - groupId내 유
+    - version
+      - 프로젝트의 현재 버전
+      - 개발 中에는 SNAPSHOT을 접미사
+    -  packaging
+      - 패키징 유형
+      - jar, war, ear 등
+  - dependencies
+    - Declare primary dependencies
+    - Transitive dependencies
 
+      - dependency of your dependency 까지 download
 
+    - Downloading from repository
 
-### Project Object Model
+    - Caching locally
 
-- Object-based representation of a build
-- `pom.xml`
-- Project meta data
-  - coordinates (Group, Artifact, Version)
-- dependencies
-- Build settings
-- Inheritance / Super POM
+    - Scopes (compile time vs runtime)
 
-
-
-### Dependencies
-
-- Declare primary dependencies
-
-- Transitive dependencies
-
-  - dependency of your dependency 까지 download
-
-- Downloading from repository
-
-- Caching locally
-
-- Scopes ( compile time vs runtime)
-
-  - dependency가 언제 필요한지 정의
-
-  
-
-### Maven Repositories
-
-- Artifact Storage
-- Standard layout
-- local or remote
-- central (many open source projects)
-- private (corporate)
-- used by others (gradle , Ivy)
+      - dependency가 언제 필요한지 정의
+  - Build settings
+  - Inheritance / Super POM
 
 
-
-- - 
-
-
-
-### Plugins
-
-- Nearly everything is a plugin
-- Extends Maven
-- More Goals
-- Dependencies
-
-
-
-LifeCycle contains phases.
-
-phases are mapped to goals
-
-
-
-중간 단계 phase 실행 시 , 앞 단계들 전부 실행됨
 
 
 
@@ -192,12 +147,12 @@ phases are mapped to goals
 
 - `mvn -version`
 - `mvn --help`
-  - 
-- 
+- `mvn clean`
+- `mvn package`
+- `mvn clean package`
+- `mvn verify`
+  - run all test
 
-
-
-
-
-
+- `mvn install`
+  - build project & installs the result (JAR)
 
