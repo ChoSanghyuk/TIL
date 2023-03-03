@@ -48,3 +48,14 @@ https://jforj.tistory.com/257
 
 
 
+ numeric이 문자열로 되어있을 때 비교시, 의도한 결과와 다름
+
+
+
+
+
+@Transaction
+
+https://maivve.tistory.com/337
+
+https://ynzu-dev.tistory.com/entry/Spring-Transactional%EC%9D%B4-%EC%A0%81%EC%9A%A9%EB%90%98%EC%A7%80-%EC%95%8A%EC%9D%84-%EA%B2%BD%EC%9A%B0%EB%A1%A4%EB%B0%B1%EC%9D%B4-%EC%95%88%EB%90%98%EB%8A%94-%EC%9D%B4%EC%9C%A0
