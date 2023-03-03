@@ -710,6 +710,142 @@ fn do_stuff(s: &String) {
 
 
 
+### Traits
+
+- similar with interface
+
+- Rust takes composition over inheritance approach
+
+- defines required behavior
+
+  ```rust
+  trait Noisy {
+      fn get_noise(&self) -> &str;
+  }
+  
+  impl Noisy for RedFox {
+      fn get_noise(&self) -> &str {"Meow?"}
+  }
+  ```
+
+- can start writing `generic functions` that accpet any value that implements the traits
+
+  ```rust
+  fn print_noise<T: Noisy>(item: T){
+      println!("{}", item.get_noise());
+  }
+  
+  fn main() {
+      print_noise(fox)
+  }
+  ```
+
+  - can implement your triats on any types from anywhere including built-in types
+
+  ```rust
+  impl Noisy for u8 {
+      fn get_noise(&self) -> &str {"BYTE!"}
+  }
+  
+  fn main() {
+      print_noise(5_u8); // prints "BYTE!"
+  }
+  ```
+
+- Define default behavior
+
+  ```rust
+  trait Run {
+     fn run(&self) {
+         println!("I'm running!");
+      } 
+  }
+  
+  struct Robot{}
+  impl Run for Robot{}
+  ```
+
+  - don't need to provide a new definition for the method
+
+- can't define fields as part of traits
+
+
+
+### Copy
+
+- special trait
+- if implements Copy, it will be copied instead of moved in move situations
+
+
+
+### Collections
+
+- `Vec<T>`
+
+  - holds a bunch of one type
+  - 선언
+
+      ```rust
+      let mut v: Vec<i32> = Vec::new();
+      ```
+
+  - 메소드
+
+    ````rust
+    v.push(2);
+    v.push(4);
+    v.push(6);
+    let x = v.pop(); // x is 6
+    println!("{}", v[1]); // print "4"
+    ````
+
+    - `push`
+      - appends  things to the end
+    - `pop()`
+      - removes the item at the end and returns it
+    - 등등 다 있음
+
+  - macro
+
+    ```rust
+    let mut v = vec![2,4,6];
+    ```
+
+    - create vectors from literal values much more ergonomic
+
+- `HashMap<K, V>`
+
+  - 생성
+
+    ```rust
+    let mut h: HashMap<u8, bool> = HashMap::new();
+    ```
+
+  - 메소드
+
+    ```rust
+    h.insert(5, true);
+    h.insert(6, false);
+    let have_five = h.remove(&5).unwrap();
+    ```
+
+    - also have methods for getting references to values and iterating through keys, values, or (keys, values), 
+
+- 기타 collection
+
+  - `VecDeque`
+    - uses a ring buffer => implement a double-ended queue
+
+  - `LinkedList`
+  - `HashSet`
+  - `BinaryHeap`
+    - priority queue
+
+  - `BTreemap`
+  - `BTreeSet`
+    - needed when map keys or set values to always be sorted
+
+
 
 
 

@@ -50,15 +50,13 @@
 
 
 
-## 개인 프로젝트
 
-- [ ] JPA + DB
-- [ ] 인증 (TIL Spring 참조)
+
+## 기술 블로그
+
+- [ ] @Transactional
 - [ ] TDD
-- [ ] MSA
-- [ ] 도커
-
-
+- [ ] Composition over Inheritance
 
 
 
