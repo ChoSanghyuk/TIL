@@ -847,6 +847,220 @@ fn do_stuff(s: &String) {
 
 
 
+### Enums
+
+- 비교
+
+  - more like algebraic Data Types in Haskell > enums in C
+  - simliar with a union in C
+
+  ```rust
+  enum Color {
+      Red,
+      Green,
+      Blue,
+  }
+  ```
+
+  - Enum name은 camel-case
+
+  ```rust
+  let color = Color:;Red;
+  ```
+
+- 강점
+
+  - Associating data and methods with the variants
+
+    ```rust
+    enum DispenserItem {
+        Empty, // variant with no data
+        Ammo(u8), // variant with single type of data
+        Things(String, i32), // variant with tuple
+        Place {x: i32, y:i32} // variant with anonymous struct of data
+    }
+    ```
+
+  - can be any one of those, but only one at a time
+
+
+  ```rust
+  use DispenserItem::*;
+  let item1 = Empty;
+  let item2 = Ammo(69);
+  ```
+
+  - implement functions and methods for an enum
+
+    ```rust
+    impl DispenserItem{
+        fn display(&self) {      
+        }
+    }
+    ```
+
+  - use enums with generics
+
+    - `Option` is a generic enum in the std library
+
+    ```rust
+    enum Option<T> {
+        Some(T),
+        None,
+    }
+    ```
+
+    - `Option` enum represents when sth is either absent or present
+    - `NULL` 사용하고 싶을 때, Option 사용
+
+- patterns to examine variants in Enum
+
+    - `if let`
+
+        - check single variant
+
+        ```rust
+        if let Some(x) = my_variable {
+            println!("value is {}", x);
+        }
+        ```
+
+        - pattern matches => conditon is true => variabls inside the pattern are created
+
+    - `match`
+
+        - check multi variants
+
+        ```rust
+        match my_variable {
+            Some(x) => {
+                println!("value is {}", x);
+            },
+            
+            None => {
+                println!("no value");
+            },
+            
+            _ => {
+                println!("defualt");
+            }
+        }
+        ```
+
+        - write a branch arm for every possible outcome
+          - = match expression must be exhaustive
+        - `single unscore` : matches anything => used for defualt / anything-else branch
+        - 모든 branch arm은 `같은 타입 return` or `return 값 X` 이어야 함
+
+
+
+
+### Option
+
+- Initiate
+
+  ```rust
+  let mut x: Option<i32> = None;
+  ```
+
+- 특징
+
+  - Once you use Option with concrete type, compiler infer the type.
+
+    => leave the type annotation off
+
+    ```rust
+    let mut x = None;
+    x = Some(5);
+    ```
+
+- method
+
+  - `is_some()`
+
+    ```rust
+    x.is_some(); // true
+    ```
+
+  - `is_none()`
+
+    ```rust
+    x.is_none(); // false
+    ```
+
+- implements Iterator trait
+
+  ```rust
+  for i in x {
+      println!("{}", i); 
+  }
+  ```
+
+  
+
+### Result
+
+- 사용
+
+  - whenever sth might have a useful result or might have an error
+  - Functions return `Result` whenever errors are expected and recoverable.
+  - io module 사용시, 자주 사용
+
+- Definition
+
+  ```rust
+  #[must_use]
+  enum Result<T, E> {
+      Ok(T),
+      Err(E),
+  }
+  ```
+
+  - `type wrapped by Ok`, and `the type wrapped by Err` are both generic but independent of each other
+
+  - `#[must_use]` annotation makes it a compiler warning to silently drop a result
+
+    => Rust strongly encourages you to look at all possible erros and make a conscious choise what to do with each one
+
+- method
+  - `is_ok()`
+  - `is_err()`
+
+- 예시
+
+  ```rust
+  use std::fs::File;
+  
+  fn main() {
+      let res = File::open("foo");
+      let f = res.unwrap();	// If Result is Ok, give you File struct. If Err, crashes the program
+  }
+  ```
+
+  ```rust
+  use std::fs::File;
+  
+  fn main() {
+      let res = File::open("foo");
+      let f = res.expect("error message"); // unwrap과 같은 동작. crash 일 때, error message 표시
+  }
+  ```
+
+  ```rust
+  use std::fs::File;
+  
+  fn main() {
+      let res = File::open("foo");
+      if res.is_ok() {
+          let f = res.unwrap();
+      }
+  }
+  ```
+
+  
+
+​		
+
 
 
 
