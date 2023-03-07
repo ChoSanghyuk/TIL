@@ -1057,9 +1057,100 @@ fn do_stuff(s: &String) {
   }
   ```
 
+
+
+
+### Closures
+
+- when you spawn a thread, or when you want to do functional programming
+
+- 정의
+
+  - anonymous functions that can borrow or capture some data from the scope it is nested in
+
+- systax
+
+  ```rust
+  // with paraemeter
+  |x, y| {x+y}
+  
+  // no parameter
+  || {x+y}
+  
+  // 극단적으로 parameter와 return 둘다 없이도 가능
+  || {}
+  ```
+
+  - types or arguments and the return value are all inferred from how you use the arguments and what you return
+
+- Borrow Reference
+
+  ```rust
+  let s = "sample".to_string();
+  let f = || {
+      println!("{}", s);
+  };
+  f(); // print "sample"
+  ```
+
+  - closure가 참조하는 변수 보다 오래 살지 않는 이상, 계속 참조 가능
+  - 다른 Thread로 보내는 것은 불가능
+    - 현재 Thread가 해당 Thread 보다 일찍 종료될 수 있으므로, 컴파일러가 막음
+
+- Move Semantics
+
+  ```rust
+  let s = "sample".to_string();
+  let f = move || {
+      println!("{}", s);
+  };
+  f(); // print "sample"
+  ```
+
+  - can force the closure to move any variables it uses into itself and take ownership of them
+
+    => closure와 해당 변수의 수명이 같아짐
+
+    => 다른 Thread로 보내는 것이 가능해짐
+
+- Functional Programming
+
+  ```rust
+  let mut v = vec![2,4,6];
+  
+  v.iter()	// java의 stream
+  	.map(|x| x*3)
+  	.filter(|x| *x > 10)
+  	.fold(0, |acc,x| acc+x); // java의 reduce
+  ```
+
+  :bulb: the closure passed to `filter()` takes a reference
+
   
 
-​		
+### Threads
+
+```rust
+use std::thread;
+
+fn main() {
+    let thread1 = thread::spawn(move || {
+        
+    })
+    
+    thread1.join().unwrap();
+}
+```
+
+- `thread::spawn` : thread 생성
+- `move || {}` : thread의 메인 동작 부분
+- `join` : pause the thread until the thread has completed and exited
+
+:bulb: Thread는 비싼 작업. 독립적인 메모리 할당 및 전환 시에는 비싼 context 전환을 해야함
+
+
+
+
 
 
 
