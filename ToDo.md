@@ -18,7 +18,7 @@
 
 ## Rust
 
-- [ ] 초급 강의
+- [x] 초급 강의
 - [ ] 중급 강의
 
 
@@ -57,6 +57,7 @@
 - [ ] @Transactional
 - [ ] TDD
 - [ ] Composition over Inheritance
+- [ ] Rust 문자
 
 
 
