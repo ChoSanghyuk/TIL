@@ -18,7 +18,6 @@
 
 ```rust
 let mut string_line = String::with_capacity(3); // 문자열 크기 미리 지정
-
 ```
 
 - 메소드
