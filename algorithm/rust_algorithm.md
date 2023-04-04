@@ -12,18 +12,44 @@
 
 
 
+## Debug
+
+- 기본 사용 방법
+  - struct / enum에 `#[derive(Debug)]` 적용 시 사용 O
+- Primitivate Type & 대부분 Library 타입엔 적용되어 있음
+
+```rust
+println!("{:?}", puzzle)	// 기본 Debug
+println!("{:#?}", puzzle)	// Pretty Debug
+```
+
+
+
+
+
 ## String
 
 - 초기화
 
 ```rust
-let mut string_line = String::with_capacity(3); // 문자열 크기 미리 지정
+let mut s = String::new();
+let mut s = String::from("String Value");
+let mut s = String::with_capacity(3); // 문자열 크기 미리 지정
 ```
 
 - 메소드
 
 ```rust
-string_line.push_str("*"); // 문자열 이어 붙이기
+s.push_str("문자열": &str ); // 문자열 이어 붙이기. &str 타입을 요구함
+s.len() // 문자열 길이
+s.replace("orgn", "dest") // 일치 문자열 전체 교환
+s.chars().rev().collect::<String>() // 문자열 뒤집기
+```
+
+- 비교
+
+```rust
+s1 == s2 // PartialEq는 String 타입에는 정의되지 않았음.
 ```
 
 
