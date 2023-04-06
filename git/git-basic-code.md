@@ -168,6 +168,16 @@ $ git revert <commit hash>
 
 
 
+### COMMIT 되지 않은 사항 폐기
+
+```
+$ git checkout .
+```
+
+- 커밋되지 않은 **모든 로컬 변경 사항을 되돌립니다**
+
+
+
 ## 비교
 
 

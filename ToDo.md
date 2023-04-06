@@ -54,10 +54,21 @@
 
 ## 기술 블로그
 
-- [ ] @Transactional
+
+
 - [ ] TDD
 - [ ] Composition over Inheritance
-- [ ] Rust 문자
+
+### Java_Spring
+
+- [ ] @Transactional
+- [ ] 객체 지향 사고
+
+### Rust
+
+- [x] Rust 문자
+- [ ] ownership
+- [ ] 메모리
 
 
 
