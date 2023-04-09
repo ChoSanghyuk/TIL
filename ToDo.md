@@ -63,6 +63,7 @@
 
 - [ ] @Transactional
 - [ ] 객체 지향 사고
+- [x] hashCode
 
 ### Rust
 
