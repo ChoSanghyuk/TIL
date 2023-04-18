@@ -113,7 +113,6 @@
 #### 옵션
 
 - -a : binary 형식이 아닌 파일 형식으로 인식
-
 - -b : 문자와 일치하는 줄의 시작점 출력
 - -c : 문자와 일치하는 줄의 수 출력
 - -h : 여러 파일에서 문자열을 찾을 때, 파일이름이 붙는 것을 방지
@@ -125,6 +124,8 @@
 - -r : 하위 디렉토리에서도 문자를 찾음
 - -A : 특정문자 아래 추가로 여러 행 출력
 - -B : 특정 문자 위 추가로 여러 행 출력
+- -E : use extended regular expressions
+- -P : Perl-compatible regular expressions
 
 #### 예제
 
@@ -207,3 +208,36 @@
   - `*`: 현재 커서가 있는 단어와 동일 단어 찾기
   - n : 다음 단어
   - N : `*`시 위쪽으로 찾기
+
+
+
+## Control Flow
+
+
+
+### while 문으로 문서 읽기
+
+```bash
+while IFS= read -r item; do
+echo "Item : Sitem"
+done < "list.txt"
+```
+
+- `IFS=` : IFS(Internal Field Separator)를 빈 문자열로 세팅
+  - `IFS=$'\t'` : 탭으로 라인 분리시킴
+- `read -r item`: 한줄씩 읽어 item에 값 배정
+- `do` : while문에 실행 코드 시작
+- `done` : while문에 실행 코드 끝
+- `<` : while 문에 넣은 문서
+
+
+
+### for 문으로 숫자 범위 탐색하기
+
+```bash
+for i in {1..5}; do
+  echo "Number: $i"
+done
+```
+
+- 1부터 5까지.
