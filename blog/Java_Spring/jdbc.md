@@ -1,20 +1,3 @@
-Java™ database connectivity (JDBC) is the JavaSoft specification of a standard application programming interface (API) that allows Java programs to access database management systems. The JDBC API consists of a set of interfaces and classes written in the Java programming language.
-
- Using the JDBC API, you can access virtually any data source, from relational databases to spreadsheets and flat files. JDBC technology also provides a common base on which tools and alternate interfaces can be built.
-
-The JDBC API is comprised of two packages:
-
-- [`java.sql`](https://docs.oracle.com/javase/8/docs/api/java/sql/package-summary.html)
-- [`javax.sql`](https://docs.oracle.com/javase/8/docs/api/javax/sql/package-summary.html)
-
-You automatically get both packages when you download the Java Platform Standard Edition (Java SE) 8.
-
- To use the JDBC API with a particular database management system, you need a JDBC technology-based driver to mediate between JDBC technology and the database. 
-
-Using these standard interfaces and classes, programmers can write applications that connect to databases, send queries written in structured query language (SQL), and process the results.
-
-Since JDBC is a standard specification, one Java program that uses the JDBC API can connect to any database management system (DBMS), as long as a driver exists for that particular DBMS.
-
 
 
 import java.sql.PreparedStatement
