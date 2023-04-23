@@ -118,20 +118,20 @@
 
   ```java
   @Test
-      public void checkValidISBN(){
-          ValidationISBN validator = new ValidationISBN();
-          boolean result = validator.checkISBN("0140449116");
-          assertTrue(result, "First Value"); // True시 테스트 성공
+  public void checkValidISBN(){
+      ValidationISBN validator = new ValidationISBN();
+      boolean result = validator.checkISBN("0140449116");
+      assertTrue(result, "First Value"); // True시 테스트 성공
   
-          result = validator.checkISBN("0140177396");
-          assertTrue(result, "Second Value");
-      }
-      @Test
-      public void checkInvalidISBN(){
-          ValidationISBN validator = new ValidationISBN();
-          boolean result = validator.checkISBN("0140449117");
-          assertFalse(result); // False시 테스트 성공
-      }
+      result = validator.checkISBN("0140177396");
+      assertTrue(result, "Second Value");
+  }
+  @Test
+  public void checkInvalidISBN(){
+      ValidationISBN validator = new ValidationISBN();
+      boolean result = validator.checkISBN("0140449117");
+      assertFalse(result); // False시 테스트 성공
+  }
   ```
 
 - `Throwable assertThrows(Class<Throwable>, Executable)`
