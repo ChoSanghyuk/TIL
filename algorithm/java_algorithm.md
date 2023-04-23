@@ -322,6 +322,7 @@ Stack<타입 > stack = new Stack<>();
 ## Stream
 
 ```java
+import java.util.strea
 coll객체.stream()
 	.map( String::toUpperCase)		// s -> s.UpperCase 도 가능
 	.filter( s -> s.startsWith("~") )  

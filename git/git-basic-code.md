@@ -178,6 +178,24 @@ $ git checkout .
 
 
 
+### Local / Head Replace
+
+#### Local <= Head 
+
+```bash
+git checkout origin/master file.md
+```
+
+#### Head <= Local
+
+```
+git checkout file.md
+```
+
+
+
+
+
 ## 비교
 
 

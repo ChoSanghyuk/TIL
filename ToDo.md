@@ -68,8 +68,8 @@
 ### Rust
 
 - [x] Rust 문자
-- [ ] ownership
-- [ ] 메모리
+- [x] ownership
+- [x] 메모리
 
 
 
