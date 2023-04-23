@@ -93,8 +93,15 @@
   - specify the type of data that a particular class, interface, or method can work with, at the time of instantiation or invocation, instead of using raw types which can result in less type safety and require explicit type casting.
 - 패턴
   - DAO 패턴
-    - DAO : DB처리를 전문으로 하는 객체
-    - 테이블 당 1개씩
+    - DAO
+      - DB처리를 전문으로 하는 객체
+      - 테이블 당 1개씩
+    - DTO
+      - transferring data between different layers or components of an application, typically across different tiers or services
+      - contains only data and has no behavior or business logic.
+    - VO
+      - represent a value or a piece of data with a specific meaning or behavior 
+      - represents a value or a piece of data within the domain model of an application. It may contain behavior, validation logic
   - MVC 패턴
     - Model - View - Controller
     - 소프트웨어 시스템을 세 가지 타입의 컴포넌트로 분할하는 소프트웨어 패턴
@@ -180,6 +187,12 @@
 
 - TDD
 - DDD
+  - placing a strong emphasis on the domain or business logic of the application. 
+  - 주요 특징
+    - Ubiquitous Language :  shared language that is understood by both domain experts and developers
+    - Bounded Context :  dividing a complex domain into smaller, more manageable bounded contexts
+    - Domain Model : 
+
 
 
 
@@ -188,6 +201,27 @@
 - 소스코드 파일을 컴퓨터에서 실행할 수 있는 독립 소프트웨어 가공물로 변환하는 과정 / 결과물
 - Build Tool, Dependency Management, Repository system, Plugin framework, 
 - Goals < Phases < Lifecycle
+
+
+
+### Jar & War
+
+- Jar
+  - used for packaging Java class files, resources, and metadata into a single archive file
+- War
+  - used for packaging and distributing Java web applications.
+  - contains web components such as servlets, JSP (JavaServer Pages) files, HTML, CSS, JavaScript, and other web resources
+  - be deployed on a Java web server, such as Apache Tomcat or Java EE application servers
+
+
+
+
+
+### Proxy
+
+- intermediary or an intermediate entity that acts on behalf of another entity or client to access a resource or perform an action
+
+
 
 
 
@@ -207,6 +241,14 @@
 
 - 도커
 - Kubernetes
+  - Node vs Pod
+    - Node
+      - A node is a worker machine
+      - can be a physical or virtual machine.
+
+    - Pod
+      - smallest and simplest unit in the Kubernetes object model and represents a single instance of a running process in a cluster.
+
 
 
 
@@ -224,10 +266,16 @@
 - Kibana
 - Control Center
 - Whatap
+- redis
 
 
 
 질문거리
 
+- MSA 빅뱅이 아닌 점진적으로 분리 중, 쪼개지는 개수? 목표 시간?
+
 - msa에서 다른 언어 사용 계획
 - 테스트 환경 ( 테스트 코드로 대체 / 별도 테스트 결과 보고 절차)
+- Kotlin에서 JPA와 같이 ORM 사용?
+- 개발 문화
+  - 코드 리뷰 / 스터
