@@ -31,7 +31,7 @@ Arrays.copyOfRange( arr, begin, end ) ;  // arr을 begin에서 end-1까지
 
 ### 초기화
 
-```
+```java
 Arrays.asList(new String[] {"a", "b", "c"});
 ```
 
