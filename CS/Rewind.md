@@ -256,11 +256,19 @@
 
 - Kotlin
 
+- 세션
+
+- CI/CD
+- 
+
 
 
 기타 도구
 
 - Jenkins
+  - Continuous Integration (CI): Jenkins can automatically build and test code changes as they are committed to a version control repository, allowing developers to quickly identify and fix issues early in the development process.
+
+  - Continuous Delivery (CD): Jenkins can automate the deployment of applications to different environments, such as development, staging, and production, ensuring consistent and reliable deployments.
 
 - Jira
 - Kibana
