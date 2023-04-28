@@ -159,6 +159,73 @@
 
 - @Transactional
 
+  - 에러 핸들링
+    -  Error & Unchecked Exception(Runtime Exception 하)만 롤백
+    - Checked Exception은 롤백 X
+
+
+
+
+### JPA
+
+- Cascade : 연관 entity끼리의 상태 전이
+
+  - Detach
+    - not associated with a hibernate session
+  - Merge
+    - When detached, merge will reattach to session
+    - reattach a detached entity back to the persistence context and synchronize its state with the database.
+  - Persist
+    - Transitions new instances to managed state
+    - used to make a new entity managed by the persistence context and persist it to the database for the first time
+    - Next flush / commit will save in db
+  - Remove
+    - Transitions managed entity to be removed
+    - Next flush / commit will delete from db
+  - Refresh
+    - Reload / synch object with data from db
+    - Prevents stale data
+
+- N + 1
+
+  - jpaRepository에 정의한 인터페이스 메서드를 실행하면 JPA는 메서드 이름을 분석해서 JPQL을 생성하여 실행하게 된다. JPQL은 SQL을 추상화한 객체지향 쿼리 언어로서 특정 SQL에 종속되지 않고 엔티티 객체와 필드 이름을 가지고 쿼리jpaRepository에 정의한 인터페이스 메서드를 실행하면 JPA는 메서드 이름을 분석해서 JPQL을 생성하여 실행하게 된다. JPQL은 SQL을 추상화한 객체지향 쿼리 언어로서 특정 SQL에 종속되지 않고 엔티티 객체와 필드 이름을 가지고 쿼리
+
+  - JPQL 입장에서는 연관관계 데이터를 무시하고 해당 엔티티 기준으로 쿼리를 조회JPQL 입장에서는 연관관계 데이터를 무시하고 해당 엔티티 기준으로 쿼리를 조회
+
+  -  Fetch join
+
+    - Fetch join을 사용하는 것이다. 하지만 이는 jpaRepository에서 제공해주는 것은 아니고 JPQL로 작성해야 한다.
+
+    - ```java
+      @Query("select o from Owner o join fetch o.cats")
+      
+      List<Owner> findAllJoinFetch();
+      ```
+
+    - 우리가 연관관계 설정해놓은 FetchType을 사용할 수 없다는 것이다. Fetch Join을 사용하게 되면 데이터 호출 시점에 모든 연관 관계의 데이터를 가져오기 때문에 FetchType을 Lazy로 해놓는것이 무의미우리가 연관관계 설정해놓은 FetchType을 사용할 수 없다는 것이다. Fetch Join을 사용하게 되면 데이터 호출 시점에 모든 연관 관계의 데이터를 가져오기 때문에 FetchType을 Lazy로 해놓는것이 무의미
+
+  
+
+### MyBatis
+
+- Configuration
+  - MyBatis configuration XML file
+
+- Dynamic SQL
+  - MyBatis supports dynamic SQL, which allows you to dynamically generate SQL queries based on different conditions.
+- Caching
+  - MyBatis provides built-in caching capabilities that allow you to cache the results of SQL queries, reducing the overhead of executing repetitive queries. 
+
+
+
+### 기타
+
+- 카테시안 곱카테시안 곱
+
+
+
+
+
 
 
 ### 테이블 관계
