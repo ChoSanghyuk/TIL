@@ -27,7 +27,7 @@ $ git branch -r
 
 - remote branch 목록 확인
 
-
+ch
 
 ```
 $ git branch -a
