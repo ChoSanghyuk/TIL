@@ -427,8 +427,6 @@ myCar.print()				# 100 small
 
 ### Collection
 
-
-
 #### OrderedDict
 
 ```python
@@ -472,6 +470,32 @@ deq.popleft()
 
 # Pop element from the end
 deq.pop()
+```
+
+
+
+
+
+### heap
+
+```python
+from heapq import heappush, heappop #, ... 다른 함수들
+
+heap = [] #heapq은 보통 리스트를 마치 최소 힙처럼 다룰 수 있도록 도와줍
+
+# 추가
+heappush(heap, 4)
+# 삭제 및 반환
+heappop(heap)
+# 조회
+heap[0]
+
+# 리스트 => heap 변환
+heap = [4, 1, 7, 3, 8, 5]
+heapify(heap)
+
+# 최대 힙 사용 시에는 -1 곱해서 사용
+
 ```
 
 
