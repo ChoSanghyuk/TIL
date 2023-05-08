@@ -7,6 +7,7 @@
 - [x] Enum
 - [x] Stream
 - [x] Thread
+- [ ] Multi-Thread Efficiency
 - [x] Synchronized
 - [x] Generics
 - [x] Volatile
@@ -36,19 +37,20 @@
 - [x] Debugging
 - [x] Junit Test
 - [x] 프로젝트 패키징
-- [ ] Cloud ( AWS or Naver)
+- [ ] Cloud ( AWS or Naver) : AWS
 - [ ] Doker
 - [ ] Kubernetes
-
 - [ ] jenkins
-
 - [x] maven 명령어
-
 - [ ] 디자인 패턴
-
 - [ ] redis
 
 
+
+## 통신
+
+- [ ] Kafka
+- [ ] redis
 
 
 

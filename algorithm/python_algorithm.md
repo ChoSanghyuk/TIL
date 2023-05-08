@@ -99,6 +99,15 @@ for i in enumerate(myTuple):
 
 
 
+### while loop
+
+```python
+while [조건문]:
+    [수행부분]
+```
+
+
+
 
 
 ## 자료 구조
@@ -418,6 +427,10 @@ myCar.print()				# 100 small
 
 ### Collection
 
+
+
+#### OrderedDict
+
 ```python
 # OrderedDict : Dict의 순서 유지
 from collections import OrderedDict
@@ -438,4 +451,28 @@ li = [0,0,1,1,1,2,3,4,4,6,6,6,6]
 li_C = Counter(li)
 li_C						# Counter({0: 2, 1: 3, 2: 1, 3: 1, 4: 2, 6: 4})
 ```
+
+
+
+#### deque
+
+```python
+from collections import deque
+
+deq = deque()
+
+# Add element to the start
+deq.appendleft(10)
+
+# Add element to the end
+deq.append(0)
+
+# Pop element from the start
+deq.popleft()
+
+# Pop element from the end
+deq.pop()
+```
+
+
 
