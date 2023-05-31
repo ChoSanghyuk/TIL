@@ -100,6 +100,15 @@ for i in enumerate(myTuple):
 
 
 
+### while loop
+
+```python
+while [조건문]:
+    [수행부분]
+```
+
+
+
 
 
 ## 자료 구조
@@ -426,6 +435,8 @@ myCar.print()				# 100 small
 
 ### Collection
 
+#### OrderedDict
+
 ```python
 # OrderedDict : Dict의 순서 유지
 from collections import OrderedDict
@@ -477,11 +488,54 @@ math.gcd(6, 8)  #2
 
 # 제곲
 math.pow(3, 2)  #9
+
 ```
 
 
 
+#### deque
 
+```python
+from collections import deque
+
+deq = deque()
+
+# Add element to the start
+deq.appendleft(10)
+
+# Add element to the end
+deq.append(0)
+
+# Pop element from the start
+deq.popleft()
+
+# Pop element from the end
+deq.pop()
+```
+
+
+
+### heap
+
+```python
+from heapq import heappush, heappop #, ... 다른 함수들
+
+heap = [] #heapq은 보통 리스트를 마치 최소 힙처럼 다룰 수 있도록 도와줍
+
+# 추가
+heappush(heap, 4)
+# 삭제 및 반환
+heappop(heap)
+# 조회
+heap[0]
+
+# 리스트 => heap 변환
+heap = [4, 1, 7, 3, 8, 5]
+heapify(heap)
+
+# 최대 힙 사용 시에는 -1 곱해서 사용
+
+```
 
 
 

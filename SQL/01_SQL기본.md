@@ -115,6 +115,29 @@ DELETE FROM classmates WHERE id=5;
 UPDATE classmates SET name = '홍길동', address = '제주도' WHERE id=5;
 ```
 
+### DML 심화
+
+- 타 테이블의 컬럼으로 UPDATE
+
+```SQL
+UPDATE TABLE1 A
+SET A.COL1 = (SELECT B.COLA FROM TABLE2 B WHERE A.COMMON_COL = B.COMMON_COL)
+WHERE 1=1
+```
+
+- 타 테이블의 컬럼으로 UPDATE 시, 1:1 관계가 아니라 NULL로 잡혀서 오류 생길 때 => CASE 문
+
+```SQL
+UPDATE TABLE1 A
+SET A.COL1 = (SELECT CASE WHEN A.COL2 = '조건' THEN B.COLA 
+              		      ELSE A.COL1 END
+              FROM TABLE2 B WHERE A.COMMON_COL = B.COMMON_COL)
+WHERE 1=1
+AND A.COL2 = '조건'
+```
+
+:bulb: 우선 A.COL1에 데이터를 매칭시키고 조건으로 걸러지는 구조로, A.COL1이 NOT NULL 일 때, TABLE2와 매칭되는 데이터 없을 시, 에러 발생. CASE문으로 방어로직 생성
+
 
 
 ### SELECT와 함께 쓰는 clause
