@@ -24,6 +24,7 @@
 
 - 주요 Library
   - Collection
+  - math
 
 
 
@@ -200,6 +201,13 @@ sorted(li) 			# [1,2,3,4]
 
 # 리스트 언패킹
 a ,*b = li			# a: 4 , b : [3, 2, 1]
+
+# 비어있는지 확인		// 조건문에서 사용 시, 값이 있으면 true, 없으면 false
+if list1 :
+    # list1에 값이 있으면 true
+if not list2:
+    # list2에 값이 없으면 true
+    
 ```
 
 
@@ -457,6 +465,39 @@ li_C						# Counter({0: 2, 1: 3, 2: 1, 3: 1, 4: 2, 6: 4})
 
 
 
+### math
+
+```python
+import math
+
+# 올림
+math.ceil(3.14) #4
+# 내림
+math.floor(3.78)    #3
+# 0으로 향하는 내림
+math.trunc(-3.14)   #-3
+#반올림
+round(3.1415)   	#결과는 3
+round(3.1415, 2)   #결과는 3.14
+## 사사오입 원칙 : 반올림할 자리의 수가 5이면 반올림 할 때 앞자리의 숫자가 짝수면 내림하고 홀수면 올림
+round(4.5)  #결과는 4
+round(3.5)  #결과는 4
+
+# 절대값
+math.fabs(-3.14)    #3.14
+# 팩토리얼
+math.factorial(5)   #120
+
+# 최대 공약수
+math.gcd(6, 8)  #2
+
+# 제곲
+math.pow(3, 2)  #9
+
+```
+
+
+
 #### deque
 
 ```python
@@ -479,8 +520,6 @@ deq.pop()
 # 조회
 deq[0]
 ```
-
-
 
 
 
