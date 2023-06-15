@@ -296,7 +296,15 @@
   - forEach
     - 요소를 돌면서 최종작업
 
+:bulb: Array로 변환
 
+- toArray
+
+  ```java
+  String[] arr = list.stream().toArray(String[]::new);
+  ```
+
+  
 
 
 
