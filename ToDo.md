@@ -56,16 +56,17 @@
 
 ## 기술 블로그
 
-
-
 - [ ] TDD
 - [ ] Composition over Inheritance
+
+
 
 ### Java_Spring
 
 - [ ] @Transactional
-- [ ] 객체 지향 사고
+- [x] 객체 지향 사고
 - [x] hashCode
+- [ ] AOP
 
 ### Rust
 

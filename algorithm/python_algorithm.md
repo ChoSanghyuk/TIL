@@ -90,8 +90,12 @@ myTuple = 1,2,3,4,5
 for i in myTuple:
     print(i, end = ' ')
 print('\n')
+
 for i in enumerate(myTuple):
     print(i, end=' ')
+    
+for i in range(10, 0, -1):	# 10에서 1까지 역순으로 숫자 생성
+    print(li[i])
 ```
 
     1 2 3 4 5 
@@ -167,6 +171,7 @@ list(dic.items()) 				# [('a', 0), ('b', 2), ('c', 3)]
 ```python
 # 리스트 선언
 li = [1,2,3,4,5]
+li = [0] * 5
 
 # 리스트 index , 슬라이스
 li[0] 				# 1
@@ -511,6 +516,9 @@ deq.popleft()
 
 # Pop element from the end
 deq.pop()
+
+# 조회
+deq[0]
 ```
 
 
