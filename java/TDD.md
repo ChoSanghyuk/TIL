@@ -451,7 +451,10 @@
     });
     ```
 
+    :bulb: method가 void 타입일 때에는  형태가 바뀜
     
+    - `when(mockedObject.play(Matchers.<Class<T>>any())).thenReturn(object);` 
+    - Matchers.<T>any() 는 deprecated 되었지만, 버전에 따라 사용이 필요해 보임
 
 - 검증하기
 

@@ -221,7 +221,7 @@
 
 ```bash
 while IFS= read -r item; do
-echo "Item : Sitem"
+echo "Item : $item"
 done < "list.txt"
 ```
 
