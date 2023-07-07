@@ -61,6 +61,14 @@ $ git remote remove <name>
 
 
 
+```bash
+$ git remote -v
+```
+
+- remote url 확인
+
+
+
 ## 업로드
 
 
