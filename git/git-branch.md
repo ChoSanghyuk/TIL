@@ -27,7 +27,7 @@ $ git branch -r
 
 - remote branch 목록 확인
 
-ch
+
 
 ```
 $ git branch -a
@@ -63,7 +63,11 @@ $ git -b checkout <브랜치이름>
 
 - 브랜치 생성 후 이동
 
+```
+$ git checkout -b "develop" "origin/develop"
+```
 
+- 브랜치 pull 받아 오면서 로컬 브랜치 생성 후 이동
 
 ```
 $ git switch master (혹은 branch이름)
@@ -109,9 +113,11 @@ $ git switch -c <브랜치이름>
 
 - 브랜치를 생성하면서 작업 공간을 옮김
 
-g
+
 
 ## branch 삭제
+
+### 로컬 branch 삭제
 
 ```
 $ git branch -d <branchname>
@@ -129,8 +135,10 @@ $ git branch -D <branchname>
 
 
 
+### 원격 branch 삭제
+
 ```
-$ git push origin :<remote branch>
+$ git push origin -d <remote branch>
 ```
 
 - remote branch 삭제
@@ -163,3 +171,44 @@ $ git merge <branch>
 - Fast Forward : master branch가 브랜치가 커밋해 둔 내용을 그대로 따라감.
 - Auto Merge : master와 branch에 서로 다른 commit이 있을 경우, 두개를 합침
 - Manual Merge : master와 branch의 변경 사항 사이에 충돌이 있는 경우, 문제 파일을 수정하고 병합함. 이때는 merge가 아닌 commit으로 합침.
+
+
+
+## branch 강제 엎어치기
+
+1. 백업
+
+```bash
+git branch develop_backup
+```
+
+2. 엎어쳐질 대상 branch로 이동
+
+```bash
+git checkout develop
+```
+
+3. master 브랜치로 엎어치기
+
+```bash
+git reset --hard master
+```
+
+4. 강제 push 하기
+
+```bash
+git push origin develop --force
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
