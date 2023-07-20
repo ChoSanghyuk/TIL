@@ -58,7 +58,7 @@ $ git checkout <브랜치이름>
 
 
 ```
-$ git -b checkout <브랜치이름>
+$ git checkout -b <브랜치이름>
 ```
 
 - 브랜치 생성 후 이동
@@ -88,14 +88,6 @@ $ git branch <브랜치이름>
 ```
 
 - 로컬 브랜치 생성
-
-
-
-```
-$ git checkout -t <remote branch 이름>
-```
-
-- remote branch와 같은 이름 local branch를 생성하면서 내용 가져옴
 
 
 
