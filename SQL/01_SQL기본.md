@@ -138,6 +138,17 @@ AND A.COL2 = '조건'
 
 :bulb: 우선 A.COL1에 데이터를 매칭시키고 조건으로 걸러지는 구조로, A.COL1이 NOT NULL 일 때, TABLE2와 매칭되는 데이터 없을 시, 에러 발생. CASE문으로 방어로직 생성
 
+- UPDATE 대상 테이블의 특정 ROW를 다른 테이블과의 조인을 통한 조건으로 걸러내야 할때
+
+```SQL
+UPDATE TABLE1 A
+SET A.COL1 = (SELECT B.COLA FROM TABLE2 B WHERE A.COMMON_COL = B.COMMON_COL)
+WHERE 1=1
+AND EXISTS (SELECT 1 FROM TABLE2 B WHERE A.COMMON_COL = B.COMMON_COL AND A.COL2 = B.COL2)
+```
+
+
+
 
 
 ### SELECT와 함께 쓰는 clause

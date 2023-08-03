@@ -68,6 +68,8 @@
 - [x] hashCode
 - [ ] AOP
 
+
+
 ### Rust
 
 - [x] Rust 문자
@@ -77,3 +79,11 @@
 
 
 :bulb: checkbox 생성 시, 편집 모드 => `- [ ] `입력
+
+
+
+## 서적
+- [ ] 토비의 스프링
+- [ ] 리눅스 마스터
+- [ ] JPA
+- [ ] Kafka: The Definitive Guide
