@@ -194,6 +194,57 @@ git push origin develop --force
 
 
 
+## Commit간 변경된 파일 목록 조회
+
+
+
+### Commit 간 비교
+
+```bash
+$ git diff [prev commit] [current commit]
+$ git diff --name-status HEAD HEAD~1 # 파일명만 비교하고 싶을 경우
+$ git diff HEAD HEAD~1 # 만약 내용 전체를 보고 싶을 경우
+```
+
+- Commit hash number를 통해서도 비교 가능
+
+```bash
+$ git diff [prev commit hash] [current commit hash]
+```
+
+  
+
+### Branch 간 비교
+
+- 원격 branch vs Local branch
+
+```bash
+$ git diff [remote]/[branch] [local branch]
+$ git diff origin/master test1 --name-status
+```
+
+- Branch 간 비교
+
+```bash
+$ git diff [branch1] [branch2]
+$ git diff master main
+```
+
+- 다른 파일 간 비교
+
+```bash
+$ git diff -- [path1] [path2] #  -- 옵션 뒤에 적은 내용은 항상 경로로 인식
+```
+
+- 특정 파일에 대한 변경점 비교
+
+```bash
+$ git diff [commit1] [commit2] -- [file]
+$ git diff HEAD HEAD~5 -- src/aaa.cpp
+```
+
+
+
 
 
 
