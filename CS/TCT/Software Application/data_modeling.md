@@ -118,7 +118,7 @@
 
 - 한 엔터티 내 Occurrence와 Occurrence가 1:M 관계
 - 레벨 속성을 두어 특정 레벨 접근 용이 O
-
+:bulb: Occurrence : Each row in a table represents a specific, single occurence of the entity
 #### 1:1 자기 참조 관계
 
 - 한 엔터티 내 Occurrence와 Occurrence가 1:1 관계
