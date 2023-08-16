@@ -116,8 +116,6 @@
 
 
 
-
-
 ### ROWNUM
 
 - 데이터 정렬
@@ -221,17 +219,129 @@
 
   - `TO_CHAR(SALARY, '$9,999.99')`
 
-  - 
+- TO_NUMBER
+
+  - 문자열 형식을 숫자로 변환
+    - `TO_NUMBER('1234')` => 1234
+
+- 데이터 형 변환 원칙
+
+  - 반드시 명시적 형 변환을 사용
+  - 포맷이 필요한 형 변환
+  - :bulb: **WHERE 절의 컬럼 변환 제거**
+    - WHERE 컬럼은 원칙적으로 변환 X
+      - 넓은 데이터 범위에 대한 추가적인 연산
+      - 인덱스 컬럼이 대상일 경우, index 활용을 못 하여 FULL Scan 가능성 존재
+      - DB별 다른 형변환 처리로 인한, 결과값 상이
 
 
 
 
+### 조건부 표현식
+
+- CASE
+
+  ```sql
+  CASE expr WHEN comparison_expr1 THEN return_expr1
+  		  [WHEN comparison_expr2 THEN return_expr2
+  		  ELSE return_expr3]
+    END
+  ```
+
+  ```SQL
+  CASE WHEN condition1 THEN return_expr1
+       [WHEN condition2 THEN return_expr2
+        ELSE return_expr3]
+    END
+  ```
+
+  - 조건에 맞는 값 및 ELSE절 미존재 시, NULL 반환
+  - 모든 반환 값은 데이터 유형 일치
+
+- DECODE
+
+  ```SQL
+  DECODE ( col, search1, result1 
+         		, search2, result2 
+         		, default)
+  ```
+
+  - 조건에 맞는 값 및 DEFAULT 값 미존재 시, NULL 반환
+  - 실제 업무에서는 GROUP 함수와 함께 사
+  - 비교 연산자 사용 X
+
+  
+
+## SQL 작성 응용
 
 
 
+### ANSI-SQL 특징
+
+- 국제 표준 => DBMS간 높은 호환성
+- 조인 조건을 명확히 기술
+- 일부 작성이 불가능한 OUTER JOIN도 표현 O
+- 각 DBMS 벤더 제공 기능 활용에 제약 O
+  - 벤더 dependent SQL : 각 벤더사 자체의 SQL은 자체 구조에 맞는 쿼리에 성능상 이점 존
 
 
 
+### JOIN 구분
+
+- 결과 집합 유형
+
+  - INNER : 일치하는 행만 반환
+  - OUTER : INNER Join 결과 및 일치하지 않는 행도 반환
+    - ORACLE 문법으로는 표기 X
+
+- 조인 연산자 유형
+
+  - EquiJoin : `=` 연산자 이용
+
+  - Non-EquiJoin : `=` 이외의 연산자 이용
+
+    - ex) 카테시안 조인 (Cartesian Join) : 조인 조건이 없거나 누락된 조인
+
+      => 모든 가능한 행들의 조합을 반환 (N행 테이블과 M행 테이블 조인 시, N *M 결과값 가짐)
+
+      ```sql
+      -- ORACLE
+      SELECT *
+      FROM EMPLOYEE E,
+      	DEPARTMENT D;
+      	
+      -- ANSI
+      SELECT *
+      FROM EMPLOYEES E
+      	CROSS JOIN DEPARTMENT D ;
+      ```
+
+
+
+### 카티시안 곱의 활용
+
+20/132 => 계층 쿼리 학습 후 가로 세로 행/열 바꾸기 
+
+
+
+### Oracle OUTER JOIN 제약
+
+- 조인 조건이 하나 이상일 경우, 모든 조인 조건에 (+) 사용
+- :bulb: **조인 조건 외에 일반 조건에도 (+) 사용해야 데이터 유실 X**
+  - 상수와 비교하는 컬럼에도 사용 필요
+- 조인되는 두 개 테이블에 동시에 (+) 사용 X => FULL OUTER JOIN X
+- **조인 조건 식에서 (+)가 붙은 컬럼과는 서브쿼리 같이 사용 X**
+- 조인 순서가 미리 정해지므로 조인 순서를 이용한 튜닝 X
+- Outer Join은 업무적으로 NULL이 필요한 경우에만 사용
+
+
+
+### 서브 쿼리 종류
+
+- 종류
+  - 인라인 뷰 : 뷰 처럼 활용 => 테이블과 같이 사용
+  - 서브쿼리 : 조건역할 => WHERE 절 사용
+  - 스칼라서브쿼리 : 하나의  값 => SELECT 문 사용
 
 
 
