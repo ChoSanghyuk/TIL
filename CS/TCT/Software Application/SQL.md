@@ -421,9 +421,69 @@
 
 
 
+### 분석함수
 
+- 개념
 
+  - 데이터를 특정 용도로 분석하여 그 결과를 반화는 함수
+  - DW 업무에서 효과적
+  - 간결한 표현 및 성능적 향상
+    - PARTITION 절 => 결과 집합을 여러 그룹으로 분할하여 분석
+    - WINDOW 기능 => 결과 집합의 일부를 대상으로 분석
 
+- 구문형식
+
+  ```SQL
+  분석함수 (파라미터1, 파라미터2, ...)
+  	OVER ( <query_partition 절> 
+             <order_by 절> 
+             <windowing 절> )
+  ```
+
+  - 분석함수 : 분석함수 명을 명시
+  - 파라미터 : 분석함수에 따라 0에서 3개까지의 파라미터 가짐
+  - query_partition 절 : `PARTITION BY`로 시작하여, 분석함수의 계산그룹 대상 지정
+  - order_by 절 : 계산대상 그룹에 대해 정렬작업을 수
+  - windowing 절 : `PARTITION BY`에 의해 나누어진 기준 그룹에 또 다시 소그룹을 생성 (생략 시, 소그룹 = 기준그룹)
+
+- 실행 단계
+
+  1. 일반 질의 처리 : 조인, WHERE, GROUP BY 등
+  2. 분석 함수 적용
+  3. 정렬
+
+- 종류
+
+  - **RANKING** 함수 : 순위 함수
+
+    - 다른 레코드와 비교되는 순서 계
+
+    - TOP N 분석에 활용
+
+    - 종류
+
+      - `RANK`
+        - 순위 반환
+        - 1등이 2건인 경우, 다음 순위는 3등
+        - 정렬 결과를 기준으로 전체 순위를 출력
+      - `DENSE_RANK`
+        - 1등이 2건인 경우, 다음 순위 2등
+        - 동일 순위 무시한 연속 순위 출력
+      - `ROW_NUMBER`
+        - 1부터 시작하여 각 로우 별로 순차적 값 반환
+        - 무조건 순서대로 순번 반환
+
+    - 예시
+
+      ```SQL
+      SELECT EMPLOYEE_ID, SALARY,
+      		RANK() OVER (ORDER BY SALARY DESC) RANKING1,
+      		DENSE_RANK() OVER (ORDER BY SALARY DESC) RANKING2,
+      		ROW_NUMBER() OVER (ORDER BY SALARY DESC) RANKING3
+      FROM EMPLOYEES ;
+      ```
+
+      
 
 
 
