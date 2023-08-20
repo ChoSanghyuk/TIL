@@ -483,7 +483,20 @@
       FROM EMPLOYEES ;
       ```
 
-      
+  - 윈도우 함수
+  
+    ```sql
+    윈도우함수 OVER (PARTITION BY expr ORDER BY expr [ASC|DESC])
+    	ROWS | RANGE
+    		BETWEEN UNBOUNDED PRECEDING | PRECEDING | CURRENT ROW
+    		    AND UNBOUNDED FOLLOWING | CURRENT ROW
+    ```
+  
+    - OVER : 함수를 적용하기 위한 행의 정렬 기준 또는 대상 행 집합에 대한 윈도우 정의
+      - FROM, WHERE, GROUP BY, HAVING 절 처리 이후 적용
+    - ROWS | RANGE : 윈도우의 크기를 정렬하기 위한 행 집합 정의
+    - BETWEEN ... AND : 윈도우의 시작 위치와 마지막 위치 지정
+    - UNBOUNDED PRECEDING |CURRENT ROW |UNBOUNDED FOLLOWING : 부분집합을 결정하기 위한 범위
 
 
 
