@@ -46,6 +46,7 @@
 - OR을 복잡하게 사용하면 FULL TABLE SCAN이 발생하여 성능 :arrow_down:
   - 가능한 UNION ALL 또는 DECODE, IN 등을 활용
 - JOIN시, Driving 테이블 (첫 번째로 Access 되는 테이블)의 필터 조건이 있다면, 가장 먼저 기술
+- ORDER BY 절에는 단순 컬럼 기술 외에 다양한 함수 (ex CASE) 사용 O
 
 
 
@@ -425,7 +426,7 @@
 
 - 개념
 
-  - 데이터를 특정 용도로 분석하여 그 결과를 반화는 함수
+  - 데이터를 특정 용도로 분석하여 그 결과를 반환하는 함수
   - DW 업무에서 효과적
   - 간결한 표현 및 성능적 향상
     - PARTITION 절 => 결과 집합을 여러 그룹으로 분할하여 분석
@@ -482,21 +483,136 @@
       		ROW_NUMBER() OVER (ORDER BY SALARY DESC) RANKING3
       FROM EMPLOYEES ;
       ```
-
-  - 윈도우 함수
   
+  - LAG / LEAD 함수
+  
+    - 동일한 테이블에 있는 다른 행의 값을 참조
+  
+      - 일별 매출 추이와 같은 연속된 데이터 값을 분석 시 사용
+  
+    - 사용
+  
+      - LAG
+        - 현재 행을 기준으로 이전 값을 참조
+        - `LAG(expr, offset, default) OVER (PARTITION BY 절)`
+        - offset : 현재 행의 중심으로 offset만큼 이전 행의 값 표시. 행 없을 시, default 값 표기
+      - LEAD
+        - 현재 행을 기준으로 이후 값을 참조 
+        - `LEAD(expr, offset, default) OVER (PARTITION BY 절)`
+        - offset : 현재 행의 중심으로 offset만큼 이후 행의 값 표시. 행 없을 시, default 값 표기
+  
+    - 예시
+  
+      ```SQL
+      -- 현재연도, 이전연도, 이후 연도에 입사한 사원수를 동시에 추출하기
+      SELECT
+      	TO_CHAR(HIRE_DATE, 'YYYY') 입사연도, COUNT(*) 사원수,
+      	LAG(COUNT(*),1,0) OVER (ORDER BY TO_CHAR(HIRE_DATE, 'YYYY')) "이전연도사원수",
+      	LEAD(COUNT(*),1,0) OVER (ORDER BY TO_CHAR(HIRE_DATE, 'YYYY')) "이후연도사원수"
+      FROM EMPLOYEES
+      GROUP BY TO_CHAR(HIRE_DATE, 'YYYY')
+      ORDER BY TO_CHAR(HIRE_DATE, 'YYYY') ;
+      ```
+  
+  - RATIO_TO_REPORT 분석함수
+  
+    - 계산 대상 값 전체에 대한 현재 로우의 상대적인 비율 값을 반환
+  
+    - 각 로우별로 PARTITION BY 절에 명시된 그룹의 총합에 대한 비율을 반환
+  
+    - 사용법
+  
+      - `RATIO_TO_REPORT (expr) OVER (PARTITION BY절)`
+      - expr : null일 시, null 반환
+  
+    - 예시
+  
+      ```sql
+      -- 2008년 전체 영업 실적 중 각 개인별 실적 비율 추출하기
+      SELECT EMP, LAST_NAME 이름, SUM(ORD.ORDER_TOTAL) 개인별실적,
+      	   ROUND(RATIO_TO_REPORT(SUM(ORD.ORDER_TOTAL)) OVER
+                  	(PARTITION BY TO_CHAR(ORD.ORDER_DATE, 'YYYY')),2) RATIO
+      FROM ORDERS ORD, EMPLOYEES EMP
+      WHERE TO_CHAR(ORD.ORDER_DATE, 'YYYY') = '2008'
+      AND ORD.SALES_REP_ID = EMP.EMPLOYEE_ID
+      GROUP BY EMP.LAST_NAME, TO_CHAR(ORD.ORDER_DATE, 'YYYY')
+      ORDER BY EMP.LAST_NAME ;
+      ```
+  
+  - LISTAGG
+  
+    - 그룹핑 하여 ROW 데이터를 한 컬럼으로 조회
+  
+    - 사용법
+  
+      - `LISTAGG(expr, 구분자) WITHIN GROUP (ORDER BY 절)`
+      - WITHIN GROUP() 절에 아무 조건도 주지 않으면 에러 발생
+      - 구분자에 예약어 사용 X
+  
+    - 예시
+  
+      ```SQL
+      -- 부서별로 속한 사원을 한 ROW로 보여주는 SQL 
+      SELECT DEPARTMENT_ID DID,
+      	LISTAGG(LAST_NAME, ',') WITHIN GROUP (ORDER BY LAST_NAME) AS ENAMES
+      FROM EMPLOYEES
+      GROUP BY DEPARTMENT_ID
+      ORDER BY DEPARTMENT_ID ;
+      ```
+  
+      
+
+
+
+### 윈도우 함수
+
+- 구문
+
     ```sql
     윈도우함수 OVER (PARTITION BY expr ORDER BY expr [ASC|DESC])
-    	ROWS | RANGE
-    		BETWEEN UNBOUNDED PRECEDING | PRECEDING | CURRENT ROW
-    		    AND UNBOUNDED FOLLOWING | CURRENT ROW
+        ROWS | RANGE
+            BETWEEN UNBOUNDED PRECEDING | PRECEDING | CURRENT ROW
+                AND UNBOUNDED FOLLOWING | CURRENT ROW
     ```
-  
+
     - OVER : 함수를 적용하기 위한 행의 정렬 기준 또는 대상 행 집합에 대한 윈도우 정의
       - FROM, WHERE, GROUP BY, HAVING 절 처리 이후 적용
+    
     - ROWS | RANGE : 윈도우의 크기를 정렬하기 위한 행 집합 정의
+    
+      - ROWS :  조회된 행이 기준이기에 값의 동일 여부를 떠나 **하나하나 연산**
+      - RANGE : 조회된 행의 **값이 기준이기에 같다면 묶어서 합산 후 연산**
+    
     - BETWEEN ... AND : 윈도우의 시작 위치와 마지막 위치 지정
+    
     - UNBOUNDED PRECEDING |CURRENT ROW |UNBOUNDED FOLLOWING : 부분집합을 결정하기 위한 범위
+    
+      - UNBOUNDED PRECEDING : 제일 앞
+      - CURRENT ROW : 현재 ROW
+      - UNBOUNDED FOLLOWING : 제일 끝
+      - 상수값 PRECEDING: 현재 값을 기준으로 상수값 만큼의 앞에서부터 지정. (앞에 상수만큼의 데이터가 없을 경우 NULL)
+      - 상수값 FOLLOWING : 현재 값을 기준으로 상수값 만큼의 뒤까지의 범위 지정 (뒤에 상수만큼의 데이터가 없을 경우, NULL)
+    
+    - BETWEEN 없는 경우
+    
+      - UNBOUNDED PRECEDING : 처음부터 하나씩 계산한 결과 표시
+      - CURRENT ROW : 현재행부터 현재행까지 => 현재행의 값만 표시
+      - n PRECEDING :  현재행에서 앞선 n개 행까지 범위 지정
+    
+      추가 참고자료 : https://tiboy.tistory.com/570
+    
+- 종류
+
+    - SUM
+        - 누적합계 구하기
+        - `SUM(TOTAL) OVER (PARTITION BY 부서번호 ORDER BY TOTAL)`
+            - PARTITION BY 구문으로 세부적인 그룹핑 => 해당 ROW와 같은 부서번호의 누적합에 자신의 값을 더한 값이 표기됨
+            - 부서번호 기준으로 누적판매금액 집계
+
+
+
+
+
 
 
 
