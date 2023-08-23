@@ -611,8 +611,62 @@
 
 
 
+### Paging 처리
 
+- 개념
 
+  - 온라인 프로그램 중 추출된 데이터 건수가 많아 한 화면에 보여주면 성능상 문제 발생 경우 有
+
+    => 페이지 분활 => 최소 데이터만 보여주도록 작
+
+  - 종류 : Index Paging, NEXT Paging
+
+- INDEX PAGE 개념
+
+  - 전체 페이지(or 전체 건수)와 Page Index를 같이 보여주는 방법
+
+  - 전체 건수 SQL 및 상세 데이터 SQL 두 가지가 실행
+
+  - 사용방법
+
+    ```sql
+    SELECT HIRE_DATE
+    	 , EMPLOYEE_ID
+    	 , FIRST_NAME
+    	 , SALARY
+    	 , JOB_ID
+    FROM (SELECT ROWNUM RN, A.*
+         FROM (SELECT HIRE_DATE
+              		, EMPLOYEE_ID
+              		, FIRST_NAME
+              		, SALARY
+              		, JOB_ID
+              		FROM EMPLOYEES A
+              		WHERE DEPARTMENT_ID IN (20,50,80)
+              		ORDER BY FIRST_NAME
+              ) A
+         	WHERE ROWNUM <= (:Page) * 20
+         )
+    WHERE RN >= (:Page-1) * 20 +1
+    ```
+
+    - 부등호 사용 시 , `ORDER BY FRIST_NAME` 부분에서 `(:Page) * 20` 만큼만 정렬하고 STOP
+
+- NEXT PAGE 
+
+  - 개념
+
+    - 전체 건수를 추가적으로 조회하는 일반 Index Paging과 달리, 성능을 고려하여 한번의 조회로 필요한 데이터를 조회
+
+    - 프로그램에서 다음 시작 페이지의 값을 저장
+
+      => 항상 일정한 양의 row 해당 부분을 조회하여 응답시간이 일정
+
+    - 대량의 결과를 page 단위로 보여줄 경우, Next Key를 사용하여 부분처리를 유도함으로써 온라인 성능을 높임
+
+    - 
+
+  
 
 
 
