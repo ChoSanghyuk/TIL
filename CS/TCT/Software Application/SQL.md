@@ -652,7 +652,7 @@
 
     - 부등호 사용 시 , `ORDER BY FRIST_NAME` 부분에서 `(:Page) * 20` 만큼만 정렬하고 STOP
 
-- NEXT PAGE 
+- NEXT PAGE  (요즘 미사용 추정. skip)
 
   - 개념
 
@@ -664,13 +664,110 @@
 
     - 대량의 결과를 page 단위로 보여줄 경우, Next Key를 사용하여 부분처리를 유도함으로써 온라인 성능을 높임
 
-    - 
+  - 사용 방법
 
+    ```sql
+    SELECT ...
+    FROM TABLE1
+    WHERE 조회조건들..
+    AND a >= :a		-- 공통조건
+    AND NOT(a = :a AND b < :b)
+    AND NOT(a = :a AND b = :b AND c < :c)
+    ORDER BY a,b,c 	-- ORDER BY 절에 기술되는 컬럼들이 nextkey
+    ```
+  
+    
   
 
+### GROUP 함수
 
+- ROLLUP
 
+  - 개념
 
+    - ROLLUP 연산자는 GROUP BY 절의 그룹 조건에 따라 전체 행을 그룹화하고 각 그룹에 대해 부분합을 구함
+      - 그룹별 소계
+      - ex) GROUP BY ROULLUP(a,b) = GROUP BY a,b + GROUP BY a + total
+    - 인수로 받은 컬럼 수가 n개 인 경우 ROLLUP에 의해 만들어지는 그룹핑 조합은 n+1개
 
+    | ROLLUP                 | UNION ALL                                                    |
+    | ---------------------- | ------------------------------------------------------------ |
+    | GROUP BY ROLLUP(a,b,c) | GROUP BY ROLLUP(a,b,c) UNION ALL<br />GROUP BY ROLLUP(a,b) UNION ALL<br />GROUP BY ROLLUP(a) UNION ALL<br />GROUP BY ROLLUP() |
 
+  - ROLLUP 사용하기
+
+    ```SQL
+    SELECT DEPARTMENT_ID, JOB_ID, SUM(SALARY)
+    FROM EMPLOYEES
+    WHERE DEPARTMENT_ID < 30
+    GROUP BY ROLLUP(DEPARTMENT_ID, (JOB_ID, MANAGER_ID))
+    ;
+    ```
+
+    - ROLLUP 의 인자에서 괄호로 묶인 열은 하나의 단위로 처리된다.
+
+- CUBE
+
+  - 개념
+
+    - 그룹핑된 컬럼의 모든 가능한 조합에 대하여 합계를 구함
+      - ex) GROUP BY CUBE(a,b) = GROUP BY a,b + GROUP BY a + GROUP BY b + total
+    - 인수로 받은 컬럼 수가 n개 인 경우 CUBE에 의해 만들어지는 그룹핑 조합은 2^n개
+
+  - CUBE 사용하기
+
+    ```SQL
+    SELECT DEPARTMENT_ID, JOB_ID, SUM(SALARY)
+    FROM EMPLOYEES
+    WHERE DEPARTMENT_ID < 30
+    GROUP BY CUBE(DEPARTMENT_ID, (JOB_ID, MANAGER_ID))
+    ;
+    ```
+
+    - 지정 가능한 모든 그룹화 조합의 소계와 총계를 산출
+
+- GROUPING
+
+  - 개념
+
+    - ROLLUP 또는 CUBE 연산자와 함께 사용하는 함수
+    - 인수로 지정된 컬럼이 해당 그룹핑 작업에 사용되었는지 구별
+      - 그룹 조합에서 사용 => 0 / 미사용 => 1
+    - GROUPING 함수를 이용하여 그룹 결과의 NULL이 원래 저장된 값인지 (0), 그룹 조합 생성시 유도된 값인지 확인 (1)
+    - GROUPING 함수에 사용되는 인수는 GROUP BY  절에 지정된 컬럼 중 하나여야 함
+    - 매개변수의 컬럼 순서에 맞게 해당 컬럼이 NULL인 경우 1을 반한하고 한 행을 2진수 표기
+      - ex. `GROUP BY ROLLUP(a,b,c)`에서 a와c가 그룹에 미참여한 row의 경우 5(101)로 표기됨
+
+  - 사용하기
+
+    ```sql
+    SELECT DEPARTMENT_ID DID, JOB_ID JID, SUM(SALARY),
+    	   GROUPING(DEPARTMENT_ID) GRP_DEPT,
+    	   GROUPING(JOB_ID) GRP_JOB
+    FROM EMPLOYEES
+    WHERE DEPARTMENT_ID < 30
+    GROUP BY ROLLUP(DEPARTMENT_ID, JOB_ID)
+    ;
+    ```
+
+- GROUPING SETS 
+
+  - 개념
+    - GROUP BY 절에서 그룹 조건을 여러 개 지정할 수 있는 함수
+    - 구문의 결과는 각 그룹 조건에 대해 별도로 GROUP BY한 결과를 UNION ALL한 결과와 동일
+    - 하나의 SQL에 여러 개의 그룹 조건을 한번에 지정하여 복잡한 그룹처리 과정을 단순화
+
+  - 사용하기
+
+    ```SQL
+    SELECT DEPARTMENT_ID DID, JOB_ID JID, MANAGER_ID MID, AVG(SALARY)
+    FROM EMPLOYEES
+    WHERE DEPARTMENT_ID < 30
+    GROUP BY GROUPING SETS ((DEPARTMENT_ID, JOB_ID, MANAGER_ID ),
+                           	(DEPARTMENT_ID, MANAGER_ID ),
+                            (JOB_ID, MANAGER_ID ))
+    ;
+    ```
+
+    - 세 가지 GROUP에 대한 GROUP BY 결과를 UNION ALL 한 것과 동일
 
