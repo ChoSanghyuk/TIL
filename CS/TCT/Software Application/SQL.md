@@ -770,4 +770,111 @@
     ```
 
     - 세 가지 GROUP에 대한 GROUP BY 결과를 UNION ALL 한 것과 동일
+  
+  - GROUPING SETS vs ROLLUP, CUBE
+  
+    - CUBE(a,b,c) = GROUPING SETS( (a,b,c), (a,b), (a,c), (b,c), (a), (b), (c), () )
+    - ROLLUP(a,b,c) = GROUPING SETS((a,b,c), (a,b), (a), () )
+  
+  - 연결된 그룹화
+  
+    ```sql
+    SELECT DEPARTMENT_ID DID, JOB_ID JID, MANAGER_ID MID, AVG(SALARY)
+    FROM EMPLOYEES
+    WHERE DEPARTMENT_ID < 30
+    GROUP BY GROUPING SETS (DEPARTMENT_ID),
+             GROUPING SETS (JOB_ID, MANAGER_ID )
+    ORDER BY 1,2,3;
+    ```
+  
+    - GROUPING SET에서 가져온 그룹의 CROSS-Product로 실행
+      - = GROUPING SETS( (DEPARTMENT_ID, JOB_ID),  (DEPARTMENT_ID, MANAGER_ID) )
+
+
+
+## SQL 작성 심화
+
+
+
+### SQL 처리 구조
+
+- SELECT / INSERT/ UPDATE / DELETE 처리 절차 및 REDO, UNDO 동작 원리
+
+
+
+### SQL 처리 절차
+
+- SQL 처리 단계
+
+  1. Create Cursor
+     - SQL 문장 처리를 위해 메모리 일정 영역 점유
+  2. Parse SQL
+     - SQL 구문 분석과 최적화를 통한 실행 계획 생성
+  3. Bind variables
+     - 구문실행 전, Bind 변수를 사용한 경우 변수값 대응
+  4. Execute SQL
+     - DDL, DML => 구문 자체 실행
+     - 질의(QUERY) => Row Fetch하기 위한 준비 수행
+  5. Fetch Rows
+     - Execute 결과값 검색하여 Row 반환
+  6. Close Cursor
+     - 할당된 자원 반환
+
+- Soft parsing & Hard Parsing
+
+  ```
+  					<< Parse >>
+  SQL 			=>	1.Check Syntax
+  EXECUTE			<=	2.Search shared SQL area 	: SOFT PARSE
+  					3.Search data dictionary
+  					4.Optimizer
+  EXECUTE			<=	5.Save execution plan		: HARD PARSE
+  ```
+
+  1. Check Syntax 
+     - SQL 구문 문법 체크
+  2. Search shared SQL area 
+     - 같은 SQL이 shared pool에 있는지 확인
+  3. Search data dictionary
+     - SQL문에 포함된 모든 object와 column에 대한 dictionary validation 수행 및 권한 체크
+  4. Optimizer
+     - 최적화된 실행 계획 결정
+  5. Save execution plan
+     - Shared pool에 parse 정보 저장
+
+- 바인드 변수 필요성
+
+  - 바인드 변수 사용 => Oracle은 SQL을 동일한 것으로 판단
+
+  - Reparse 없이 Shared Pool에 저장된 SQL 실행
+
+  - Hard Parse 감소 => CPU 사용률 감소 & Shared Pool 메모리 공유 
+
+    ==> DB 서버 메모리 사용 감소 및 성능 향상
+
+
+
+### SQL 실행 계획
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
