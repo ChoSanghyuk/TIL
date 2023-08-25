@@ -854,13 +854,54 @@
 
 
 
-### SQL 실행 계획
+### 인덱스
+
+- 개념
+  - '어떤 데이터가 어디에 있다'라는 위치 정보를 가진 주소록 개념
+  - 책의 목차나 색인 역할로 테이블과 연결된 물리적인 객체
+  - 인덱스를 생성시킨 Key 컬럼과 RowID로 구성되며 정렬된 상태로 저장
+  - 인덱스는 테이블 Row와 하나씩 대응
+- 방식
+  - FULL SCAN => 테이블에서 직접 원하는 Data 찾음
+  - INDEX SCAN => 우선 색인 Data에서 조건 검색을 수행 후 검색된 색인을 사용하여 Data 조회
+
+- B-Tree 인덱스
+  - 2개의 자식만 가지는 Binary Tree 구조에서 확장되어 n개의 자식을 가질 수 있는 트리 구조
+    - 단, 노드의 자식수가 비대칭적일 경우 비효율적이기 때문에, 균형을 맞춤 (Balanced)
+    - 모든 leaf node가 Root node와 동일한 깊이를 가짐 (동일 Height) => 균일한 성능 보장
+  - 
+
+```
+The B-tree index is organized as a tree structure, where each node can have multiple children and contains a range of keys and pointers to other nodes. The tree is balanced in the sense that all leaf nodes are at the same level, and the number of keys in each node remains within a certain range.
+```
+
+
+
+```
+In a B-tree index, the leaf nodes contain the actual data or references to the actual data records in the database. These leaf nodes serve as the endpoints of the B-tree structure and store the values that you're indexing for quick retrieval. 
+```
 
 
 
 
 
+이러한 이유로 옵티마이저는 인덱스를 통해 레코드 1건을 읽는 것이 테이블을 통해 직접 읽는 것 보다 4~5배 정도 비용이 더 많이 드는 것으로 예측한다. 하지만 DBMS는 우리가 원하는 레코드가 어디있는지 모르므로, 모든 테이블을 뒤져서 레코드를 찾아야한다. 이는 엄청난 디스크 읽기 작업이 필요하므로 상당히 느리다.
 
+하지만 인덱스를 사용한다면 인덱스를 통해 PK를 찾고, PK를 통해 레코드를 저장된 위치에서 바로 가져올 수 있으므로 디스크 읽기가 줄어들게 된다. 그렇기 때문에 레코드를 찾는 속도가 훨씬 빠르며, 이것이 인덱스를 사용하는 이유이다.
+
+반면에 인덱스를 타지 않는 것이 효율적일 수도 있다. 인덱스를 통해 레코드 1건을 읽는 것이 4~5배 정도 비싸기 때문에, 읽어야 할 레코드의 건수가 전체 테이블 레코드의 20~25%를 넘어서면 인덱스를 이용하지 않는 것이 효율적이다. 이런 경우 옵티마이저는 인덱스를 이용하지 않고 테이블 전체를 읽어서 처리한다.
+
+
+
+'균형 트리'란 루트로부터 리프까지의 거리가 일정한 트리 구조를 뜻하는 것
+
+
+
+ B-tree 처음 생성 당시는 균형 트리이지만 테이블 갱신(INSERT/UPDATE/DELETE)의 반복을 통해 서서히 균형이 깨지고, 성능도 악화된다. 
+
+ 
+
+어느 정도 자동으로 균형을 회복하는 기능이 있지만, 갱신 빈도가 높은 테이블에 작성되는 인덱스 같은 경우 인덱스 재구성을 해서 트리의 균형을 되찾는 작업이 필요
 
 
 
