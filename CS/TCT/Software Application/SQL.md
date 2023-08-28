@@ -91,7 +91,7 @@
   - NUMBER
     - NUMBER(p,s) 형식으로 입력
       - p : 소수점 포함하는 전체 자리 수. 미지정 시, 입력되는 숫자 크기만큼 저장공간 할당
-      - s : 소수점 이하 자리. 미지정 시, 소수점 이하 반올
+      - s : 소수점 이하 자리. 미지정 시, 소수점 이하 반올림
   
 - 날짜 타입
 
@@ -171,12 +171,12 @@
   - INSTR : 명명된 문자의 위치를 구함
     - `INSTR(COL1, 'v')`
   - LPAD : 왼쪽 문자 자리 채움
-    - `LPAD(COL1, 10, *)
+    - `LPAD(COL1, 10, *)`
   - RPAD
   - TRIM : 선행문자와 후행문자를 모두 자름
     - `TRIM ('S' FROM COL1)` => 좌우의 S들 전부 제거
   - REPLACE
-    - `REPLACE('COL1, 'St', 'Ok')`
+    - `REPLACE(COL1, 'St', 'Ok')`
 - 숫자함수
   - ROUND : 지정된 소수점 자릿수로 값을 반올림 (지정 숫자가 `-`인 경우 정수레벨)
     - `ROUND(4.592,2)`
@@ -269,7 +269,7 @@
   ```
 
   - 조건에 맞는 값 및 DEFAULT 값 미존재 시, NULL 반환
-  - 실제 업무에서는 GROUP 함수와 함께 사
+  - 실제 업무에서는 GROUP 함수와 함께 사용
   - 비교 연산자 사용 X
 
   
@@ -284,7 +284,7 @@
 - 조인 조건을 명확히 기술
 - 일부 작성이 불가능한 OUTER JOIN도 표현 O
 - 각 DBMS 벤더 제공 기능 활용에 제약 O
-  - 벤더 dependent SQL : 각 벤더사 자체의 SQL은 자체 구조에 맞는 쿼리에 성능상 이점 존
+  - 벤더 dependent SQL : 각 벤더사 자체의 SQL은 자체 구조에 맞는 쿼리에 성능상 이점 존재
 
 
 
@@ -320,9 +320,86 @@
 
 
 
-### 카티시안 곱의 활용
+### :bulb: 행/열 바꾸기
 
-20/132 => 계층 쿼리 학습 후 가로 세로 행/열 바꾸기 
+- 카타시안 곱의 활용
+
+  ```SQL
+  SELECT DEPARMENT_ID
+  	  ,JOB_ID
+  	  ,DECODE(LV, 1, '결혼여부', 2, '공채여부', 3, '특별관리대상여부') 구분
+  	  ,DECODE(LV, 1, MARRY_YN, 2, OPENRECUIT_YN, 3, SPECIALMMG_YN) 값
+  FROM EMPLOYEES
+  	,(SELECT LEVEL LV
+        FROM DUAL
+        CONNECT BY LEVEL <=3)
+  WHERE 1=1
+  AND JOB_ID LIKE 'M%'
+  AND DEPARMENT_ID IN (20,30)
+  ORDER BY 1,2,3
+  ```
+
+- PIVOT 함수 활용
+
+  - PIVOT 개요
+
+    - 개념
+
+      - 식에 있는 한 열의 값들을 회전하여 테이블의 열(column)으로 지정
+
+    - 문법
+
+      ```SQL
+      SELECT 집계함수의 열 + 기준열의 값
+      FROM (
+          SELECT 원본테이블
+      ) AS TEMP
+      PIVOT (
+          집계함수 FOR 기준열 IN (기준열의 값)
+      ) AS PVT
+      ```
+
+      - `집계함수의 열`과 `기준열의 값`로 GROUP BY 한 집계함수의 결과에서 `기준열의 값` 과 집계함수 값을 열로 회전시킴
+
+    - 예제
+
+      ```SQL
+      SELECT deptno
+           , p_president
+           , p_analyst
+           , p_manager
+           , p_salesman
+           , p_clerk
+        FROM (
+               SELECT deptno
+                    , job
+                    , sal
+                 FROM emp
+             )
+       PIVOT (
+               SUM(sal) FOR job IN ( 'PRESIDENT' AS p_president
+                                   , 'ANALYST'   AS p_analyst
+                                   , 'MANAGER'   AS p_manager
+                                   , 'SALESMAN'  AS p_salesman
+                                   , 'CLERK'     AS p_clerk )
+             )
+      ```
+
+- DECODE 활용
+
+  ```SQL
+  SELECT deptno
+       , SUM(DECODE(job, 'PRESIDENT', sal)) AS p_president
+       , SUM(DECODE(job, 'ANALYST', sal))   AS p_analyst
+       , SUM(DECODE(job, 'MANAGER', sal))   AS p_manager
+       , SUM(DECODE(job, 'SALESMAN', sal))  AS p_salesman
+       , SUM(DECODE(job, 'CLERK', sal))     AS p_clerk
+    FROM emp
+   GROUP BY deptno
+   ORDER BY deptno
+  ```
+
+  
 
 
 
@@ -444,7 +521,7 @@
   - 분석함수 : 분석함수 명을 명시
   - 파라미터 : 분석함수에 따라 0에서 3개까지의 파라미터 가짐
   - query_partition 절 : `PARTITION BY`로 시작하여, 분석함수의 계산그룹 대상 지정
-  - order_by 절 : 계산대상 그룹에 대해 정렬작업을 수
+  - order_by 절 : 계산대상 그룹에 대해 정렬작업을 수행
   - windowing 절 : `PARTITION BY`에 의해 나누어진 기준 그룹에 또 다시 소그룹을 생성 (생략 시, 소그룹 = 기준그룹)
 
 - 실행 단계
@@ -457,7 +534,7 @@
 
   - **RANKING** 함수 : 순위 함수
 
-    - 다른 레코드와 비교되는 순서 계
+    - 다른 레코드와 비교되는 순서 계산
 
     - TOP N 분석에 활용
 
@@ -617,7 +694,7 @@
 
   - 온라인 프로그램 중 추출된 데이터 건수가 많아 한 화면에 보여주면 성능상 문제 발생 경우 有
 
-    => 페이지 분활 => 최소 데이터만 보여주도록 작
+    => 페이지 분할 => 최소 데이터만 보여주도록 작성
 
   - 종류 : Index Paging, NEXT Paging
 
@@ -939,7 +1016,7 @@
   | INDEX 구성 컬럼의 내부적 변형 | 데이터 형이 상이한 컬럼 간 조인, 데이터 형에 부적절한 값의 대응과 같은 내부적 변형 발생 | 데이터 모델 상의 적합성 정비<br />데이터형에 적합한 연상 수행 유도 |
   | 부정형 비교                   | 부정형 비교 (!=, <>, NOT IN) 수행                            | 가능한 부정형 제거                                           |
   | NULL 값 비교                  | IS (NOT) NULL 비교 => 인덱스에는 NULL 미존재하므로 사용 X 경우 발생 | 테이블 생성 시 인덱스 컬럼에 DEFAULT 값 적용으로 NULL 값 제거 |
-  | 기타                          | 결합 index 사용 부적절                                       | 선행 컬럼의 조거 사용                                        |
+  | 기타                          | 결합 index 사용 부적절                                       | 선행 컬럼의 조건 사용                                        |
   | 기타                          | %가 앞에 나오는 등 LIKE 비교 부적절                          | BETWEEN, <= 같은 연산자 사용 및 사용자 입력 값 검토          |
   | 기타                          | HAVING 절의 조건 추가<br />(Having 절에는 Index 미적용)      | WHERE 절에서 조건 추가                                       |
 
@@ -952,13 +1029,21 @@
   - 선행테이블의 데이터와 매치되는 값을 후행테이블에서 찾아옴
   - 선행테이블에서 추출되는 데이터 건수만큼 후행테이블을 반복 엑세스
   - 후행테이블에 인덱스가 있으면 해당 값을 빨리 찾아올 수 있음
-- 
+- SORT MERGE JOIN
+  - 두 테이블을 각각 읽어 조인 컬럼을 정렬한 후, 결과를 합쳐 조인하는 방식
+  - 항상 정렬 작업 발생 => 정렬 크기에 따라 자원 소모 클 수 있음
+  - 테이블 순서 상관 X
 
- 
+- HASH JOIN
+  - 선행 조인 컬럼의 HASH 테이블을 메모리에 만들고, 후행 테이블의 조인 컬럼과 일치하는 값을 선별
+  - SORT MERGE의 시스템 자원 소모의 대안으로 등장
+  - 대용량 테이블 조인에 주로 사용
 
 
+:bulb: 선행테이블, 후행 테이블
 
-
+- 선행 테이블 (driving table) : 조인 시, 먼저 수행되는 테이블
+- 후행 테이블(inner table) : 조인 조건을 상수로 제공받아 나중에 수행되는 테이
 
 
 
