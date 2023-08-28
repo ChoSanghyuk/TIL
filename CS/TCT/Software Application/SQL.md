@@ -861,55 +861,100 @@
   - 책의 목차나 색인 역할로 테이블과 연결된 물리적인 객체
   - 인덱스를 생성시킨 Key 컬럼과 RowID로 구성되며 정렬된 상태로 저장
   - 인덱스는 테이블 Row와 하나씩 대응
-- 방식
+- 데이터 Access 방식
   - FULL SCAN => 테이블에서 직접 원하는 Data 찾음
   - INDEX SCAN => 우선 색인 Data에서 조건 검색을 수행 후 검색된 색인을 사용하여 Data 조회
-
 - B-Tree 인덱스
   - 2개의 자식만 가지는 Binary Tree 구조에서 확장되어 n개의 자식을 가질 수 있는 트리 구조
     - 단, 노드의 자식수가 비대칭적일 경우 비효율적이기 때문에, 균형을 맞춤 (Balanced)
     - 모든 leaf node가 Root node와 동일한 깊이를 가짐 (동일 Height) => 균일한 성능 보장
-  - 
+  - leaf node 외의 노드들은 키값의 범위와 다른 노드들에 대한 포인터 값을 저장
+  - leaf node는 실제 값 또는 DB 내의 실제 data record에 대한 참조 값(Row ID)을 가짐
 
-```
-The B-tree index is organized as a tree structure, where each node can have multiple children and contains a range of keys and pointers to other nodes. The tree is balanced in the sense that all leaf nodes are at the same level, and the number of keys in each node remains within a certain range.
-```
+- 종류
+
+  - 컬럼 값의 중복 여부
+
+    - Unique Index
+      - 중복이 없는 유일 값을 가지는 컬럼에 대한 Index
+      - 기본키 / 고유키 무결성 제약조건 설정 시, 자동 생성
+      - 명시적 생성 : `CREATE UNIQUE INDEX 인덱스이름 ON 테이블 (컬럼) ;`
+    - Non-Unique Index
+      - 중복된 값을 가지는 컬럼에 대한 Index
+      - `CRATE INDEX 인덱스이름 ON 테이블 (컬럼) ;`
+
+  - 컬럼의 결합 여부
+
+    - 단일 인덱스
+      - 하나의 컬럼만으로 구성된 인덱스
+      - `CRATE INDEX 인덱스이름 ON 테이블 (컬럼) ;`
+    - 결합 인덱스
+      - 두 개 이상의 컬럼을 결합하여 생성
+      - WHERE 조건에서 두 개 이상의 컬럼이 AND로 자주 연결되어 사용되는 경우 생성
+      - `CRATE INDEX 인덱스이름 ON 테이블 (컬럼1, 컬럼2) ;`
+
+  - 연산자 또는 함수의 적용
+
+    - 함수기반인덱스
+
+      - 일반적으로 컬럼에 함수 사용 시 인덱스 사용 불가능
+      - 함수나 수식으로 계산된 결과에 대해 인덱스 생성 제공
+
+      ```SQL
+      SELECT MEMBERID, NAME, EMAIL
+      FROM MEMBER
+      WHERE UPPER(NAME) LIKE 'A%';
+      ```
+
+      - `CRATE INDEX MEMBER_FIX01 ON MEMBER (UPPER(NAME)) ;`
+      - :bulb: 함수 기반 인덱스 생성보단 변형을 가하지 않는 대안 찾는 것이 중요
+
+- 사용 지침
+
+  - 한 테이블에 여러 인덱스가 있더라도 여러 인덱스가 하나의 SQL에서 동시에 사용 X
+
+  - 결합 인덱스를 구성하는 컬럼 중, 첫 번째 컬럼이 WHERE 조건에 지정되어야 해당 인덱스가 정상 사용
+
+  - 테이블의 크기가 적은 것은 인덱스를 사용 않는 것이 유리
+
+  - 넓은 범위를 인덱스로 처리시 성능 감소
+
+    - 읽을 레코드의 건수가 전체 레코드의 20~25%를 넘어서면 인덱스를 타지 않는 것이 효율적
+
+      - 인덱스를 통합 탐색 = 1. 인덱스로 Reference 찾음 + 2. Reference 를 통해 레코드를 찾음
+
+        =>  1건당 비용이 FULL SCAN보다 4~5배 정도 비쌈
+
+    - 해당 경우, 옵티마이저가 FULL SCAN으로 자체 판단
+
+  - 새로 추가된 인덱스는 기존 엑세스 경로에 영향 줄 수 있음
+
+    => 영향도 파악 필요
+
+- 인덱스 사용 X 경우
+
+  | 유형                          | 설명                                                         | 권고안                                                       |
+  | ----------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+  | INDEX 구성 컬럼의 외부적 변형 | 함수 사용, 연산 수행 등으로 변형                             | INDEX 컬럼에 대한 외부적 변형 제거                           |
+  | INDEX 구성 컬럼의 내부적 변형 | 데이터 형이 상이한 컬럼 간 조인, 데이터 형에 부적절한 값의 대응과 같은 내부적 변형 발생 | 데이터 모델 상의 적합성 정비<br />데이터형에 적합한 연상 수행 유도 |
+  | 부정형 비교                   | 부정형 비교 (!=, <>, NOT IN) 수행                            | 가능한 부정형 제거                                           |
+  | NULL 값 비교                  | IS (NOT) NULL 비교 => 인덱스에는 NULL 미존재하므로 사용 X 경우 발생 | 테이블 생성 시 인덱스 컬럼에 DEFAULT 값 적용으로 NULL 값 제거 |
+  | 기타                          | 결합 index 사용 부적절                                       | 선행 컬럼의 조거 사용                                        |
+  | 기타                          | %가 앞에 나오는 등 LIKE 비교 부적절                          | BETWEEN, <= 같은 연산자 사용 및 사용자 입력 값 검토          |
+  | 기타                          | HAVING 절의 조건 추가<br />(Having 절에는 Index 미적용)      | WHERE 절에서 조건 추가                                       |
 
 
 
-```
-In a B-tree index, the leaf nodes contain the actual data or references to the actual data records in the database. These leaf nodes serve as the endpoints of the B-tree structure and store the values that you're indexing for quick retrieval. 
-```
+### 조인 처리 방식
 
-
-
-
-
-이러한 이유로 옵티마이저는 인덱스를 통해 레코드 1건을 읽는 것이 테이블을 통해 직접 읽는 것 보다 4~5배 정도 비용이 더 많이 드는 것으로 예측한다. 하지만 DBMS는 우리가 원하는 레코드가 어디있는지 모르므로, 모든 테이블을 뒤져서 레코드를 찾아야한다. 이는 엄청난 디스크 읽기 작업이 필요하므로 상당히 느리다.
-
-하지만 인덱스를 사용한다면 인덱스를 통해 PK를 찾고, PK를 통해 레코드를 저장된 위치에서 바로 가져올 수 있으므로 디스크 읽기가 줄어들게 된다. 그렇기 때문에 레코드를 찾는 속도가 훨씬 빠르며, 이것이 인덱스를 사용하는 이유이다.
-
-반면에 인덱스를 타지 않는 것이 효율적일 수도 있다. 인덱스를 통해 레코드 1건을 읽는 것이 4~5배 정도 비싸기 때문에, 읽어야 할 레코드의 건수가 전체 테이블 레코드의 20~25%를 넘어서면 인덱스를 이용하지 않는 것이 효율적이다. 이런 경우 옵티마이저는 인덱스를 이용하지 않고 테이블 전체를 읽어서 처리한다.
-
-
-
-'균형 트리'란 루트로부터 리프까지의 거리가 일정한 트리 구조를 뜻하는 것
-
-
-
- B-tree 처음 생성 당시는 균형 트리이지만 테이블 갱신(INSERT/UPDATE/DELETE)의 반복을 통해 서서히 균형이 깨지고, 성능도 악화된다. 
+- NESTED LOOP JOIN
+  - 가장 보편적 조인
+  - 선행테이블의 데이터와 매치되는 값을 후행테이블에서 찾아옴
+  - 선행테이블에서 추출되는 데이터 건수만큼 후행테이블을 반복 엑세스
+  - 후행테이블에 인덱스가 있으면 해당 값을 빨리 찾아올 수 있음
+- 
 
  
-
-어느 정도 자동으로 균형을 회복하는 기능이 있지만, 갱신 빈도가 높은 테이블에 작성되는 인덱스 같은 경우 인덱스 재구성을 해서 트리의 균형을 되찾는 작업이 필요
-
-
-
-
-
-
-
-
 
 
 
