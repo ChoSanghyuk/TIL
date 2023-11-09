@@ -86,7 +86,7 @@
        => 객체 다운 모델링을 할 경우,
 
        			- Member Insert 시, `Team`의 Id에 대한 별도 접근 필요 `member.getTeam().getId()`
-  		
+  			
        			- Member Select 시, `Member`와 `Team`을 모두 조회 & 관계 설정 필요
 
        :heavy_check_mark: 자바 컬럭센 사용의 경우
@@ -156,7 +156,7 @@
     - 특정 기능 수행하는 라이브러리 X. ORM 사용방식을 정의한 기술 명세 O
     - JPA 2.1의 표준 명세를 구현한 3가지 구현체 : 하이버네이트, EclipseLink, DataNucleus
 
-- JPA 장
+- JPA 장점
 
   - SQL 중심적인 개발에서 객체 중심으로 개발
 
@@ -214,11 +214,155 @@
 
 
 
+## JPA 시작
+
+### [프로젝트 설정]
+
+#### H2 데이터베이스 설치와 실행
+
+- H2
+  - 가볍다.(1.5M)
+  -  MySQL, Oracle 데이터베이스 시뮬레이션 기능
+  - 시퀀스, AUTO INCREMENT 기능 지원
+  - 설치 시 주의사항
+    - 처음 실행 시, Generic H2(Embedded) 모드로 실행 후 => Server 모드 실행
+
+
+
+#### 라이브러리 추가
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?> 
+<project xmlns="http://maven.apache.org/POM/4.0.0" 
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"> 
+	 <modelVersion>4.0.0</modelVersion> 
+     <groupId>jpa-basic</groupId> 
+     <artifactId>ex1-hello-jpa</artifactId> 
+     <version>1.0.0</version> 
+     <dependencies> 
+     <!-- JPA 하이버네이트 --> 
+         <dependency> 
+             <groupId>org.hibernate</groupId> 
+             <artifactId>hibernate-entitymanager</artifactId> 
+             <version>5.3.10.Final</version> 
+         </dependency> 
+     <!-- H2 데이터베이스 --> 
+         <dependency> 
+             <groupId>com.h2database</groupId> 
+             <artifactId>h2</artifactId> 
+             <version>1.4.199</version> 
+         </dependency> 
+     </dependencies> 
+</project>
+```
+
+- 라이브러리 버전 선택
+  - Spring.io => Project => Spring Boot => 내가 사용할 Spring 버전의 `Reference Doc` => `Dependency Version` => 사용할 의존성 명 검색
+- H2 의존성
+  - 다운받은 버전과 일치시키는 것 권장
+
+
+
+#### JPA 설정
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.2"
+             xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_2.xsd">
+    <persistence-unit name="hello">
+        <properties>
+            <!-- 필수 속성 -->
+            <property name="javax.persistence.jdbc.driver" value="org.h2.Driver"/>
+            <property name="javax.persistence.jdbc.user" value="sa"/>
+            <property name="javax.persistence.jdbc.password" value=""/>
+            <property name="javax.persistence.jdbc.url" value="jdbc:h2:tcp://localhost/~/test"/>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
+
+            <!-- 옵션 -->
+            <property name="hibernate.show_sql" value="true"/>
+            <property name="hibernate.format_sql" value="true"/>
+            <property name="hibernate.use_sql_comments" value="true"/>
+            <!--<property name="hibernate.hbm2ddl.auto" value="create" />-->
+        </properties>
+    </persistence-unit>
+</persistence>
+```
+
+- resources//META-INF/persistence.xml
+- `persistence-unit`
+  - 이름 지정(주로 DB 이름)
+  - DataBase 별로 하나씩 생성
+- 필수속성
+  - DB  접속 정보
+- 옵션
+  - `hibernate.show_sql` : 실행되는 SQL 콘솔 출력
+  - `hibernate.format_sql` : 출력되는 SQL를 예쁘게 만들어서 출력
+  - `hibernate.use_sql_comments` : `/* */` 주석안에 ... 포함해서 SQL 출력
+
+
+
+#### JPA Dialect 지정
+
+- 데이터베이스 방언
+  - 방언: SQL 표준을 지키지 않는 특정 데이터베이스만의 고유한 기능
+    - 가변 문자: MySQL은 VARCHAR, Oracle은 VARCHAR2 
+    - 문자열을 자르는 함수: SQL 표준은 `SUBSTRING()`, Oracle은 `SUBSTR() `
+    - 페이징: MySQL은 LIMIT , Oracle은 ROWNUM 
+- JPA는 특정 데이터베이스에 종속 X
+  - 지정된 Dialect에 맞게 SQL문을 생성
+  - `hibernate.dialect` 속성에 지정
 
 
 
 
 
+### [Hello JPA - 애플리케이션 개발]
+
+
+
+#### JPA 구동 방식
+
+<img src="JPA_기본편.assets/image-20231110081614062.png" alt="image-20231110081614062" style="zoom:80%;" />
+
+- **엔티티 매니저 팩토리**는 하나만 생성해서 애플리케이션 전체에서 공유함
+
+- 주의 사항
+
+  - **엔티티 매니저**는 쓰레드간에 공유 X (사용하고 버려야 한다). 
+  - **JPA의 모든 데이터 변경은 트랜잭션 안에서 실행**
+
+- 샘플 코드
+
+  ```java
+  EntityManagerFactory emf = Persistence.createEntityManagerFactory("hello");
+  EntityManager em = emf.createEntityManager();
+  EntityTransaction transaction = em.getTransaction();
+  transaction.begin();
+  
+  Member member1 = new Member();
+  member1.setId(1L);
+  member1.setName("HelloA");
+  em.persist(member1);
+  transaction.commit();
+  em.close();
+  emf.close();
+  ```
+
+  
+
+
+
+### JPQL 소개
+
+- 필요 이유
+  - JPA의 메소드만으로는 복잡한 조건을 가진 쿼리를 실행할 수 X
+- 개요
+  - JPA는 SQL을 추상화한 JPQL이라는 객체 지향 쿼리 언어 제공
+  - SQL과 문법 유사, SELECT, FROM, WHERE, GROUP BY,  HAVING, JOIN 지원
+  - **JPQL은 엔티티 객체**를 대상으로 쿼리
+    - SQL은 데이터베이스 테이블을 대상으로 쿼리
 
 
 
