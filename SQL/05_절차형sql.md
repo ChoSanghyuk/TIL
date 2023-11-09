@@ -156,3 +156,17 @@ END UF_TEST_MONTH1;
 
 
 
+## 반복문
+
+
+
+### FOR문
+
+```SQL
+BEGIN
+	FOR I IN 1..10 LOOP
+	// SQL 문
+	END LOOP;
+END;
+```
+

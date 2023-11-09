@@ -86,7 +86,7 @@
        => 객체 다운 모델링을 할 경우,
 
        			- Member Insert 시, `Team`의 Id에 대한 별도 접근 필요 `member.getTeam().getId()`
-  	
+  		
        			- Member Select 시, `Member`와 `Team`을 모두 조회 & 관계 설정 필요
 
        :heavy_check_mark: 자바 컬럭센 사용의 경우
@@ -121,7 +121,7 @@
 - JPA
 
   - Java Persistence API
-  - 자바 진영의 ORM 기술 표
+  - 자바 진영의 ORM 기술 표준
 
 - ORM
 
@@ -153,7 +153,8 @@
     - EJB라는 자바 표준 엔터티의 빈의 불편함에서 Hibernate가 오픈 소스로 개발됨 => 이를 바탕으로 자바 표준 JPA 개발
   - 표준 명세
     - JPA는 인터페이스의 모음
-    - JPA 2.1 표준 명세를 구현한 3가지 구현체 : \- 하이버네이트, EclipseLink, DataNucleus
+    - 특정 기능 수행하는 라이브러리 X. ORM 사용방식을 정의한 기술 명세 O
+    - JPA 2.1의 표준 명세를 구현한 3가지 구현체 : 하이버네이트, EclipseLink, DataNucleus
 
 - JPA 장
 
