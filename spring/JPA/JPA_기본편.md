@@ -25,7 +25,7 @@
 
     1. 상속
 
-       ![image-20231108080124159](JPA소개.assets/image-20231108080124159.png)
+       ![image-20231108080124159](JPA_기본편.assets/image-20231108080124159.png)
 
        - 객체	: 상속 관계
 
@@ -363,6 +363,102 @@
   - SQL과 문법 유사, SELECT, FROM, WHERE, GROUP BY,  HAVING, JOIN 지원
   - **JPQL은 엔티티 객체**를 대상으로 쿼리
     - SQL은 데이터베이스 테이블을 대상으로 쿼리
+
+
+
+## 영속성 관리
+
+
+
+### 영속성 컨텍스트
+
+- JPA에서 가장 중요한 2가지
+
+  - 객체와 관계형  DB 매핑하기
+  - **영속성 컨텍스트**
+
+- 개요
+
+  - 엔티티를 영구 저장하는 환경
+  - `EntityManager.persist(entity);`
+  - 눈에 보이지 않는 논리적인 개념으로, 엔티티 매니저를 통해서 영속성 컨텍스트에 접근
+
+- 엔티티의 생명주기
+
+  <img src="JPA_기본편.assets/image-20231112103649098.png" alt="image-20231112103649098" style="zoom:50%;" />
+
+  - 비영속(new/transient) : 영속성 컨텍스트와 전혀 관계가 없는 새로운 상태
+  - 영속(managed) : 영속성 컨텍스에 관리되는 상태
+  - 준영속(detached) : 영속성 컨텍스트 저장되었다가 분리된 상태
+  - 삭제(removed) : 삭제된 상태
+
+- 장점
+
+  - 1차 캐시
+    - Map<PK, 엔티티 > 구조로 되어있어, DB 조회 전에 1차 캐시에서 먼저 검색함
+  - 동일성 보장
+    - 1차 캐시로 반복 가능한 읽기(REPEATABLE READ) 등급의 트랜잭 션 격리 수준을 데이터베이스가 아닌 애플리케이션 차원에서 제공
+  - 트랙잭을 지원하는 쓰기 지연
+    - 커밋하는 순간 데이터베이스에 SQL을 보낸다
+    - `<property name = "hibernate.jdbc.batch_size" value="10" />` 설정을 통해, 배치로 한꺼번에 SQL문을 날릴 수 있
+  - 변경 감지(Dirty Checking)
+    - 영속성 컨텍스트에는 1차 캐시 뿐만 아니라, 스냅샷을 통해 엔티티의 초기 상태를 저장함
+    - `flush` 요청이 올 때, 현재 엔티티와 스냅샷을 비교
+    - 변경이 있을 경우, 차이나는 필드 뿐 아니라 모든 필드에 대한 Update 쿼리 생성
+  - 지연 로딩
+
+
+
+### 플러시 (flush)
+
+- 개념
+
+  - 영속성 컨텍스트의 변경내용을 데이터베이스에 반영
+
+- 동작
+
+  1. 변경 감지
+
+  2. 수정된 엔티티 쓰기 지연 SQL 저장소에 등록
+
+  3. 쓰기 지연 SQL 저장소의 쿼리를 데이터베이스에 전송 
+
+- 수행 방법
+
+  - `em.flush()` : 직접 호출
+
+  - 트랜잭션 커밋 : 플러시 자동 호출
+
+  - JPQL 쿼리 실행 : 플러시 자동 호출
+
+    - 자동 호출 이유
+
+      ```java
+      em.persist(memberA);
+      em.persist(memberB);
+      em.persist(memberC);
+      //중간에 JPQL 실행
+      query = em.createQuery("select m from Member m", Member.class);
+      List<Member> members= query.getResultList();
+      
+      ```
+
+      - 플러시가 수행되지 않았다면, JPQL이 의미없이 사용됨
+
+    - 플러시 모드 옵션
+
+      - `em.setFlushMode(FlushModeType.AUTO)`
+        - 기본값 (사용 권장)
+      - `em.setFlushMode(FlushModeType.COMMIT)`
+        - Commit할 때만 수행되는 것으로 변경
+
+- 특징
+
+  - 영속성 컨텍스트를 비우지 않음
+    - flush 이후 변경사항이 없으면 재flush할 때 작업 X
+    - `flush` 후 snapshot이 갱신되는 것인지, 아니면 현재까지의 작업 내용을 저장하고 반복 수행 안 하는 것인지는 불확실
+  - 영속성 컨텍스트의 변경내용을 데이터베이스에 동기화
+  - 트랜잭션이라는 작업 단위가 중요 => 커밋 직전에만 동기화  하면 됨
 
 
 
