@@ -560,6 +560,73 @@
 
 
 
+### 필드와 컬럼 매핑
+
+- 샘플
+
+  ```java
+  @Entity 
+  public class Member { 
+       @Id 
+       private Long id; 
+      
+       @Column(name = "name") 
+       private String username; 
+      
+       private Integer age; 
+      
+       @Enumerated(EnumType.STRING) 
+       private RoleType roleType; 
+      
+       @Temporal(TemporalType.TIMESTAMP) 
+       private Date createdDate; 
+      
+       @Temporal(TemporalType.TIMESTAMP) 
+       private Date lastModifiedDate; 
+      
+       @Lob 
+       private String description; 
+       //Getter, Setter… 
+  }
+  ```
+
+- 매핑 어노테이션 정리
+
+  - `@Column` : 컬럼 매핑
+
+    | 속성                   | 설명                                                         | 기본값                 |
+    | ---------------------- | ------------------------------------------------------------ | ---------------------- |
+    | name                   | 필드와 매핑할 테이블의 컬럼 이름                             | 객체의 필드 이름       |
+    | insertable,updatable   | 등록, 변경 가능 여부                                         | TRUE                   |
+    | nullable(DDL)          | null 값의 허용 여부 설정<br />false => DDL 생성 시 not null 제약조건 |                        |
+    | unique(DDL)            | @Table의 uniqueConstraints와 같지만 한 컬럼에 간단히 유니크 제약조건을 걸 때 사용한다 |                        |
+    | columnDefinition (DDL) | 데이터베이스 컬럼 정보를 직접 줄 수 있다.  ex) varchar(100) default ‘EMPTY |                        |
+    | length(DDL)            | 문자 길이 제약조건, String 타입에만 사용한다.                | 255                    |
+    | precision,  scale(DDL) | BigDecimal 타입(혹은 BigInteger)에서 사용<br />    - precision :소수점을 포함한 전체 자릿수를, <br />    - scale :소수의 자릿수<br />참고로 double, float 타입에는 적용되지 X | precision=19,  scale=2 |
+
+  - `@Temporal` : 날짜 타입 매핑
+
+    | 속성  | 매핑                                                         | 기본값 |
+    | ----- | ------------------------------------------------------------ | ------ |
+    | value | `TemporalType.DATE` : 날짜, 데이터베이스 date 타입과 매핑 (예: 2013–10–11) <br />`TemporalType.TIME` : 시간, 데이터베이스 time 타입과 매핑 (예: 11:11:11) <br />`TemporalType.TIMESTAMP` : 날짜와 시간, 데이터베이스 timestamp 타입과 매핑(예: 2013–10–11 11:11:11) |        |
+
+    - :bulb: LocalDate, LocalDateTime을 사용할 때는 생략 가능
+
+  - `@Enumerated` : enum 타입 매핑
+
+    | 속성  | 설명                                                         | 기본값           |
+    | ----- | ------------------------------------------------------------ | ---------------- |
+    | value | `EnumType.ORDINAL` : enum 순서를 데이터베이스에 저장<br />`EnumType.STRING`   : enum 이름을 데이터베이스에 저장 | EnumType.ORDINAL |
+
+    - :bulb: **주의! ORDINAL 사용X**
+      - Enum에 신규 추가로 순서 꼬일 경우, DB 전체 update 필요
+
+  - `@Lob` : BLOB, CLOB 매핑
+    - 매핑하는 필드 타입이 문자면 CLOB 매핑, 나머지는 BLOB 매핑
+    - 속성 X
+  - `@Transient` : 특정 필드를 컬럼에 매핑하지 않음(매핑 무시)
+    - 주로 메모리상에서만 임시로 어떤 값을 보관하고 싶을 때 사용
+
 
 
 
