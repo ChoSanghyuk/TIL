@@ -520,10 +520,13 @@
 
 
 
+<<<<<<< HEAD
 :bulb: 엔티티에 Setter를 모든 필드에 다 추가할 경우, 데이터 변경 트래킹에 어려움이 있음. 가급적 생성자로 값 세팅
 
 
 
+=======
+>>>>>>> c68732e40d63aa39a2d0d7cd5738fa28ae0a0175
 ### 데이터베이스 스키마 자동 생성
 
 - 개요
@@ -600,13 +603,19 @@
 
     | 속성                   | 설명                                                         | 기본값                 |
     | ---------------------- | ------------------------------------------------------------ | ---------------------- |
+    <<<<<<< HEAD
     | name                   | 필드와 매핑할 테이블의 컬럼 이름<br />Spring boot에서 jpa 사용하면, 카멜 => 스네이크 자동 변환(소문자) | 객체의 필드 이름       |
-    | insertable,updatable   | 등록, 변경 가능 여부                                         | TRUE                   |
-    | nullable(DDL)          | null 값의 허용 여부 설정<br />false => DDL 생성 시 not null 제약조건 |                        |
-    | unique(DDL)            | @Table의 uniqueConstraints와 같지만 한 컬럼에 간단히 유니크 제약조건을 걸 때 사용한다 |                        |
-    | columnDefinition (DDL) | 데이터베이스 컬럼 정보를 직접 줄 수 있다.  ex) varchar(100) default ‘EMPTY |                        |
-    | length(DDL)            | 문자 길이 제약조건, String 타입에만 사용한다.                | 255                    |
-    | precision,  scale(DDL) | BigDecimal 타입(혹은 BigInteger)에서 사용<br />    - precision :소수점을 포함한 전체 자릿수를, <br />    - scale :소수의 자릿수<br />참고로 double, float 타입에는 적용되지 X | precision=19,  scale=2 |
+    =======
+    | name                   | 필드와 매핑할 테이블의 컬럼 이름                             | 객체의 필드 이름       |
+
+
+
+| insertable,updatable   | 등록, 변경 가능 여부                                         | TRUE                   |
+| nullable(DDL)          | null 값의 허용 여부 설정<br />false => DDL 생성 시 not null 제약조건 |                        |
+| unique(DDL)            | @Table의 uniqueConstraints와 같지만 한 컬럼에 간단히 유니크 제약조건을 걸 때 사용한다 |                        |
+| columnDefinition (DDL) | 데이터베이스 컬럼 정보를 직접 줄 수 있다.  ex) varchar(100) default ‘EMPTY |                        |
+| length(DDL)            | 문자 길이 제약조건, String 타입에만 사용한다.                | 255                    |
+| precision,  scale(DDL) | BigDecimal 타입(혹은 BigInteger)에서 사용<br />    - precision :소수점을 포함한 전체 자릿수를, <br />    - scale :소수의 자릿수<br />참고로 double, float 타입에는 적용되지 X | precision=19,  scale=2 |
 
   - `@Temporal` : 날짜 타입 매핑
 
@@ -630,6 +639,129 @@
     - 속성 X
   - `@Transient` : 특정 필드를 컬럼에 매핑하지 않음(매핑 무시)
     - 주로 메모리상에서만 임시로 어떤 값을 보관하고 싶을 때 사용
+
+
+
+### 기본 키 매핑
+
+- 기본 키 매핑 어노테이션
+
+  - `@Id`
+
+  - `@GenratedValue`
+
+    ```java
+    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    ```
+
+- 기본 키 매핑 방법
+
+  - 직접 할당 : `@Id`만 사용
+
+  - 자동 생성 : `@GenratedValue`
+
+    - `IDENTITY` : 데이터베이스에 위임
+
+      - 주로 MySQL, PostgreSQL, SQL Server, DB2에서 사용
+        - MySQL => AUTO_INCREMENT
+
+      - JPA는 보통 커밋 시점에 INSERT문을 실행하지만, IDENTITY 전략은 `persist` 시점에 즉시 INSERT 실행 후 DB에서 식별자 조회
+
+    - `SEQUENCE` : 데이터베이스 시퀀스 오브젝트 사용
+
+      - 유일한 값을 순서대로 생성하는 특별한 DB 오브젝트
+
+      - 오라클, PostgreSQL, DB2, H2 데이터베이스에서 사용
+
+      - `@SequenceGenerator` 필요
+
+        - 속성
+
+          | 속성            | 설명                                                         | 기본값             |
+          | --------------- | ------------------------------------------------------------ | ------------------ |
+          | name            | 식별자 생성기 이름                                           | 필수               |
+          | sequenceName    | 데이터베이스에 등록되어 있는 시퀀스 이름                     | hibernate_sequence |
+          | initialValue    | DDL 생성 시에만 적용<br />처음 시작하는 수 지정              | 1                  |
+          | allocationSize  | 시퀀스 한 번 호출에 증가하는 수(성능 최적화)<br />**시퀀스 값이 하나씩 증가하도록 설정되어 있다면 반드시 1로 설정** | ****               |
+          | catalog, schema | 데이터베이스 catalog, schema 이름                            |                    |
+
+        - 샘플
+
+            ```java
+            @Entity 
+            @SequenceGenerator( 
+             name = “MEMBER_SEQ_GENERATOR", 
+             sequenceName = “MEMBER_SEQ", //매핑할 데이터베이스 시퀀스 이름
+             initialValue = 1, allocationSize = 1) 
+            public class Member { 
+             @Id 
+             @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "MEMBER_SEQ_GENERATOR") 
+             private Long id; 
+            ```
+
+    - `TABLE` : 키 생성용 테이블 사용
+
+      - 키 생성 전용 테이블을 하나 만들어서 DB 시퀀스를 흉내내는 전략
+
+      - 모든 DB에서 사용 O
+    
+      - Lock 등의 이유로 **성능상 단점**이 존재하여 운영 단계에서 잘 사용 X
+    
+      - `@TableGenerator` 필요
+    
+        - 속성
+    
+          | 속성                   | 설명                                 | 기본값              |
+          | ---------------------- | ------------------------------------ | ------------------- |
+          | name                   | 식별자 생성기 이름                   | 필수                |
+          | table                  | 키생성 테이블명                      | hibernate_sequences |
+          | pkColumnName           | 시퀀스 컬럼명                        | sequence_name       |
+          | valueColumnName        | 시퀀스 값 컬럼명                     | next_val            |
+          | pkColumnValue          | 키로 사용할 값 이름                  | 엔티티 이름         |
+          | initialValue           | 초기 값, 마지막으로 생성된 값이 기준 | 0                   |
+          | allocationSize         | 시퀀스 한 번 호출에 증가하는 수      | **50**              |
+          | catalog, schema        | 데이터베이스 catalog, schema 이름    |                     |
+          | uniqueConstraint (DDL) | 유니크 제약 조건 지정                |                     |
+    
+        - 샘플
+    
+          ```java
+          @Entity 
+          @TableGenerator( 
+           name = "MEMBER_SEQ_GENERATOR", 
+           table = "MY_SEQUENCES", 
+           pkColumnValue = “MEMBER_SEQ", allocationSize = 1) 
+          public class Member { 
+           @Id 
+           @GeneratedValue(strategy = GenerationType.TABLE, 
+           generator = "MEMBER_SEQ_GENERATOR") 
+           private Long id; 
+          ```
+    
+          ```sql
+          create table MY_SEQUENCES ( 
+           sequence_name varchar(255) not null, 
+           next_val bigint, 
+           primary key ( sequence_name ) 
+          )
+          ```
+    
+    - `AUTO` : 방언에 따라 자동 지정. 기본값
+
+
+
+### :bulb: 권장하는 식별자 조합
+
+- null 아니고, 유일하며, 변하면 안된다
+
+- **미래까지 이 조건을 만족하는 자연키는 찾기 어려움**
+
+  => **대리키 사용**
+
+- ex) 주민번호도 적절 X
+
+- 권장 : **Long형 + 대체키 + 키 생성전략 사용**
 
 
 
@@ -749,7 +881,6 @@
     - 누구를 주인으로?
       - 외래 키가 있는 있는 곳을 주인
       - 1 : N 관계에서 N쪽이 주인을 담당
-
 
 
 
