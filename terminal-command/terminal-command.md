@@ -1,0 +1,245 @@
+# Linux Terminal 명령어 모음
+
+
+
+## 기본 개념
+
+- `$` : prompt. 명령어를 받아들일 준비가 되었다는 기호
+- `/` : Root directory. 
+- `~` : Home directory.
+- `.` : 현재 폴더
+- `..` : 현재 폴더의 상위 폴더
+- `tab key` : 자동 완성 기능
+- `ctrl + c` : 실행중인 프로세스 취소
+- `ctrl + l ` : 터미널 창 정리하기
+
+
+
+### 명령 문자
+
+- `;` : 명령의 끝을 나타냄
+- `||` : 이전의 명령이 실패하면 실행하는 조건문 문자""
+- `&&` : 이전의 명령이 성공하면 실행하는 조건문 문자
+- `&` : 명령을 백그라운드에서 실행
+- `$` : 변수에 접근할 수 있는 문자
+- `>` : 출력 결과 저장
+  - `find ./ -name "*filname" -and -path "*path*" > data.txt`
+
+
+
+
+### 변수 접근 기호
+
+- `0` : stdin(표준 입력)
+- `1` : stdout (표준 출력)
+- `2` : stderr (에러 출력)
+
+
+
+## 주요 명령어
+
+- `touch <filename>`  : 파일 생성
+- `start <filename>` : 파일 실행
+- `rm <filename>` : 파일 삭제
+- `mkdir <dirname>` : 폴더 생성
+- `mkdir -p <dirname1/dirname2>` : 중간 폴더도 같이 생성
+- `rm -r <dirname>` : 지정한 폴더 및 파일 삭제
+- `rm - rf <dirname>` : 지정판 폴더 및 파일 강제 삭제
+- `ls` :  현재 위치한 폴더 내부의 파일/폴더 출력
+- `ls -a` : 현재 위차한 홀더 내부의 모든 파일 / 폴더 출력
+  - `ls -al ./폴더` : 대상 폴더 내부 확인
+
+- `code . `  : 해당 디렉토리로 visual studio code 열기
+- `vim <filename>` : 파일 오픈 (없으면 파일 생성)
+- `vi <filename>` : 파일 오픈 
+
+
+
+### ls
+
+- `ls [*options*] [*directory name*]`
+
+- 옵션
+
+  - -a : 숨김파일을 포함한 모든파일을 리스트
+
+  - -t : 파일이 마지막으로 수정된 시간 순으로 출력
+
+  - -l : 해당 디렉터리에 존재하는 파일, 디렉터리의 접근권한 등 파일정보를 출력
+
+  - -i : incode 를 함께 출력
+
+  - -r : 파일 및 디렉터리의 순서를 역순(reverse) 출력
+
+  - -R : 재귀적(recursive)으로 수행되는 서브디렉터리 내용도 함께 출력
+
+  - -S : 파일의 크기순으로 출력
+
+  - -F : 해당 파일의 종류도 우측에 함께 출력
+
+
+
+### find
+
+#### 기본 구조
+
+`find [경로] [플래그] [표현식]`
+
+- 플래그 : -name 등의 옵션
+  - 앞에 -not 으로 부정 사용 가능
+
+- 표현식 : 검색할 파일의 이름/패턴/표현식
+
+#### 플래그 
+
+- `-name` : 파일/폴더의 이름 형식 지정
+  - `iname ` : 대소문자 구분 x
+
+- `-type` : 검색 대상의 파일 지정. 디폴트가 f
+  - d : directory
+  - f : file
+- `-regextype` : 정규표현식 타입
+  - posix-extended 로 지정
+- `-regex` : 정규표현식 사용
+- `-path` : 경로 형식 지정
+- 예제
+  - `find / \(-name "*.pc" -or -name "*.cpp" -or -name "*.gc" \) -and \( -not -path "*backup*" -and -not -path "*PIF" \) | xargs grep -r -i -a "테이블" 2>/dev/null`
+
+
+### grep
+
+#### 기본 구조
+
+`grep 옵션 [문자열] [파일명]`
+
+#### 옵션
+
+- -a : binary 형식이 아닌 파일 형식으로 인식
+- -b : 문자와 일치하는 줄의 시작점 출력
+- -c : 문자와 일치하는 줄의 수 출력
+- -h : 여러 파일에서 문자열을 찾을 때, 파일이름이 붙는 것을 방지
+- -i : 대소문자 구분 X
+- -n : 줄의 번호와 내용을 같이 출력
+- -v : 문자가 포함되지 않는 행 출력
+- -w : 문자와 한 단어로 일치해야 출력
+- -l (소문자 엘) : 문자가 들어간 파일 이름만 출력
+- -r : 하위 디렉토리에서도 문자를 찾음
+- -A : 특정문자 아래 추가로 여러 행 출력
+- -B : 특정 문자 위 추가로 여러 행 출력
+- -E : use extended regular expressions
+- -P : Perl-compatible regular expressions
+
+#### 예제
+
+- **grep "john" | grep -v "[[:graph:]]john\|john[[:graph:]]"**
+  - john 이라는 정확히 단어가 일치하는 것만 찾음
+  - john이 포함된 행을 찾고, john 앞뒤로 공백을 제외한 문자가 있을 때 제외
+- **find ./ -name "*.pc" -or -name ".cpp" 2>/dev/null | xargs grep -r -i -a "문자열" 2>/dev/null**
+  - find
+    - -name : 파일명 지정
+    - -or : 조건 추가
+    - 2>/dev/null : 오류는 출력 안함
+
+  - grep
+    - -a : 
+- `find / \(-name "*.pc" -or -name "*.cpp" -or "*.gc" \) -and \(-not -path "*.backup*" -and -not -path "*PIF*" \) 2>/dev/null |xargs grep -l -r -i -a "테이블" 2>/dev/null |xargs grep -i -a "컬럼" `
+
+
+
+
+### 압축
+
+- gz
+  - `gzip [파일명]` : 파일 압축하기
+  - `gzip -d [파일명].gz` : 압축풀기
+  - `apt-get install gzip` : gzip 설치
+- tar
+  - 주요 명령어
+    - `tar -cvf [처리후파일명.tar] [대상폴더명]` : tar 압축하기
+    - `tar -zcvf [처리후파일명.tar.gz] [대상폴더명]` : tar.gz 압축하기
+    - `tar -xvf [파일명.tar]` : tar 압축 풀기
+    - `tar -zxvf [파일명.tar.gz]` : tar.gz 압축풀기
+  - 옵션
+    - -c : 파일을 tar로 묶음
+    - -C : 경로 지정
+    - -p : 파일 권한 저장
+    - -v : 묶거나 풀 때 과정을 화면으로 출력
+    - -f : 파일 이름을 저장
+    - -x : tar 압축을 풂
+    - -z : gzip으로 압축 / 해제
+
+
+
+### 파일 시스템 용량 확인
+
+- `df [옵션]`
+  - -h : 보기 편한 용량 크기로 출력
+
+### maven 실행
+
+- mvn 실행
+  - `mvn --version` : 버전 확인
+  - `mvn spring-boot:run -Dspring-boot.run.jvmArguments='-Dserver.port=9003'` : maven 프로젝트를 해당 port로 실행함
+- jar 파일 사용
+  - `mvn clean` : 기존 빌드 정보 삭제 => target 폴더 없어짐
+  - `mvn compile package` : compile 후 packaging => target 다시 생성됨 (jar 생성)
+  - `java -jar -Dserver.port=9004 ./target/user-service-0.0.1-SNAPSHOT.jar`
+- 종료
+  - crtl + c
+
+## Command Mode
+
+- :    명령 시작
+- 문서 편집
+  - i    수정
+  - w  저장
+  - q   종료
+  - wq, x  저장 & 종료
+  - q!  강제 종료 (저장x 종료)
+- undo/redo
+  - u : 가장 마지막 명령 취소
+  - U : 해당 라인 전체 수정사항 취소
+  - ctrl + r : 원하는 만큼 redo
+- 이동
+  - ctrl + f : 다음 화면
+  - ctrl + b : 이전 화면 
+- 찾기
+  - /글자 : 아래쪽으로 찾기
+    - \c 추가 시, 대소문자 구분 X
+  - ?글자 : 위쪽으로 찾기
+  - `*`: 현재 커서가 있는 단어와 동일 단어 찾기
+  - n : 다음 단어
+  - N : `*`시 위쪽으로 찾기
+
+
+
+## Control Flow
+
+
+
+### while 문으로 문서 읽기
+
+```bash
+while IFS= read -r item; do
+echo "Item : $item"
+done < "list.txt"
+```
+
+- `IFS=` : IFS(Internal Field Separator)를 빈 문자열로 세팅
+  - `IFS=$'\t'` : 탭으로 라인 분리시킴
+- `read -r item`: 한줄씩 읽어 item에 값 배정
+- `do` : while문에 실행 코드 시작
+- `done` : while문에 실행 코드 끝
+- `<` : while 문에 넣은 문서
+
+
+
+### for 문으로 숫자 범위 탐색하기
+
+```bash
+for i in {1..5}; do
+  echo "Number: $i"
+done
+```
+
+- 1부터 5까지.1>
