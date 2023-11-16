@@ -519,14 +519,12 @@
     | uniqueConstraints(DDL) | DDL 생성 시에 유니크 제약 조건 생성 |             |
 
 
-
-<<<<<<< HEAD
 :bulb: 엔티티에 Setter를 모든 필드에 다 추가할 경우, 데이터 변경 트래킹에 어려움이 있음. 가급적 생성자로 값 세팅
 
 
 
-=======
->>>>>>> c68732e40d63aa39a2d0d7cd5738fa28ae0a0175
+
+
 ### 데이터베이스 스키마 자동 생성
 
 - 개요
@@ -603,19 +601,14 @@
 
     | 속성                   | 설명                                                         | 기본값                 |
     | ---------------------- | ------------------------------------------------------------ | ---------------------- |
-    <<<<<<< HEAD
     | name                   | 필드와 매핑할 테이블의 컬럼 이름<br />Spring boot에서 jpa 사용하면, 카멜 => 스네이크 자동 변환(소문자) | 객체의 필드 이름       |
-    =======
     | name                   | 필드와 매핑할 테이블의 컬럼 이름                             | 객체의 필드 이름       |
-
-
-
-| insertable,updatable   | 등록, 변경 가능 여부                                         | TRUE                   |
-| nullable(DDL)          | null 값의 허용 여부 설정<br />false => DDL 생성 시 not null 제약조건 |                        |
-| unique(DDL)            | @Table의 uniqueConstraints와 같지만 한 컬럼에 간단히 유니크 제약조건을 걸 때 사용한다 |                        |
-| columnDefinition (DDL) | 데이터베이스 컬럼 정보를 직접 줄 수 있다.  ex) varchar(100) default ‘EMPTY |                        |
-| length(DDL)            | 문자 길이 제약조건, String 타입에만 사용한다.                | 255                    |
-| precision,  scale(DDL) | BigDecimal 타입(혹은 BigInteger)에서 사용<br />    - precision :소수점을 포함한 전체 자릿수를, <br />    - scale :소수의 자릿수<br />참고로 double, float 타입에는 적용되지 X | precision=19,  scale=2 |
+    | insertable,updatable   | 등록, 변경 가능 여부                                         | TRUE                   |
+    | nullable(DDL)          | null 값의 허용 여부 설정<br />false => DDL 생성 시 not null 제약조건 |                        |
+    | unique(DDL)            | @Table의 uniqueConstraints와 같지만 한 컬럼에 간단히 유니크 제약조건을 걸 때 사용한다 |                        |
+    | columnDefinition (DDL) | 데이터베이스 컬럼 정보를 직접 줄 수 있다.  ex) varchar(100) default ‘EMPTY |                        |
+    | length(DDL)            | 문자 길이 제약조건, String 타입에만 사용한다.                | 255                    |
+    | precision,  scale(DDL) | BigDecimal 타입(혹은 BigInteger)에서 사용<br />    - precision :소수점을 포함한 전체 자릿수를, <br />    - scale :소수의 자릿수<br />참고로 double, float 타입에는 적용되지 X | precision=19,  scale=2 |
 
   - `@Temporal` : 날짜 타입 매핑
 
