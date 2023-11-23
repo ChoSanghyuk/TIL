@@ -73,6 +73,23 @@ ALTER TABLE <테이블이름> ADD COLUMN <COL이름> <데이터타입> NOT NULL 
 
 
 
+### DDL 심화 (ORACLE)
+
+- CREATE-SELECT 문
+
+  ```SQL
+  CREATE TABLE TABLE1 AS 
+   SELECT 문
+  ```
+
+  - SELECT 문의 기존 테이블들을 토대로 새 테이블 생성
+    - PK 및 INDEX까지 복사 X
+    - NOT NULL 속성 및 길이 등은 반영
+
+  - SELECT 문 결과 값 그대로 새 TABLE에 INSERT
+
+
+
 ### 스키마 확인
 
 ```
@@ -115,37 +132,79 @@ DELETE FROM classmates WHERE id=5;
 UPDATE classmates SET name = '홍길동', address = '제주도' WHERE id=5;
 ```
 
-### DML 심화
+
+
+### DML 심화(ORACLE)
+
+- 두 테이블간의 대량 DIFF건 INSERT
+
+  ```sql
+  INSERT INTO 테이블 (COL1,COL2,COL3) 
+  	SELECT /*+ FULL(A) FULL(B) PARALLEL(4) USE_HASH(A B) */
+  	A.COL1,A.COL2,A.COL3
+  	FROM 테이블1 A
+  	   , 테이블2 B
+  	WHERE 1=1
+      AND A.COL1 = B.COL1(+) -- col1, col2가 두 테이블의 pk라 가정
+      AND A.COL2 = B.COL2(+)
+      AND B.COL2 IS NULL;
+  ```
+
+  - 테이블1을 기준으로 outer join으로 테이블1과 테이블2를 조인검
+
+  - 테이블2의 pk값이 null인 조건을 통해 테이블1에만 존재하는 DIFF 데이터를 도출해서 INSERT
 
 - 타 테이블의 컬럼으로 UPDATE
 
-```SQL
-UPDATE TABLE1 A
-SET A.COL1 = (SELECT B.COLA FROM TABLE2 B WHERE A.COMMON_COL = B.COMMON_COL)
-WHERE 1=1
-```
+    ```SQL
+    UPDATE TABLE1 A
+    SET A.COL1 = (SELECT B.COLA FROM TABLE2 B WHERE A.COMMON_COL = B.COMMON_COL)
+    WHERE 1=1
+    ```
 
 - 타 테이블의 컬럼으로 UPDATE 시, 1:1 관계가 아니라 NULL로 잡혀서 오류 생길 때 => CASE 문
 
-```SQL
-UPDATE TABLE1 A
-SET A.COL1 = (SELECT CASE WHEN A.COL2 = '조건' THEN B.COLA 
-              		      ELSE A.COL1 END
-              FROM TABLE2 B WHERE A.COMMON_COL = B.COMMON_COL)
-WHERE 1=1
-AND A.COL2 = '조건'
-```
+    ```SQL
+    UPDATE TABLE1 A
+    SET A.COL1 = (SELECT CASE WHEN A.COL2 = '조건' THEN B.COLA 
+                              ELSE A.COL1 END
+                  FROM TABLE2 B WHERE A.COMMON_COL = B.COMMON_COL)
+    WHERE 1=1
+    AND A.COL2 = '조건'
+    ```
 
 :bulb: 우선 A.COL1에 데이터를 매칭시키고 조건으로 걸러지는 구조로, A.COL1이 NOT NULL 일 때, TABLE2와 매칭되는 데이터 없을 시, 에러 발생. CASE문으로 방어로직 생성
 
 - UPDATE 대상 테이블의 특정 ROW를 다른 테이블과의 조인을 통한 조건으로 걸러내야 할때
 
-```SQL
-UPDATE TABLE1 A
-SET A.COL1 = (SELECT B.COLA FROM TABLE2 B WHERE A.COMMON_COL = B.COMMON_COL)
-WHERE 1=1
-AND EXISTS (SELECT 1 FROM TABLE2 B WHERE A.COMMON_COL = B.COMMON_COL AND A.COL2 = B.COL2)
-```
+    ```SQL
+    UPDATE TABLE1 A
+    SET A.COL1 = (SELECT B.COLA FROM TABLE2 B WHERE A.COMMON_COL = B.COMMON_COL)
+    WHERE 1=1
+    AND EXISTS (SELECT 1 FROM TABLE2 B WHERE A.COMMON_COL = B.COMMON_COL AND A.COL2 = B.COL2)
+    ```
+
+- Merge 문으로 한 테이블을 다른 테이블로 맞추기
+
+    ```sql
+    MERGE
+    /*+ FULL(A) FULL(B) USE_HASH(A B) PARALLEL(4) */
+    INTO TABLE1 A
+    USING TABLE2 B
+    ON (
+    	A.COL1 = B.COL1
+    AND A.COL2 = B.COL2
+    )
+    WHEN MATCHED THEN
+    UPDATE SET A.COL3 = B.COL3;
+    ```
+
+    
+
+
+
+
+
 
 
 
