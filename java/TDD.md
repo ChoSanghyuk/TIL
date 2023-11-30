@@ -389,8 +389,8 @@
   - `site.mokito.org` 
 - Dependency 추가
   - jar 필요 추가 => lib 등록
-  - Spring 프로젝트 시, `spring-boot-start-test` dependency 추가 시 자동 등
-  - :bulb: java 9 이상 버전 사용 시, `module-info.java` 파일 설정 필
+  - Spring 프로젝트 시, `spring-boot-start-test` dependency 추가 시 자동 등록
+  - :bulb: java 9 이상 버전 사용 시, `module-info.java` 파일 설정 필요
 
 
 
