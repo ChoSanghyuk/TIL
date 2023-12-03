@@ -1111,21 +1111,31 @@
     - 단점
       - 부모 클래스로 Enity 받을 때 UNION SQL이 강제됨 => 성능 느림
 
-    :bulb: 쓰지마
+    :bulb: **쓰지마**
 
 - 주요 어노테이션
 
   - `@Inheritance(strategy=InheritanceType.XXX)`
+    
     - `JOINED` : 조인 전략
     - `SINGLE_TABLE` : 단일 테이블 전략
     - `TABLE_PER_CLASS` : 구현 테이블마다 테이블 전략
+    
+    :heavy_check_mark: 부모 클래스에 지정
+    
   - `@DiscriminatorColumn(name="DTYPE")`
-    - 부모 클래스 엔티티에 부착
+    
     - 서브 클래스 분류하는 컬럼명 지정
+    - default : `DTYPE`
+    
+    :heavy_check_mark: 부모 클래스 엔티티에 부착
+    
   - `@DiscriminatorValue("XXX")`
-    - 서브 타입 엔티티 클래스에 지정 (???)
+    
     - 타입 값 명시
-    - 미지정 시 default로 엔티티이름 (테이블이름??)
+    - default : 엔티티이름
+    
+    :heavy_check_mark:서브 타입 엔티티 클래스에 지정 
 
 - 주의점
 
@@ -1327,31 +1337,10 @@
 
   - `@OneToOne`, `@OneToMany`만 가능
 
+-  영속성 전이 + 고아 객체 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  - 부모 엔티티를 통해서 자식의 생명 주기를 관리
+  - 도메인 주도 설계(DDD)의 Aggregate Root개념을 구현할 때 유용
 
 
 
