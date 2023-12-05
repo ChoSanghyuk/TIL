@@ -1111,21 +1111,31 @@
     - 단점
       - 부모 클래스로 Enity 받을 때 UNION SQL이 강제됨 => 성능 느림
 
-    :bulb: 쓰지마
+    :bulb: **쓰지마**
 
 - 주요 어노테이션
 
   - `@Inheritance(strategy=InheritanceType.XXX)`
+    
     - `JOINED` : 조인 전략
     - `SINGLE_TABLE` : 단일 테이블 전략
     - `TABLE_PER_CLASS` : 구현 테이블마다 테이블 전략
+    
+    :heavy_check_mark: 부모 클래스에 지정
+    
   - `@DiscriminatorColumn(name="DTYPE")`
-    - 부모 클래스 엔티티에 부착
+    
     - 서브 클래스 분류하는 컬럼명 지정
+    - default : `DTYPE`
+    
+    :heavy_check_mark: 부모 클래스 엔티티에 부착
+    
   - `@DiscriminatorValue("XXX")`
-    - 서브 타입 엔티티 클래스에 지정 (???)
+    
     - 타입 값 명시
-    - 미지정 시 default로 엔티티이름 (테이블이름??)
+    - default : 엔티티이름
+    
+    :heavy_check_mark:서브 타입 엔티티 클래스에 지정 
 
 - 주의점
 
@@ -1148,60 +1158,189 @@
 - 특징
 
   - 상속관계 매핑 X
-  - 엔티티 X, 테이블과 매핑 X
-  - 부모 클래스(`@MappedSuperclass`)를 상속 받는 자식 클래스에 매핑 정보만 제공
-  - 조회, 검색 불가
-  - 직접 사용 X => 추상 클래스 권장
+  - 엔티티 X
+    - 테이블과 매핑 X
+    - 조회, 검색 불가
+    - 직접 사용 X => 추상 클래스 권장
+  - 부모 클래스(`@MappedSuperclass`)를 상속받는 자식 클래스에 매핑 정보만 제공
+    - @MappedSuperClass의 필드들에 대해서도 @Column으로 컬럼명 지정 O
 
-- 
-
-
-
-
+  - 상속관계에서 자식 클래스 Entity에는 @MappedSuperClass Entity 상속하지 않고, 부모클래스에서 상속하면 모두 적용
 
 
 
+## 프록시와 연관관계 관리
 
 
 
+### 프록시
 
-@MappedSuperClass의 필드들에 대해서도 @Column으로 컬럼명 지정 O
+- 개념
 
-상속관계에서 자식 클래스 Entity에는 @MappedSuperClass Entity 상속하지 않고, 부모클래스에서 상속하면 모두 적용
+  - 데이터베이스 조회를 미루는 가짜(프록시) 엔티티 객체 조회
+
+- 특징
+
+  - 실제 클래스를 상속받아서 만들어짐
+
+    - 타입 비교시, `==` 로 하면 실패. `instance of` 사용 필
+
+  - 실제 클래스와 겉 모양이 같음
+
+    - 사용하는 입장에서는 진짜인지 프록시인지 구분할 필요 X (이론상)
+
+  - 프록시 객체는 실제 객체의 참조(target)를 보관 (초기엔 target에 null)
+
+    ![image-20231201173428830](JPA_기본편.assets/image-20231201173428830.png)
+
+    - 프록시 객체를 호출하면 프록시 객체는 실제 객체의 메소드 호출
+    - 프록시 객체는 처음 사용할 때 한 번만 초기화
+
+  - 영속성 컨텍스트에 실제 엔티티가 이미 존재한다면, `em.getReference()`시 에도 실제 엔티티 반환
+
+    - 이유
+      1. 이미 영속성 컨텍스트에 있는 것은 프록시로 가져올 이점이 없음
+      2. Jpa에서는 **한 영속성 컨텍스트에서 같은 pk로 조회해온 값에 대해서 ==임을 보장**함
+    - 마찬가지로 먼저 프록시를 가져왔다면, 다음에 `find`로 진짜 객체를 가져오려해도 프록시를 반환
+
+  - 영속성 컨텍스트의 도움을 받을 수 없는 준영속 상태일 때, 프록시를 초기화하면 문제 발생
+
+    - 하이버네이트는 org.hibernate.LazyInitializationException 예외를 터트림
+
+  :bulb: 프록시 객체의 동작 방법은 jpa 표준이 아닌, 구현체에 따라 다름
+
+- 프록시 객체 호출
+
+  - `em.getReference()`
+
+- 프록시 객체의 초기화
+
+  ```java
+  Member member = em.getReference(Member.class, "id1");
+  member.getName();
+  ```
+
+  <img src="JPA_기본편.assets/image-20231201173720275.png" alt="image-20231201173720275" style="zoom:70%;" />
+
+- 프록시 확인
+
+  - 프록시 인스턴스의 초기화 여부 확인
+
+    - `emf.getPersistenceUnitUtil.isLoaded(Object entity)`
+
+  - 프록시 클래스 확인 방법
+
+    - `entity.getClass().getName()`
+
+  - 프록시 강제 초기화
+
+    - `org.hibernate.Hibernate.initialize(entity);`
+
+    :bulb: JPA 표준은 강제 초기화 없음
 
 
 
-프록시 객체의 동작 방법은 jpa 표준이 아닌, 구현체에 따라 다름
+### 즉시 로딩과 지연 로딩
 
-이미 영속성 컨텍스트에 있는 것은 프록시로 가져올 이점이 없음
-Jpa에서는 한 영속성 컨텍스트에서 같은 pk로 조회해온 값에 대해서 ==임을 보장
+- 즉시 로딩과 지연 로딩
 
-마찬가지로 먼저 프록시를 가져왔다면, 다음에 find로 진짜 객체를 가져오려해도 프록시를 반환
+  - 즉시 로딩
+
+    - 엔티티 조회 시, 연관관계를 가진 모든 엔티티 즉시 조회 (JOIN)
+
+      ```java
+      @ManyToOne(fetch = FetchType.EAGER)
+      @JoinColumn(name = "TEAM_ID")
+      private Team team;
+      ```
+
+  - 지연 로딩
+
+    - 엔티티 조회 시, 연관관계 엔티티는 프록시로 대체. 프록시 객체가 사용될 때, 실제 객체 조회
+
+      ```java
+      @ManyToOne(fetch = FetchType.LAZY)
+      @JoinColumn(name = "TEAM_ID")
+      private Team team;
+      ```
+
+- 프록시와 즉시로딩 주의
+
+  - 실무에서는 **가급적 지연로딩만 사용**
+  - 즉시 로딩 사용시, 예상치 못한 SQL 발생
+    - 즉시 로딩은 JPQL에서 N+1 문제를 일으킴 (최초 쿼리 (1) 날리면, 추가 쿼리 n 개가 나감)
+    - 즉시로딩으로 여러개의 테이블 연결되어 있을 경우, SQL 성능 저하
+
+  - `@ManyToOne`, `@OneToOne`은 기본이 즉시 로딩 -> LAZY로 설정 필요
+    - `@OneToMany`, `@ManyToMany`는 기본이 지연 로딩
+
+- 지연 로딩 활용 (실무)
+  - **모든 연관관계에 지연 로딩을 사용**
+  - 거의 같이 사용되거나, 성능상 즉시 로딩이 필요한 경우에 대해서만 아래 선택지 활용
+    1. 특수한 경우에 대해서만 즉시 로딩 사용
+    2. FETCH JOIN : 동적으로 원하는 테이블들 선택해서 조인해서 가져옴
+    3. 엔티티 그래프 기능
 
 
 
-`emf.getPersistenceUnitUtil.isLoaded(Object entity)`
+### 영속성 전이 : CASCADE
+
+- 개념
+  - 특정 엔티티를 영속 상태로 만들 때 연관된 엔티티도 함께 영속 상태로 만들도 싶을 때
+  - ex) 부모 엔티티를 저장할 때 자식 엔티티도 함께 저장
+- 주의
+  - 영속성 전이와 연관관계 매핑은 관련 X
+    - 엔티티를 영속화할 때, 연관된 엔티티도 함께 영속화하는 편리함을 제공하기 위함
+  -  **소유자가 하나** (하나의 객체에서만 연관관계를 관리할 때)**일 때만 사용**
+
+- 사용 예시
+  - `@OneToMany(mappedBy="parent", cascade=CascadeType.PERSIST)`
+- `CascadeType` 종류
+  - **ALL: 모두 적용**
+  - **PERSIST: 영속**
+  - **REMOVE: 삭제**
+  - MERGE: 병합
+  - REFRESH: REFRESH
+  - DETACH: DETACH
 
 
 
-즉시로딩으로 여러개의 테이블 연결되어 있을 경우, SQL 성능 저하
+### 고아객체
 
-테이블이 단순하고 개수가 적지 않는 이상, 지연 로딩 사용
+- 개념
 
+  - 고아 객체 제거: 부모 엔티티와 연관관계가 끊어진 자식 엔티티를 자동으로 삭제
+  - 참조가 제거된 엔티티는 다른 곳에서 참조하지 않는 고아 객체로 보고 삭제
 
+- 예시
 
-n+1 문제 : 최초 쿼리 (1) 날리면, 추가 쿼리 n 개가 나감
+  ```java
+  // Parent class
+  
+  @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<Child> childList = new ArrayList<>();
+  ```
 
+  ```java
+  Parent parent1 = em.find(Parent.class, id); 
+  parent1.getChildren().remove(0);
+  ```
 
+  =>  list에서 제거된 Child 엔티티는 child 테이블에서 삭제됨
 
-해결법 : 기본적으로 LAZY LOAD 전부 세팅 후 
+- 주의
 
-1. FETCH JOIN : 동적으로 원하는 테이블들 선택해서 조인해서 가져옴
-2. 엔티티 그래프 기능
+  - **참조하는 곳이 하나일 때 사용**
+    - 특정 엔티티가 개인 소유할 때 사용
 
+  :bulb: 부모를 제거해도 자식은 고아가 되어 함께 제거됨 (`CascadeType.REMOVE`처럼 동작)
 
+  - `@OneToOne`, `@OneToMany`만 가능
 
+-  영속성 전이 + 고아 객체 
 
+  - 부모 엔티티를 통해서 자식의 생명 주기를 관리
+  - 도메인 주도 설계(DDD)의 Aggregate Root개념을 구현할 때 유용
 
 
 
