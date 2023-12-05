@@ -12,6 +12,31 @@
 
 
 
+## Compare
+
+### PartialEq
+
+- 동일성 확인을 실제로 수행하는 trait
+- 구조
+
+```rust
+impl PartialEq for Puzzle {
+    fn eq(&self, other: &Self) -> bool {
+        (self.num_pieces == other.num_pieces) && (self.name == other.name)
+    }
+}
+```
+
+- 활용
+
+```rust
+is_queue[i].eq(&0) // is_queue는 Vec<u32> 타입의 변수
+```
+
+:bulb: `eq` 메소드는 `immutable reference` 타입의 self와 파라미터를 받음
+
+
+
 ## Debug
 
 - 기본 사용 방법
