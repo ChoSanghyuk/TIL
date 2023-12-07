@@ -83,13 +83,13 @@ $ git switch master (혹은 branch이름)
 
 ## branch 생성
 
+### 로컬 브랜치에서 원격으로 반영하기
+
 ```
 $ git branch <브랜치이름>
 ```
 
 - 로컬 브랜치 생성
-
-
 
 ```
 $ git push origin master:브랜치이름
@@ -97,13 +97,27 @@ $ git push origin master:브랜치이름
 
 - 해당 이름의 브랜치에 올림 (없으면 생성되고 올려짐)
 
-
-
 ```
 $ git switch -c <브랜치이름>
 ```
 
 - 브랜치를 생성하면서 작업 공간을 옮김
+
+
+
+### 원격 브랜치 로컬에 반영하기
+
+```bash
+$ git checkout -t [원격 브랜치명]
+```
+
+- 원격 레포지토리의 브랜치를 로컬 브랜치에 적용하기 (영구적 tracking)
+
+```bash
+$ git remote update
+```
+
+- 원격 레포지토리의 브랜치 들이 로컬 레포지토리에도 반영
 
 
 
