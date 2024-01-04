@@ -268,7 +268,9 @@
   fmt.Println(x * y) // No Error because x is untyped and gets its type when its used first time (float64).
   ```
 
-  - untyped로 초기화 시, 첫번째 사용 전까지 strong type의 제약에서 어느 정도 자유로워짐
+  - untyped로 초기화 시, 첫번째 사용에 의해서 implicitly converted되어서 type 지정됨
+
+    :bulb: 일반 variable의 경우, 초기화 시 default type으로 배정
 
 - Iota
 
@@ -293,11 +295,241 @@
 
 
 
+### Data Type
+
+- 개요
+
+  - A type determines a set of values together with operations and methods specific to those values
+
+- 종류
+
+  - predeclared types
+  - introduced types 
+    - with type declarations 
+  - composite types: 
+    - ex) array, slice, map, struct, pointer, function, interface, channel types
+
+- predeclared types (Built-in types)
+
+  - Numeric types
+
+    - int8, int16, int32, int64
+    - uint8, uint16, uint32, uint64
+      - used to represent unsigned (positive) integers
+    - uint
+      - alias for uint32 or uint64 based on platform
+    - int
+      - alias for int32 or int64 based on platform
+    - float32, float64
+      - zero before the decimal point separator can be omitted
+        - ex)  -.5
+    - complex64, complex128
+    - byte
+      - alias for uint8
+      - used for character value
+    - rune
+      - alias for int32
+      - used for character value
+
+    :bulb: data type 범위 넘어가는 수 입력 시, compile error
+
+  - Bool type
+
+    - pre-defined constants true and false
+
+  - String type
+
+    - Unicode chars written enclosed by double-quotes
+    - A string value is a (possibly empty) sequence of bytes
+
+  - Array and Slice Type
+
+    -  a numbered sequence of elements of a single type
+
+    - array : a fixed length
+
+      ```go
+      var numbers = [4]int{4, 5, -9, 100}
+      fmt.Printf("%T\n", numbers) // =>  [4]int
+      ```
+
+    - slice : dynamic length (can shrink or grow )
+
+      ```go
+      var cities = []string{"London", "Bucharest", "Tokyo", "New York"}
+      fmt.Printf("%T\n", cities) // => []string
+      ```
+
+  - Map Type
+
+    - unordered group of elements of one type, indexed by a set of unique keys of another type
+
+    ```go
+    balances := map[string]float64{
+        "USD": 233.11,
+        "EUR": 555.11,
+    }
+    ```
+
+  - Struct Type (User defined type)
+
+    - A struct is a sequence of named elements, called fields, each of which has a name and a type
+
+    ```go
+    type Car struct {
+     brand string
+     price int
+    }
+    ```
+
+  - Pointer Type
+
+    -  a variable that stores the memory address of another variable
+    - The value of an uninitialized pointer is nil.
+
+  - Function and Interface Type
+
+  - Channel Type
+
+    - provides a mechanism for concurrently executing functions to communicate by sending and receiving values of a specified element type
 
 
 
+### Operations on Types
+
+- Arithmetic and Bitwise Operators
+  - +, -, *, /, %, &, |, ^, <<, >>
+- Assignment Operators
+  - +=, -=, *=, /=, %=
+- Increment and Decrement Statements
+  - ++, --
+- Comparison Operators
+  - ==, !=, <, >, <=, >=
+- Logical Operators
+  - &&, || , !
+- Operators for Pointers
+  - &
+- Channels
+  - <-
+
+:bulb: `Println(x++)` 는 허용 X
 
 
+
+### Overflows
+
+- Go는 c, c++, java과 같이 overflow 체크하지 않음
+  - 효율성 문제
+- int 타입의 경우, overflow 발생 시, 다시 초기값부터 순환
+- float 타입의 경우, `+Inf`로 넘어감 (Infinite)
+
+
+
+### Converting Numeric Types
+
+- Go에서는 Casting이 아닌 Converting이라 표현
+
+- Go에서는 다른 이름의 type이면 다른 Type
+
+  - int, int64 사이에도 converting이 필요
+  - 단, alias 제외
+
+- converting 예시
+
+  - string(99) 
+
+    - int to rune (Unicode code point)
+
+      => the ascii code for symbol c
+
+  - `fmt.Sprintf(format string, a ...any)`
+
+    - 포맷에 변수들을 대입하여 string으로 반환
+
+  - `strconv`
+
+    - common numeric conversions
+
+        ```go
+        i, err := strconv.Atoi("-42") 	// Ascii to int
+        s := strconv.Itoa(-42)			// int to Ascii
+        ```
+    
+    - ParseBool, ParseFloat, ParseInt, and ParseUint convert strings to values
+    
+        ```go
+        b, err := strconv.ParseBool("true")
+        f, err := strconv.ParseFloat("3.1415", 64)
+        i, err := strconv.ParseInt("-42", 10, 64)
+        u, err := strconv.ParseUint("42", 10, 64)
+        ```
+    
+        - The parse functions return the widest type (float64, int64, and uint64), but if the size argument specifies a narrower width the result can be converted to that narrower type without data loss:
+    
+    - FormatBool, FormatFloat, FormatInt, and FormatUint convert values to strings:
+    
+      ```go
+      s := strconv.FormatBool(true)
+      s := strconv.FormatFloat(3.1415, 'E', -1, 64)
+      s := strconv.FormatInt(-42, 16)
+      s := strconv.FormatUint(42, 16)
+      ```
+
+
+
+### Defined Types (named type)
+
+- 개요
+
+  - a new type created by the programmer from another existing type which is called the **underlying** or **source type**
+  - A new defined type must have a new name and can have its new methods
+  - The underlying type provides the representation, operations and size of the newly defined type
+  - Even though the defined type and the source type share the same representation, operations and size, **they are different types**
+  - a completely new type and a type can be **converted** to another type if they share the same underlying type
+
+  - no type-hierarchy in Go
+
+- 용도
+
+  - **attach methods** to newly defined types
+
+  - **Type safety**
+
+    - We must convert one type into another to perform operations with them
+
+  - **Readability**
+
+    - `type usd float64` 
+
+      =>  know that new type represents the US Dollar
+
+- 예시
+
+  ```go
+  // new type speed (underlying type uint)
+  type speed uint
+  
+  // s1, s2 of type speed
+  var s1 speed = 10
+  var s2 speed = 20
+  
+  // convert
+  var x uint
+  x = uint(s1)
+  ```
+
+
+
+### Aliases
+
+- form
+  - `type T1 = T2`
+    - T2에 대해 새 이름 T1 소개
+
+- 개요
+  - **same type with a new name**
+  - can be used together in operations without type conversions
+  - **shoud use it with caution**, it's not for everyday use
 
 
 
