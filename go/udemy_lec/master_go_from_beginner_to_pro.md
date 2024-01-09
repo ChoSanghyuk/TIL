@@ -239,6 +239,8 @@
   - 선언 후 사용 X => 에러  X
   - declare과 동시에 초기화 필요
 
+  :bulb: const 로 선언 불가
+
 - 다중 선언
 
   ```go
@@ -533,15 +535,250 @@
 
 
 
+## Program Flow Control in Go
+
+
+
+### If, Else If, Else Statement
+
+- 기본
+    ```go
+    if condition_that_evaluates_to_boolean{
+         perform action1
+    }else if condition_that_evaluates_to_boolean{
+         perform action2
+    }else{
+         perform action3
+    }
+    ```
+	- non bool value는 조건식에 사용 X
+
+- Simple If Statement
+
+  ```go
+  if initialization statement ; condition{
+       perform action1
+  }else if initialization statement ; condition{
+       perform action2
+  }else{
+       perform action3
+  }
+  ```
+
+  => 주요 error handling에 이용
+
+  ```go
+  // i and err are variables scoped to the if statement only
+  if i, err := strconv.Atoi("34"); err == nil {
+      fmt.Println("No error. i is ", i)
+  } else {
+      fmt.Println(err)
+  }
+  ```
+
+  
+
+
+
+### Command Line Arguments: os.Args
+
+- 개요
+
+  - 터미널에서 `go run main.go` 이후의 문자열을 string 배열에 담아서 출력시킴
+  - space 단위로 separate
+  - 첫번째 인자는 파일의 path, 두번째 인자부터 command argument
+
+- 샘플
+
+  ```go
+  fmt.Println("os.Args:", os.Args) // os.Args is slice of strings ([]string)
+   
+  // accessing command line arguments using indexes
+  fmt.Println("Path:", os.Args[0])
+  fmt.Println("1st Argument:", os.Args[1])
+  fmt.Println("2nd Argument:", os.Args[2])
+  fmt.Println("No. of items inside os.Args:", len(os.Args))
+  ```
+
+
+
+### For Loops
+
+- 개요
+
+  - Go에는 while loop 없음. 오직 for 문
+
+- 형태
+
+  - 기본 형식
+
+  ```go
+  for initialization statement ; testing boolean expression ; post statement {
+      perform action
+  }
+  ```
+
+  - post statement은 내부로 이동 O
+
+
+  ```go
+  for initialization statement ; testing boolean expression {
+      perform action
+      post statement
+  }
+  ```
+
+  - while 문처럼 사용
+
+
+  ```go
+  for testing boolean expression {
+      perform action
+      post statement
+  }
+  ```
+
+  - iterate
+
+
+  ```go
+  for index, value := range arrayVar {
+  
+  }
+  ```
+
+-  기타 문법
+
+  - continue, break문은 타 언어와 동일
+
+
+
+### Label Statement
+
+- 개요
+  - 코드의 특정 부분을 label로 지정할 수 있음
+  - Labels are used in break, continue, and goto statements.
+  - It is illegal to define a label that is never used.
+  - In contrast to other identifiers, labels are not block scoped and do not conflict with identifiers that are not labels. 
+    - They live in another space.
+    - label은 변수명과 충돌나지 않음 (ex. outer라는 변수가 존재하여도 outer라는 lable 사용 O)
+  - The scope of a label is the body of the function in which it is declared and excludes the body of any nested function.
+  - Most of the time labels are used to terminate outer enclosing loops
+    - 다중 loop에서 loop에 label을 붙일 수 있음 => 특정 label break
+
+- 코드
+
+    ```go
+    outer:	// label, it doesn't conflict with other names
+        for index, name := range people {  
+            for _, friend := range friends { 
+                if name == friend {
+                    fmt.Printf("FOUND A FRIEND: %q at index %d\n", friend, index)
+                    break outer //breaking outside the outer loop which terminates
+                }
+            }
+        }
+    ```
+
+    
+
+### go to statement
+
+- 개요
+
+  - 같은 함수 내 label로 이동
+  - `break`, `continue`는 for, switch에서만 사용 가능한 것에 비해 `go to`는 제약 X
+  - for문 처럼 사용 O
+
+  :bulb: 단, 새 변수가 선언된 곳 이후의 label로는 `go to` 불가
+
+- 코드
+
+  ```go
+  i := 0
+  loop: // label
+      if i < 5 {
+          fmt.Println(i)
+          i++
+          goto loop
+      }
+  ```
+
+  
+
+### switch
+
+- 특징
+
+  - case 문 안에 `break` 명시할 필요 X
+  - `case A , B :` => A or B와 일치 시 실행
+
+- 코드
+
+  - 기본 형식
+
+      ```go
+      language := "golang"
+      
+      switch language {
+          case "Python": //values must be comparable (compare string to string)
+              fmt.Println("You are learning Python! You don't use { } but indentation !! ")
+          case "Go", "golang": //compare language with "Go" OR "golang"
+              fmt.Println("Good, Go for Go!. You are using {}!")
+          default:
+              // and gets executed if no testing condition is true.
+              fmt.Println("Any other programming language is a good start!")
+      }
+      ```
+
+  - comparing bool
+
+      ```go
+      n := 5
+      // comparing the result of an expression which is bool to another bool value
+      switch true {
+          case n%2 == 0:
+              fmt.Println("Even!")
+          case n%2 != 0:
+              fmt.Println("Odd!")
+          default:
+              fmt.Println("Never here!")
+      }
+      ```
+
+      - 이때 swtich 옆 true를 생략해도 같은 구문
+
+  - Switch simple statement
+
+      ```go
+      switch n := 10; true {
+          case n > 0:
+              fmt.Println("Positive")
+          case n < 0:
+              fmt.Println("Negative")
+          default:
+              fmt.Println("Zero")
+      }
+      ```
 
 
 
 
+### Scopes in Go
 
-
-
-
-
+- 개요
+  - Scope means visibility.
+  - The scope or the lifetime of a variable is the interval of time during which it exists as the program executes.
+  - **A name cannot be declared again in the same scope** (for example a function in the package scope), but it can be declared in another scope.
+    - scope가 다른면 덮어쓰기 가능
+- 종류
+  - File Scope
+    - import statements
+  - Package Scope
+    - 블록 밖 선언 (함수 포함)
+    - Package Scope에서 선언된 변수는 사용 X해도 에러 나지 않음
+  - Block (local) Scope
+    - 함수 블록 or 여타 블록 내
 
 
 
