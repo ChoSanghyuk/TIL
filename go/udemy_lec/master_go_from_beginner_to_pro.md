@@ -191,7 +191,7 @@
   
       - `%v` : any type
   
-          - `%#v` : representation of the value
+          - `%#v` : 타입 + 값
   
       - `%T` : print Type
   
@@ -779,6 +779,150 @@
     - Package Scope에서 선언된 변수는 사용 X해도 에러 나지 않음
   - Block (local) Scope
     - 함수 블록 or 여타 블록 내
+
+
+
+## Arrays & Slice
+
+
+
+### Arrays
+
+- 개요
+
+  - An array is a composite, indexable type that stores a collection of elements of same type
+
+  - An array has a fixed length
+
+  - Every element in an array (or slice) must be of same type
+
+  - Go stores the elements of the array in contiguous memory locations and this way it’s very efficient
+
+  - The length and the elements type determine the type of an array. 
+    - The length belongs to array type and it’s determined at compile time
+    - `accounts := [3]int{50, 60, 70 }` 
+      - The array called accounts that consists of 3 integers has it’s type `[3]int`.
+
+- 코드
+
+  ```go
+  var a1 = [4]float64{}                           //initialized with defaults (0)
+  var a2 = [3]int{5, -3, 5}                       //initialized with the given values
+  a3 := [4]string{"Dan", "Diana", "Paul", "John"} //short declaration syntax
+  a4 := [4]string{"x", "y"}                       //initializing only the first 2 elements
+  a5 := [...]int{1, 4, 5}							//initializing by using the ellipsis operator (...) 
+  a6 := [...]int{1,								// declare an array on multiple lines
+      2,
+      3,
+  }
+  balances := [2][3]int{							// declaring a multi-dimensional arrays
+      [3]int{5, 6, 7}, 							//[3]int is optional
+      {8, 9, 10},
+  }
+  ```
+
+  - ellipsis operator(...)
+    - array 길이 지정을 compiler에게 맡김 => 자동 지정
+  - multiple lines declaration
+    - for better readability
+    - **the ending comma is mandatory
+
+- Arrays with keyed elements
+
+  ```go
+  // each key corresponds to an index of the array
+  grades := [3]int{ //the keyed elements can be in any order
+      1: 10,
+      0: 5,
+      2: 7,
+  }
+  
+  // un unkeyed element gets its index from the last keyed element
+  cities := [...]string{
+      5:        "Paris",
+      "London", // this is at index 6
+      1:        "NYC",
+  }
+  ```
+  
+  - 특정 인덱스의 값을 지정할 수 있음
+  
+  - 키 미지정 시 default 값
+  
+    => 대부분이 default값이고 몇몇 index만 값을 가질 때 유용
+  
+  - ellipsis로 길이 지정 시, 최대 key index값을 기준으로 길이 확정
+  - key 미지정하고 값 추가시, 마지막 key index 다음부터의 값으로 추가
+
+- 특징
+
+  - array는 `=`로 복사 시, 깊은 복사
+  
+    <=> slice는 얕은 복사
+
+
+
+### array vs slice
+
+- 차이점
+
+  | Array                                                        | Slice                                                        |
+  | ------------------------------------------------------------ | ------------------------------------------------------------ |
+  | Has a fixed length defined at compile time                   | Has a dynamic length (it can shrink or grow)                 |
+  | The length of an array is part of its type, defined at compile time and cannot be changed | The length of a slice is not part of its type and it belongs to runtime |
+  | By default an uninitialized array has all elements equal to zero | An uninitialized slice is equal to nil (its zero value is nil) |
+
+- 공통점
+
+  - Both a slice and an array can contain only the same type of elements
+  - We can create a keyed slice like a keyed array
+
+
+
+:bulb: nil은 value의 부재를 의미하는 것이 아닌, value가 initialize 되지 않았음을 의미
+
+​	=> slice가 nil인 것은 0 capacity slice 인 것을 의미
+
+
+
+### slice
+
+- 초기화
+
+  ```go
+  numbers := []int{2, 3, 4, 5} // on the right hand-side of the equal sign is a slice literal
+  // creating a slice with 2 int elements initialized with zero.
+  nums := make([]int, 2)
+  
+  ```
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

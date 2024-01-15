@@ -81,27 +81,39 @@
 
 
 
-Hyperledger Besu can be used to connect to the existing public Ethereum network, referred to as mainnet, and can be used to create the Ethereum Virtual Machine (EVM) compatible private blockchain network. Hyperledger Besu can be used to run a node on Ethereum mainnet, from a full node that helps sync Ethereum mainnet, to an archive node, which contains the data of the blockchain but does not participate in adding new blocks. On mainnet, Besu runs as an execution client, performing tasks such as executing transactions and accepting changes to the ledger.
+### 개요
+
+- Hyperledger Besu can be used to connect to the existing public Ethereum network, referred to as mainnet, and can be used to create the Ethereum Virtual Machine (EVM) compatible private blockchain network. 
+- Hyperledger Besu can be used to run a node on Ethereum mainnet, from **a full node** that helps sync Ethereum mainnet, to **an archive node**, which contains the data of the blockchain but does not participate in adding new blocks. 
+- On mainnet, **Besu runs as an execution client**, performing tasks such as executing transactions and accepting changes to the ledger.
 
 
 
-실행
+### 실행
 
-`./bin/besu`
+- `./bin/besu`
 
-`besu --network=<network> --data-path=<path>/<networkdata-path>`
+- `besu --network=<network> --data-path=<path>/<networkdata-path>`
 
-- <network> : the network you are connecting to. ex) sepolia and goerli
-- <path> : connecting to a network other than the network previously connected to, you must either delete the local block data or use the `--data-path` option to specify a different data directory
-  - To delete the local block data, delete the `database` directory 
-- ex) `./bin/besu --network=sepolia --data-path=./besu-test-db`
+  - `<network>` : the network you are connecting to. ex) sepolia and goerli
+
+  - `<path>` : connecting to a network other than the network previously connected to, you must either delete the local block data or use the `--data-path` option to specify a different data directory
+    - To delete the local block data, delete the `database` directory 
+
+  - ex) `./bin/besu --network=sepolia --data-path=./besu-test-db`
+
 
 
 
 ### Using Config
 
-- Options and subcommands can be stored in what we call a configuration file, or config file. 
-- This file allows for the specifications of initial parameters for Besu, and gives us a file where we can save those parameters in the event we want to reuse them.
+- 개요
+
+  - Options and subcommands can be stored in what we call a configuration file, or config file. 
+
+  - This file allows for the specifications of **initial parameters for Besu**, and gives us a file where we can save those parameters in the event we want to **reuse** them.
+
+- 예시
 
 ```toml
 # Valid TOML config file
@@ -146,15 +158,22 @@ miner-coinbase="0xfe3b557e8fb62b89f4916b721be55ceb828dbd73"
 # paid for this blockchain
 ```
 
-`besu --config-file=<file-path>/config.toml`
+- 실행
+  - `besu --config-file=<file-path>/config.toml`
 
 
 
 ### Understanding the Genesis File
 
-The first block in a blockchain is called the genesis block. In order to join or create any network, the data for the genesis block must be included. Therefore, the genesis file defines the data that is in the first block of a blockchain, as well as rules for the blockchain itself.
+- 개요
 
-When creating a private network, a genesis file must be provided. The genesis file is a[ JSON formatted](https://www.json.org/json-en.html) file. It looks like the below
+  - **The first block** in a blockchain is called the genesis block. 
+  - In order to join or create any network, the data for the genesis block must be included. 
+  - The genesis file **defines the data** that is in the first block of a blockchain, as well as **rules** for the blockchain itself.
+
+  - The genesis file is a JSON formatted file
+
+- 샘플
 
 ```json
 {
@@ -182,53 +201,100 @@ When creating a private network, a genesis file must be provided. The genesis fi
 }
 ```
 
-- config key section 
+- 구성
 
-  - contains the following information about the **blockchain**
+    - **config key section** : contains the following information about the blockchain
 
-  - `"chainId": 2018`
+      - `"chainId": 2018`
 
-    - Ethereum networks have two identifiers, a network ID and a chain ID. Although they often have the same value, they have different uses.
+        - Ethereum networks have two identifiers, a network ID and a chain ID. Although they often have the same value, they have different uses.
 
-    - Peer-to-peer communication between nodes uses the *network ID*, while the transaction signature process uses the *chain ID*.
+        - Peer-to-peer communication between nodes uses the *network ID*, while the transaction signature process uses the *chain ID*.
 
-      => *network ID*와 *chain ID* 둘 중 하나만 바뀌어도 기존 체인과 피어링 불가
+          => *network ID*와 *chain ID* 둘 중 하나만 바뀌어도 기존 체인과 피어링 불가
 
-  - `"muirglacierblock": 0`
+      - `"muirglacierblock": 0`
 
-    - This field is called a “milestone block”
-    - Muir Glacier refers to a specific network upgrade that occurred at block 9,200,000 on Ethereum mainnet
-    - For private networks, like the one that is being created in this example, the name of the latest milestone block can be listed, and set to be the genesis block
+        - This field is called a “milestone block”
+        - Muir Glacier refers to a specific network upgrade that occurred at block 9,200,000 on Ethereum mainnet
+        - For private networks, like the one that is being created in this example, the name of the latest milestone block can be listed, and set to be the genesis block
+      
+      - `"ibft2":`
+        - This specifies that the consensus protocol for the blockchain is IBFT 2.0
+        - `"blockperiodseconds": 2`
+          - The minimum block time, in seconds. 
+          - In this case, after two seconds, a new block will be proposed by the network.
+        - `"epochlength": 30000`
+          - The number of blocks at which to reset all votes
+          - The votes refer to **validators voting** to add or remove validators to the network
+          - In this case, after 30,000 blocks are created, this IBFT 2.0 network will discard all pending(보류중인) votes collected from received blocks
+        - `"requesttimeoutseconds": 4`
+          - The time by which a new block must be proposed or else a new validator will be assigned by the network
+          - If a validator goes down, the request time out ensures that proposal of a new block passes on to another validator. 
+          - **The request time out seconds should be set to be double the minimum block time**
+      
+    - **second section** : contains information about the **genesis block**
+      
+      - `"nonce": "0x0"` 
+        - a part of the blockheader for the first block. 
+        - Set to 0x0
+      
+      - `"timestamp": "0x58ee40ba"`
+        - The creation date and time of the block. 
+        - Often it can be set to 0x0, but as long as it is any value in the past, it will work
+      
+      - `"extraData": "0xf83ea00000000000000000000000000000000000000000000000000000000000000 000d5949811ebc35d7b06b3fa8dc5809a1f9c52751e1deb808400000000c0"`
+        - Extra data is a recursive length prefix (RLP) encoded string (which is space efficient) containing the validator address of the IBFT 2.0 private network.
+        - :link: ["Extra Data"](https://besu.hyperledger.org/private-networks/how-to/configure/consensus/ibft#extra-data)
+      
+      - `"gasLimit": "0x1fffffffffffff"`
+        - The block gas limit, which is the total gas limit for all transactions included in a block. 
+        - It defines **how large the block size** can be for the block, and is represented by an hexadecimal string. 
+        - For this network, the gas limit is the maximum size, and is therefore a [“free gas network”](https://besu.hyperledger.org/private-networks/how-to/configure/free-gas)
+      
+      - `"difficulty": "0x1"`
+      
+        - The difficulty of creating a new block
+        - Represented as a hexadecimal string
+        - the difficulty is set to 1, effectively the lowest difficulty.
+      
+      - `"mixHash": "0x63746963616c2062797a616e74696e65206661756c7420746f6c6572616e6365"`
+      
+        - The mixHash is the **unique identifier** for the block
+      
+      - `"coinbase": "0x0000000000000000000000000000000000000000"`
+      
+        - The coinbase account, which is where all block rewards for this network will be paid. 
+        - In this case it is to 0x0000000000000000000000000000000000000000, which is sometimes called address(0) or the zero address.
+      
+      - ```json
+        "alloc": {
+          "9811ebc35d7b06b3fa8dc5809a1f9c52751e1deb": {
+            "balance": "0xad78ebc5ac6200000"
+          }
+        }
+        ```
+      
+        - The alloc field creates an address on our network, which is sometimes also referred to as an externally owned account, as it is an account not associated with a smart contract
+        - The number starting with “98” is the public key of the address. 
+        - The balance can be passed in as a decimal OR a hexadecimal (like it has in this case and corresponds to 200 ETH, or 2*10^20 Wei). The balance is always in Wei, or 10^-18 Ether.
+      
+        :bulb: Wei는 이더리움 네트워크에서 사용되는 최소 단위로, 이더(ETH)의 가장 작은 단위입니다
 
-  - `"ibft2":`
-    - This specifies that the consensus protocol for the blockchain is IBFT 2.0
-    - `"blockperiodseconds": 2`
-      - The minimum block time, in seconds. 
-      - In this case, after two seconds, a new block will be proposed by the network.
-    - `"epochlength": 30000`
-      - The number of blocks at which to reset all votes
-      - The votes refer to validators voting to add or remove validators to the network
-      - In this case, after 30,000 blocks are created, this IBFT 2.0 network will discard all pending(보류중인) votes collected from received blocks
-    - `"requesttimeoutseconds": 4`
-      - The time by which a new block must be proposed or else a new validator will be assigned by the network
-      - If a validator goes down, the request time out ensures that proposal of a new block passes on to another validator. 
-      - **The request time out seconds should be set to be double the minimum block time**
+- 실행
+  - `./bin/besu --genesis-file=./genesis.json`
 
-- second section
-  - contains information about the **genesis block**
-  - `"nonce": "0x0"` 
-    - a part of the blockheader for the first block. 
-    - Set to 0x0
-  - `"timestamp": "0x58ee40ba"`
-    - The creation date and time of the block. 
-    - Often it can be set to 0x0, but as long as it is any value in the past, it will work
-  - `"extraData": "0xf83ea00000000000000000000000000000000000000000000000000000000000000 000d5949811ebc35d7b06b3fa8dc5809a1f9c52751e1deb808400000000c0"`
-    - Extra data is a recursive length prefix (RLP) encoded string (which is space efficient) containing the validator address of the IBFT 2.0 private network.
-    - :link: ["Extra Data"](https://besu.hyperledger.org/private-networks/how-to/configure/consensus/ibft#extra-data)
-  - `"gasLimit": "0x1fffffffffffff"`
-    - The block gas limit, which is the total gas limit for all transactions included in a block. 
-    - It defines how large the block size can be for the block, and is represented by an hexadecimal string. 
-    - For this network, the gas limit is the maximum size, and is therefore a [“free gas network”](https://besu.hyperledger.org/private-networks/how-to/configure/free-gas). (???)
+
+
+:bulb: gas
+
+- Transactions use computational resources so have an associated cost. **Gas is the cost unit** and the gas price is the price per gas unit. The transaction cost is the gas used * gas price.
+
+- In **public networks**, the account submitting the transaction pays the transaction cost, in Ether. The **miner** (or validator in PoA networks) that includes the transaction in a block **receives transaction cost**. (항동은 아니고, gas price로 부터 결정됨)
+
+- In many **private networks**, network participants run the validators and **do not require gas as an incentive**. Networks that don't require gas as an incentive usually **configure the gas price to be zero** (that is, free gas). Some private networks might allocate Ether and use a non-zero gas price to limit resource use.
+
+
 
 
 
