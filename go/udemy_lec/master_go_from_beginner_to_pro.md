@@ -11,7 +11,7 @@
 - 실행가능한 모듈의 패키지 이름은 main
 - **main 안에는 main func이 포함되어야 함**
 
-:bulb: Convetion
+:bulb: Convention
 
 - `main.go`은 `package main`으로 명명하는것이 컨벤션
 - 폴더 이름이 패키지 이름이 되는 것이 컨벤션
@@ -311,7 +311,7 @@
   - composite types: 
     - ex) array, slice, map, struct, pointer, function, interface, channel types
 
-- predeclared types (Built-in types)
+- **predeclared types (Built-in types)**
 
   - Numeric types
 
@@ -343,6 +343,12 @@
 
     - Unicode chars written enclosed by double-quotes
     - A string value is a (possibly empty) sequence of bytes
+
+- **Introduced Types**
+
+  - introduce new types using the `type` keyword
+
+- **Composite Types:**
 
   - Array and Slice Type
 
@@ -462,7 +468,7 @@
         ```go
         b, err := strconv.ParseBool("true")
         f, err := strconv.ParseFloat("3.1415", 64)
-        i, err := strconv.ParseInt("-42", 10, 64)
+        i, err := strconv.ParseInt("-42", 10, 64)		// 값, 진수, bitSize. 진수가 0일 경우, 값을 보고 유추
         u, err := strconv.ParseUint("42", 10, 64)
         ```
     
