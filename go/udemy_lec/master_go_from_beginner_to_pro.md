@@ -459,8 +459,8 @@
     - common numeric conversions
 
         ```go
-        i, err := strconv.Atoi("-42") 	// Ascii to int
-        s := strconv.Itoa(-42)			// int to Ascii
+        i, err := strconv.Atoi("-42") 	// string to int
+        s := strconv.Itoa(-42)			// int to string
         ```
     
     - ParseBool, ParseFloat, ParseInt, and ParseUint convert strings to values
