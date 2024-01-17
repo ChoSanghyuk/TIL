@@ -298,6 +298,58 @@ miner-coinbase="0xfe3b557e8fb62b89f4916b721be55ceb828dbd73"
 
 
 
+## Creating a Private Network with the Quickstart
+
+
+
+node 설치하기
+
+nvm 설치
+
+`curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash`
+
+nodejs 설치
+
+`nvm install 20.11.0`
+
+Nodesource 설치 : Nodesource에서 Nodejs 패키지를 설치할 것임을 Ubuntu에 알립니다.
+
+```
+curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+```
+
+NodeJS 설치
+
+Nodesource 세팅이 끝나면, 이제 Nodejs v14.4 설치를 할 수 있습니다.
+
+```
+sudo do-release-upgrade
+```
+
+
+
+https://www.freecodecamp.org/korean/news/how-to-install-node-js-on-ubuntu-and-update-npm-to-the-latest-version/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
