@@ -459,8 +459,8 @@
     - common numeric conversions
 
         ```go
-        i, err := strconv.Atoi("-42") 	// Ascii to int
-        s := strconv.Itoa(-42)			// int to Ascii
+        i, err := strconv.Atoi("-42") 	// string to int
+        s := strconv.Itoa(-42)			// int to string
         ```
     
     - ParseBool, ParseFloat, ParseInt, and ParseUint convert strings to values
@@ -887,7 +887,18 @@
 
 :bulb: nil은 value의 부재를 의미하는 것이 아닌, value가 initialize 되지 않았음을 의미
 
-​	=> slice가 nil인 것은 0 capacity slice 인 것을 의미
+​	=> slice가 nil인 것은 0 capacity slice인 것을 의미
+
+```go
+var nn []int
+fmt.Println(nn == nil, cap(nn)) // true
+
+// empty slice but initialized, not equal to nil
+mm := []int{}
+fmt.Println(mm == nil, cap(mm)) //false
+```
+
+
 
 
 
@@ -898,9 +909,8 @@
   ```go
   numbers := []int{2, 3, 4, 5} // on the right hand-side of the equal sign is a slice literal
   nums := make([]int, 2)		 // creating a slice with 2 int elements initialized with zero.
-  
   ```
-
+  
 - 특징
 
   - slice에서의 index는 길이보다 작은 값에 한해서 사용 O
@@ -913,33 +923,271 @@
 
     - `==`를 통한 비교는 nil과만 가
 
+- index
+
+  - slice에서 index는 길이보다 작은 값에 한해서 사용 O
+
+    => 아닐 시 에러
+
+- 비교
+
+  - `==` 는 오직 `nil`하고만 가능
+    
+    - slice 끼리 `==`를 통한 비교 X
+    
+  - loop를 통한 비교
+
+    ```go
+    var eq bool = true
+    if len(a) != len(b) {
+        eq = false
+    }
+    
+    for i, valueA := range a {
+        if valueA != b[i] {
+            eq = false // don't check further, break!
+            break
+        }
+    }
+
+- 복사
+  - `dst := src`
+    - 얕은 복사
+  - `copy(dst,src)`
+    - src의 값을 dst로 깊은 복사
+    - src와 dst 중 최소 길이 만큼만 복사됨
+  - `변수 := slice[i]` 
+    - 깊은 복사
 
 
 
-```
-var nn []int
-	fmt.Println(nn == nil, cap(nn)) // true
+### Slice’s Backing (Underlying) Array
 
-	// empty slice but initialized, not equal to nil
-	mm := []int{}
-	fmt.Println(mm == nil, cap(mm)) //false
-```
-
-
-
-
-
-
-
-
-
-
-
-
+- 개요
+  - When creating a slice, behind the scenes Go creates a hidden array called Backing Array.
+  - The backing array stores the elements, not the slice.
+  - Go implements a slice as a data structure called slice header.
+- Slice Header 구성
+  - **the address** of the backing array (pointer)
+  - **the length** of the slice. 
+    - `len()` returns it.
+  - **the capacity** of the slice. 
+    - 해당 slice의 시작 위치부터 backing array의 끝 부분까지의 길이
+    - 즉, 얼마큼까지 재할당이 필요없는지를 나타냄
+    - `cap()` returns it
+- 특징
+  - Slice Header is the runtime representation of a slice.
+  - A nil slice doesn't a have backing array.
+  - slice 변수 자체는 header로 구성되어 있기에, array보다 사이즈가 작을 수 있음
 
 
 
+### slice expression
 
+- 개요
+
+  - a slice expression is formed by specifying a start or a low bound and a stop or high bound 
+    - `s1[start:stop]`
+  - arrays, slices and strings are sliceable
+  - slicing doesn't modify the array or the slice, it returns a new one
+
+- 특징
+
+  - **새로운 backing array 생성 X**, backing array 공유
+
+    => 하나만 바뀌어도, backing array를 공유하는 모든 변수들 같이 변경
+
+  - 최대 자신의 capacity만큼 slicing으로 접근 O
+
+    ```go
+    s1 := []int{1, 2, 3, 4, 5}
+    s2 := s1[:3]
+    fmt.Println(s2[:5]) // backing array의 기준 최대치까지 slice 가능
+    ```
+
+    :bulb: 단, index로는 자신의 최대 길이까지만 접근 O. `s2[4]` 불가
+
+
+### append
+- 개요
+
+  - slice 마지막 부분에 요소 추가
+
+- 코드
+
+  - `append(s1,e1)` 
+    - 단일 요소 추가
+  - `append(s1,e1,e2)` 
+    - 복수 요소 추가
+  - `append(s1,s2...)` 
+    - 복수 요소 추가 with ellipsis operator
+
+- 특징
+
+  - capacity를 벗어나지 않는다면, backing array를 수정
+
+    ```go
+    s1 := []int{1, 2, 3, 4, 5}
+    s2 := s1[0:3]
+    s3 := append(s2, 6) // s1 : {1,2,3,6,5}
+    ```
+
+  - capicity를 벗어나는 `append`에 대해서는 **새로운 backing array 생성**
+
+
+
+
+
+## String
+
+### String
+
+- 개요
+
+  - Golang doesn’t have a char data type. It uses byte and rune to represent character values.
+    - **byte** and **rune** data types are used to distinguish characters from integer values
+  - Characters or rune literals are expressed in Go by enclosing them in single quotes, as in 'x' or '\n' . 
+    - Rune literals such as ‘a’ , ‘b’, ‘c’, ‘x’ or ‘\n’ are represented using **Unicode Code** Points. 
+    - A code point is a numeric value that represents a rune literal.
+  - The character encoding scheme ASCII which is a Unicode subset, comprises 128 code points.
+  - A string is a series of bytes values. 
+    - A string is a slice of bytes and any byte slice can be encoded in a string value.
+
+- 주요 사용법
+
+  - raw string
+
+      ```go
+      s2 := `Hi 
+      there Go!` // => `` 안에 있는 형태 그대로 출력
+      ```
+
+  - concatenating strings
+  
+      - `s1 + s2`
+  
+- 특징
+
+  - **string is immutable** in Go
+    - concatenate 시, 완전 새로운 문자열 생성
+    - 수정 불가. `s3[5] = 'x' // => error`
+  
+  - Unicode byte의 series
+    - indexing 시, 실제 값이 아닌 Unioce 값 조회
+    - `len(s1)` 시, 실제 문자열 길이가 아닌, bytes의 길이 조회
+  
+- 인코딩
+
+  - `utf8` package
+
+    - `utf8.RuneCountInString(str)` 
+
+      - 실제 문자열 길이 반환
+
+    - `r, size := utf8.DecodeRuneInString(str[i:])`
+
+      - i부터 시작하는 하나의 문자열 반환. 이때 사용된 byte 개수 반환
+  
+  
+      ```go
+      for i := 0; i < len(str); {
+          // it returns the rune in string in variable r and its size in bytes in variable size
+          r, size := utf8.DecodeRuneInString(str[i:]) 
+          fmt.Printf("%c", r) 		       // printing out each rune
+          i += size           			   // incrementing i by the size of the rune in bytes
+      }
+      ```
+  
+  - `range`로 bytes => string
+  
+    ```go
+    str := "안녕하세요"
+    
+    for i, r := range str { //the first value returned by range is the index of the byte in string where rune starts
+        fmt.Printf("%d -> %c", i, r) // => 안녕하세요
+    }
+    ```
+  
+  - slicing the rune slice
+  
+    ```go
+    s1 := "안녕하세요"
+    fmt.Println(s1[0:3]) // -> 안 - the unicode representation of bytes from index 0 and 2.
+    
+    // 1st step: converting string to rune slice
+    rs := []rune(s2)
+    
+    // 2st step: slicing the rune slice
+    fmt.Println(string(rs[0:3])) // => 안녕하
+    ```
+  
+    - `[]rune(s2)` 로 변환 시, 한 글자씩 표현 가능
+  
+
+
+
+### String 메소드
+
+- 포함 여부
+
+  - `strings.Contains("I love Go Programming!", "love")`
+  - `strings.ContainsAny("success", "xy")`
+  - `strings.ContainsRune("golang", 'g')`
+
+- 갯수 카운팅
+
+  - `strings.Count("cheese", "e")`
+
+    :bulb:`strings.Count("five", "")`  => 5
+
+    - if the substr is an empty string, Count() returns 1 + the number of runes in the string
+
+- 변환
+
+  - `strings.ToLower("Go Python Java")`
+  - `strings.ToUpper("Go Python Java")`
+
+- 비교
+
+  - `"go" == "go"`
+  - `strings.EqualFold("Go", "gO")` 
+    - case insensitive하게 비교
+
+- 반복
+
+  - `strings.Repeat("ab", 10)`
+
+- 치환
+
+  - `strings.Replace("192.168.0.1", ".", ":", 2)`
+    - `.`을 `:`으로 앞 두개만 치환
+  - `strings.Replace("192.168.0.1", ".", ":", -1)`
+    - 마지막 인자가 -1일 시, 전부 치환
+  - `strings.ReplaceAll("192.168.0.1", ".", ":")`
+    - 전부 치환
+
+- 분할
+
+  - `strings.Split("a,b,c", ",")`
+    - returns a slice of the substrings
+  - `strings.Split("Go for Go!", "")`
+    - separator가 `""`일 시, UTF-8 rune literal마다 쪼갬
+  - `strings.Fields(myStr)`
+    - splitting a string by whitespaces and newlines
+
+- 합침
+
+  - `strings.Join(s, "-")`
+    - slice s를 요소 사이사이에 -를 추가해서 반환
+
+- 양 옆 제거
+
+  - `strings.TrimSpace("\t Goodbye Windows, Welcome Linux!\n ")`
+    - 공백 제거
+  - `strings.Trim("...Hello, Gophers!!!?", ".!?")`
+    - 두번째 인자에 나열된 모든 문자를 양 옆에서 제거 (순서 상관 X)
+
+  
 
 
 
