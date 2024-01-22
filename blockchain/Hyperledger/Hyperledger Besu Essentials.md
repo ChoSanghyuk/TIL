@@ -302,49 +302,105 @@ miner-coinbase="0xfe3b557e8fb62b89f4916b721be55ceb828dbd73"
 
 
 
-node 설치하기
+### 사전 세팅
 
-nvm 설치
+- nodejs 설치하기
 
-`curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash`
+  - nvm 설치
 
-nodejs 설치
+    ```sh
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
+    ```
 
-`nvm install 20.11.0`
+  - nodejs 설치
 
-Nodesource 설치 : Nodesource에서 Nodejs 패키지를 설치할 것임을 Ubuntu에 알립니다.
+    ```sh
+    # nodejs 설치
+    nvm install 20.11.0
+    # Nodesource 설치 : Nodesource에서 Nodejs 패키지를 설치할 것임을 Ubuntu에 알립니다.
+    curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+    # installing the Node.js runtime 
+    sudo apt-get install -y nodejs
+    ```
 
+  :bulb: ubuntu 버전 업그레이드
+
+  ```sh
+  sudo do-release-upgrade
+  ```
+
+  :link: https://www.freecodecamp.org/korean/news/how-to-install-node-js-on-ubuntu-and-update-npm-to-the-latest-version/
+
+- Window에서 Docker Destop 설치 및 Ubuntu 연동 설정
+
+  - 설치
+    - :link:[Docker Desktop configured to use the Windows Subsystem for Linux 2 engine](https://docs.docker.com/docker-for-windows/wsl/)
+  - WSL 연계 설정
+    - docker desktop > Settings > Resources > WSL Integration > Enable integration with my default WSL distro 체크 > 선택 > Apply & Restart
+
+- Ubuntu에서 Docker Compose 설치 (위에꺼 했어도 필요??)
+  - :link:[Docker Compose](https://docs.docker.com/compose/install/)
+
+
+
+### quickstart
+
+- 설치
+  - `npx quorum-dev-quickstart`
+- 실행 및 중지
+  - 실행 : `./run.sh` 
+  - 중지 : `./stop.sh` 
+  - 다시시작 : `./resume.sh` 
+  - 삭제 : `./remove.sh` 
+
+
+
+### 모니터링
+
+- 개요
+  - There are two monitoring tools included in the Quickstart, Prometheus and Granfana.
+- Prometheus
+  - an open source monitoring tool that pulls data from the services that it is connected to - like nodes, databases, validators, servers, etc
+  - allows for that data from these services to be used in alerts and notifications
+  - pulls the data and stores it in a database, and then allows you or a data visualization tool to query that data
+  - has an integration with Grafana
+- Grafana 
+  - an observability platform that takes in data and displays the outputs as visualizations
+  - allows us to make sense of what is occurring in our private network over time.
+
+
+
+
+
+## Creating a Private Network
+
+
+
+In this chapter, you will create a Clique Proof of Authority (PoA) network with three nodes on your computer using Hyperledger Besu. First, you will create the folder structure necessary for the network. Next, you will generate an address and public key for Node 1 of the network. And then, you will create a genesis file for the first block, and use it to start all three nodes of the private blockchain network.
+
+
+
+```sh
+mkdir -p code/Clique-Network
+cd code/Clique-Network
+mkdir Node-1 Node-2 Node-3
+
+for dir in ./*
+> do cd ${dir}; mkdir data; cd ..;
+> done
 ```
-curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-```
-
-NodeJS 설치
-
-Nodesource 세팅이 끝나면, 이제 Nodejs v14.4 설치를 할 수 있습니다.
-
-```
-sudo do-release-upgrade
-```
 
 
 
-https://www.freecodecamp.org/korean/news/how-to-install-node-js-on-ubuntu-and-update-npm-to-the-latest-version/
+2024-01-19 08:10:28.726+09:00 | main | INFO  | KeyPairUtil | Generated new secp256k1 public key 0xa63461b628df59383c6898e95c373e2dea595afd20d31ed58a3441dc6b352e1fca6e926c9c3b79161a63287b2ac36194cdfe4012305fcde6c1952eb44e393c6f and stored it to /home/chosh901/code/Clique-Network/Node-1/data/key
 
 
 
+### creating Genesis File
 
+root folder(Clique-Network)에 cliqueGenesis.json 생성 (touch cliqueGenesis.json)
 
-
-
-
-
-
-
-
-
-
-
-
+[tutorial](https://besu.hyperledger.org/private-networks/tutorials/clique#2-get-the-address-for-node-1)에서 제공하는 Genesis File에서 <Node 1 Address> 부분을 나의 public key 중 `0x` 이후 부분으로 치환 후 cliqueGenesis.json에 저장
 
 
 

@@ -189,6 +189,8 @@
 
 ## Command Mode
 
+### vi/vim
+
 - :    명령 시작
 - 문서 편집
   - i    수정
@@ -211,11 +213,11 @@
   - n : 다음 단어
   - N : `*`시 위쪽으로 찾기
 
+유용 :link: https://iamfreeman.tistory.com/entry/vi-vim-%ED%8E%B8%EC%A7%91%EA%B8%B0-%EB%AA%85%EB%A0%B9%EC%96%B4-%EC%A0%95%EB%A6%AC-%EB%8B%A8%EC%B6%95%ED%82%A4-%EB%AA%A8%EC%9D%8C-%EB%AA%A9%EB%A1%9D
+
 
 
 ## Control Flow
-
-
 
 ### while 문으로 문서 읽기
 
@@ -243,3 +245,35 @@ done
 ```
 
 - 1부터 5까지.1>
+
+
+
+## 시스템 환경 변수 등록하기
+
+### PATH 등록
+
+- 일시 등록
+
+  ```SH
+  export PATH=$PATH:/mnt/c/Users/chosh/lecture_code/besu-24.1.0/bin
+  ```
+
+- 영구적 등록
+
+  - .bashrc 파일 open
+
+    - `vim ~/.bashrc`
+
+  - Path 등록 및 저장
+
+    1. i로 수정모드 시작
+    2. 입력 : `export PATH=$PATH:/mnt/c/Users/chosh/lecture_code/besu-24.1.0/bin`
+
+    3. `:w`로 저장
+
+
+
+
+
+
+

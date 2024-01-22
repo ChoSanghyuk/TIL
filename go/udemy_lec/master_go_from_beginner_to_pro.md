@@ -897,14 +897,33 @@
 
   ```go
   numbers := []int{2, 3, 4, 5} // on the right hand-side of the equal sign is a slice literal
-  // creating a slice with 2 int elements initialized with zero.
-  nums := make([]int, 2)
+  nums := make([]int, 2)		 // creating a slice with 2 int elements initialized with zero.
   
   ```
 
-  
+- 특징
+
+  - slice에서의 index는 길이보다 작은 값에 한해서 사용 O
+
+    => 길이 초과하는 index 접근 => error
+
+  - `변수 := slice[i]`와 같이 index로 하나의 값을 복사했을 때에는 깊은 복사
+
+  - slice는 오직 nil과만 비교 될 수 있음
+
+    - `==`를 통한 비교는 nil과만 가
 
 
+
+
+```
+var nn []int
+	fmt.Println(nn == nil, cap(nn)) // true
+
+	// empty slice but initialized, not equal to nil
+	mm := []int{}
+	fmt.Println(mm == nil, cap(mm)) //false
+```
 
 
 
