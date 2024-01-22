@@ -1187,7 +1187,98 @@ fmt.Println(mm == nil, cap(mm)) //false
   - `strings.Trim("...Hello, Gophers!!!?", ".!?")`
     - 두번째 인자에 나열된 모든 문자를 양 옆에서 제거 (순서 상관 X)
 
+
+
+
+## Maps in Go
+
+
+
+### Map
+
+- 개요
+
+  - collection type which stores `key:value` pairs.
+  - add, get and delete operations take **constant expected time**.
+  - All the keys and the values in a Map are statically typed and must have the same type.
+  - The keys in a map must be unique, but the values don’t have to be unique.
+  - A Map allows us to quickly access a value using a unique key!
+  - We can use any **comparable type as a key** map. 
+    - A comparable type is that type that supports the comparing operator which is the double equals sign.
+      - slice : X , array : O
+    - Even if it’s possible, it’s not recommended to use a float as a key. 
+      - A **float has some comparable issues**.
+  - We can not compare a map to another map. We can only compare a map to nil.
+  - Maps are unordered data structures in Go
+
+- 선언 및 초기화
+
+  ```go
+  // declaring a map with keys of type string and values of type string
+  var employees map[string]string
   
+  // declaring and initializing a map using a map literal
+  people := map[string]float64{} // empty map
+  // declaring and initializing a map using the make() function:
+  map1 := make(map[int]int)
+  // declaring and initializing a map using a map literal
+  balances := map[string]float64{
+  "USD": 233.11,
+  "EUR": 555.11,
+  "CHF": 600, //this last comma (,) is mandatory when declaring the map on multiple lines
+  }
+  
+  // 에러!! 
+  // initializing a map with duplicate keys
+  n := map[int]int{1: 3, 4: 5, 6: 8, 1: 4} // => 에러
+  ```
+
+- 특징
+
+  - if the key doesn't exist or the map is not initialized it returns the zero value for the value type
+
+  - if the key exists it updates its value and if the key doesn't exist it adds the key: value pair
+
+    ```go
+     balances["USD"] = 500.5
+    ```
+
+- 활용
+
+  - comma ok
+
+    - "comma ok" idiom is used to distinguish between a missing key:value pair and an existing key with value zero
+
+    ```go
+    v, ok := balances["RON"]
+    ```
+
+    - ok : boolean type value which is **true if the key exists** and false otherwise
+
+  - iterate
+
+    ```go
+    // iterating over a map
+    for k, v := range balances {
+        fmt.Printf("Key: %#v, Value: %#v\n", k, v)
+    }
+    ```
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

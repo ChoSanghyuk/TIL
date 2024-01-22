@@ -380,6 +380,8 @@ In this chapter, you will create a Clique Proof of Authority (PoA) network with 
 
 
 
+### 1. Create directories
+
 ```sh
 mkdir -p code/Clique-Network
 cd code/Clique-Network
@@ -392,19 +394,120 @@ for dir in ./*
 
 
 
+### 2. Get the address for Node-1
+
+Node-1 폴더에서 아래 실행
+
+```sh
+besu --data-path=data public-key export-address --to=data/node1Address
+```
+
+```
 2024-01-19 08:10:28.726+09:00 | main | INFO  | KeyPairUtil | Generated new secp256k1 public key 0xa63461b628df59383c6898e95c373e2dea595afd20d31ed58a3441dc6b352e1fca6e926c9c3b79161a63287b2ac36194cdfe4012305fcde6c1952eb44e393c6f and stored it to /home/chosh901/code/Clique-Network/Node-1/data/key
-
-
-
-### creating Genesis File
-
-root folder(Clique-Network)에 cliqueGenesis.json 생성 (touch cliqueGenesis.json)
-
-[tutorial](https://besu.hyperledger.org/private-networks/tutorials/clique#2-get-the-address-for-node-1)에서 제공하는 Genesis File에서 <Node 1 Address> 부분을 나의 public key 중 `0x` 이후 부분으로 치환 후 cliqueGenesis.json에 저장
+```
 
 
 
 
+
+### 3. creating Genesis File
+
+root folder(Clique-Network)에 cliqueGenesis.json 생성 (`touch cliqueGenesis.json`)
+
+[tutorial](https://besu.hyperledger.org/private-networks/tutorials/clique#2-get-the-address-for-node-1)에서 제공하는 Genesis File에서 <Node 1 Address> 부분을 나의 node1Address 중 `0x` 이후 부분으로 치환 후 cliqueGenesis.json에 저장
+
+```
+{
+"config":{
+"chainId":1981,
+"constantinoplefixblock":
+0,
+"clique":{
+"blockperiodseconds":15,
+"epochlength":30000
+}
+},
+"coinbase":"0x0000000000000000000000000000000000000000",
+"difficulty":"0x1",
+"extraData":"0x0000000000000000000000000000000000000000000000000000000000000000<Node
+1 Address>0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+"gasLimit":"0xa00000",
+"mixHash":"0x0000000000000000000000000000000000000000000000000000000000000000",
+"nonce":"0x0",
+"timestamp":"0x5c51a607",
+"alloc":
+{
+"fe3b557e8fb62b89f4916b721be55ceb828dbd73":
+{
+"privateKey":
+"8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63",
+"comment":
+"private key and this comment are ignored. In a real chain, the private key should NOT be stored",
+"balance":
+"0xad78ebc5ac6200000"
+},
+"627306090abaB3A6e1400e9345bC60c78a8BEf57":
+{
+"privateKey":
+"c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3",
+"comment":
+"private key and this comment are ignored. In a real chain, the private key should NOT be stored",
+"balance":
+"90000000000000000000000"
+},
+"f17f52151EbEF6C7334FAD080c5704D77216b732":
+{
+"privateKey":
+"ae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f",
+"comment":
+"private key and this comment are ignored. In a real chain, the private key should NOT be stored",
+"balance":
+"90000000000000000000000"
+}
+},
+"number":"0x0",
+"gasUsed":"0x0",
+"parentHash":"0x0000000000000000000000000000000000000000000000000000000000000000"
+}
+```
+
+
+
+### 4.Starting the Bootnode
+
+Node-1 폴더로 이동 후 아래 실
+
+```sh
+besu --data-path=data --genesis-file=../cliqueGenesis.json --network-id 123 --rpc-http-enabled --rpc-http-api=ETH,NET,CLIQUE --host-allowlist="*" --rpc-http-cors-origins="all"
+```
+
+
+
+### 5. Start Node-2 & Node-3
+
+Node-2 폴더와 Node-3 폴더에서 각각 아래 command 실행
+
+`<Node-1 Enode URL>` 부분엔 Node-1 실행하고 나온 Enode URL(enode://로 시작) 입력
+
+또한 Node-2 폴더와 Node-3 폴더 실행할 땐 `p2p-port `와 `rpc-http-port`에 다른 값 설정
+
+```sh
+besu --data-path=data --genesis-file=../cliqueGenesis.json --bootnodes=<Node-1 Enode URL> --network-id 123 --p2p-port=30304 --rpc-http-enabled --rpc-http-api=ETH,NET,CLIQUE --host-allowlist="*" --rpc-http-cors-origins="all" --rpc-http-port=8546
+```
+
+
+
+:bulb: 정상 작동 확인
+
+```sh
+curl -X POST --data '{"jsonrpc":"2.0","method":"net_peerCount","params":[],"id":1}' localhost:8545
+```
+
+
+
+## Creating a Private Network with Privacy and Sending a Private Transaction
+
+In this chapter, you will create an IBFT 2.0 Proof of Authority Network with three nodes on your computer using Hyperledger Besu. You will also use Tessera, a stateless Java system, to enable private transactions. You will see how private transactions are represented in your network, and understand other privacy features you can enable.
 
 
 
