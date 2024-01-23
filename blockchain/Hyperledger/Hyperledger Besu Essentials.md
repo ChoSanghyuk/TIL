@@ -511,7 +511,42 @@ In this chapter, you will create an IBFT 2.0 Proof of Authority Network with thr
 
 
 
+```sh
+npx quorum-dev-quickstart
+```
 
+`>` Hyperledger Besu
+
+`>` Private Transaction : Y
+
+`>` Logging : ELK
+
+
+
+```sh
+mv quorum-test-network/ ./private-transaction-network
+cd private-transaction-network/
+README.md
+
+cd smart_contracts
+npm install
+node scripts/privacy/private_tx.js
+```
+
+
+
+[Privacy](https://besu.hyperledger.org/private-networks/concepts/privacy), in the context of Hyperledger Besu, refers to the ability to keep transactions between two or more participants hidden from other participants in the network. This is done using:
+
+- [Private Transactions](https://besu.hyperledger.org/private-networks/concepts/privacy/private-transactions)
+  Transactions sent on the blockchain network that specify the addresses and/or nodes that receive the transaction and are able to see the contents. Private transactions are created and sent using different API methods than transactions that are not private. The differences between the API methods for private transactions are shared in more detail in the Hyperledger Besu Documentation, *["Creating and Sending Private Transactions"](https://besu.hyperledger.org/private-networks/how-to/send-transactions/private-transactions)*.
+- [Privacy Groups](https://besu.hyperledger.org/private-networks/concepts/privacy/privacy-groups)
+  Nodes that share a private state that is not shared with the overall blockchain (the state shared by all nodes within the blockchain, including the privacy nodes is called the world state or global state). Privacy groups can be [flexible](https://besu.hyperledger.org/private-networks/concepts/privacy/flexible-privacy), meaning that nodes can be added or removed from the privacy group. Flexible privacy groups use a smart contract in order to enable the addition or deletion of nodes from the privacy group. Privacy groups can be configured on a single node, which is known as [multi-tenancy](https://besu.hyperledger.org/private-networks/concepts/privacy/multi-tenancy) (multiple tenants on the same node). As the tenants are on the same node, a JSON Web Token (JWT) is required in order to authenticate each tenant when using the JSON-RPC API to send transactions.
+
+Hyperledger Besu offers options for both private transactions and privacy groups. The options are detailed below, and each contain an example tutorial:
+
+- [Privacy-enabled network](https://besu.hyperledger.org/private-networks/tutorials/privacy)
+- [Multi-tenant private network](https://besu.hyperledger.org/private-networks/tutorials/privacy/multi-tenancy)
+- [Enterprise Ethereum Alliance compliant private network](https://besu.hyperledger.org/private-networks/tutorials/privacy/web3js-quorum)
 
 
 

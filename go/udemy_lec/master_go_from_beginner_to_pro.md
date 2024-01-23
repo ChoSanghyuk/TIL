@@ -1235,7 +1235,7 @@ fmt.Println(mm == nil, cap(mm)) //false
 
 - 특징
 
-  - if the key doesn't exist or the map is not initialized it returns the zero value for the value type
+  - 없는 키로 접근 시,  value type의 zero value 반환
 
   - if the key exists it updates its value and if the key doesn't exist it adds the key: value pair
 
@@ -1264,7 +1264,92 @@ fmt.Println(mm == nil, cap(mm)) //false
     }
     ```
 
-    
+    :bulb: looping through Map is not indicated
+
+    - key, value order changes
+    - Map is designed for fast lookup time, not fast looping
+
+  - comparing
+
+    - String으로 전환 후 비교
+
+      ```go
+      s1 := fmt.Sprintf("%s", a) // a : Map
+      s2 := fmt.Sprintf("%s", b) // b : Map
+      s1 == s2
+      ```
+
+  - 복사
+
+    - 얕은 복사
+
+      ```go
+      // both maps reference the same data structure in memory
+      friends := map[string]int{"Dan": 40, "Maria": 35}
+      neighbors := friends
+      ```
+
+      - When creating a map variable Go creates a pointer to a map header value in memory.
+      - The key: value pairs are stored in memory at the address referenced by the map header
+
+    - 깊은 복사
+
+      ```go
+      for k, v := range friends {
+          colleagues[k] = v
+      }
+      ```
+
+
+
+## Files in Go
+
+기본 package  : os
+
+추가 기능 : io, ioutil, bufio
+
+더 많은 기능을 제공하지만, executable file의 size가 증가
+
+
+
+log.Fatal(err)
+
+-. idiomatic way to log error and exit program
+
+-. thread safe & ...
+
+
+
+Truncate 방법
+
+1. `os.Create()`로 중복 생성
+2. `os.Truncate(파일, i:int64)`
+   - i만큼의 byte만 남기고 파일 삭제
+
+
+
+defer 메소드의 실행을 현재 메소드의 끝 부분에 실행되도록 미룸
+
+
+
+ioutil.writeFile() : depre => os.WriteFile()
+
+
+
+ReadFile
+
+- io.ReadFull(File, slice:byte[])
+  - slice의 크기만큼 읽어서 slice에 담음
+- ioutil.ReadAll : depre => io.ReadAll
+- ioutil.ReadFile : depre => os.ReadFile()
+
+
+
+delimiter로 파일 나누어 읽기 : scanner
+
+기본 \n
+
+
 
 
 
