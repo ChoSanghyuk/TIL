@@ -1304,27 +1304,98 @@ fmt.Println(mm == nil, cap(mm)) //false
 
 ## Files in Go
 
-기본 package  : os
-
-추가 기능 : io, ioutil, bufio
-
-더 많은 기능을 제공하지만, executable file의 size가 증가
 
 
+### File Package
 
-log.Fatal(err)
-
--. idiomatic way to log error and exit program
-
--. thread safe & ...
+- 기본 package
+  - os
+- 추가 기능 제공 package
+  - io, bufio
+  - ioutil(deprecated)
+  - 더 많은 기능을 제공하지만, executable file의 size가 증가
 
 
 
-Truncate 방법
+:bulb: `log.Fatal(err)`
 
-1. `os.Create()`로 중복 생성
-2. `os.Truncate(파일, i:int64)`
-   - i만큼의 byte만 남기고 파일 삭제
+- idiomatic way to log error and exit program
+
+- thread safe
+
+```go
+if err != nil {
+    // log the error and exit the program
+    log.Fatal(err) // the idiomatic way to handle errors
+
+}
+```
+
+
+
+
+
+### CREATING A FILE
+
+- `os.Create()`
+
+  - creates a file if it doesn't already exist. If it exists, the file is truncated.
+
+  ```go
+  // it returns a file descriptor which is a pointer to os.File and an error value.
+  newFile, err := os.Create("a.txt")
+  ```
+
+
+
+### TRUNCATING A FILE
+
+- `os.Truncate(파일, i:int64)`
+
+  - i만큼의 byte만 남기고 파일 삭제
+
+  ```go
+  err = os.Truncate("a.txt", 0) // 0이면 모든 내용 삭제
+  ```
+
+- `os.Create()`로 중복 생성
+
+
+
+### OPEN & CLOSE AN EXISTING FILE
+
+- Open : `os.Open()`
+
+  ```go
+  file, err := os.Open("a.txt") // open in read-only mode
+  file, err = os.OpenFile("a.txt", os.O_APPEND, 0644) //OPENING a FILE WITH MORE OPTIONS
+  ```
+
+  - Options
+
+    - `os.O_RDONLY` : Read only
+    - `os.O_WRONLY` : Write only
+    - `os.O_RDWR` : Read and write
+    - `os.O_APPEND` : Append to end of file
+    - `os.O_CREATE` : Create is none exist
+    - `os.O_TRUNC` : Truncate file when opening
+
+    :bulb: can open attributes combined using an `|`(OR) between them
+
+- Close : `file.Close()`
+
+  ```go
+  file.Close() // file은 변수
+  ```
+
+
+
+This argument is an octal number that represents the file permission mode for the newly created or opened file. In octal notation, the leading zero indicates that the number is in base 8.
+
+- `0`: The leading zero indicates octal notation.
+- `6`: The first digit (from left to right) represents the owner's permission. In octal, `6` is equivalent to `110` in binary, which means read and write permissions are granted to the owner.
+- `4`: The second digit represents the group's permission. In octal, `4` is equivalent to `100` in binary, which means only read permission is granted to the group.
+- `4`: The third digit represents the others' (or public) permission. In octal, `4` is equivalent to `100` in binary, which means only read permission is granted to others.
 
 
 
