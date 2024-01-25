@@ -1333,8 +1333,6 @@ if err != nil {
 
 
 
-
-
 ### CREATING A FILE
 
 - `os.Create()`
@@ -1371,54 +1369,348 @@ if err != nil {
   file, err = os.OpenFile("a.txt", os.O_APPEND, 0644) //OPENING a FILE WITH MORE OPTIONS
   ```
 
-  - Options
+  - flag
 
     - `os.O_RDONLY` : Read only
     - `os.O_WRONLY` : Write only
     - `os.O_RDWR` : Read and write
     - `os.O_APPEND` : Append to end of file
-    - `os.O_CREATE` : Create is none exist
+    - `os.O_CREATE` : Create if none exist
     - `os.O_TRUNC` : Truncate file when opening
 
     :bulb: can open attributes combined using an `|`(OR) between them
+
+  - file permission mode
+    - 개요
+      - `notation`,`owner`,`group`,`others`
+      - owner, group, others에 대한 권한은 3자리 2진수로 표시되며, 각각 read,write,execute 권한을 나타냄
+    - 예시
+      - `0`: The leading zero indicates octal notation.
+      - `6`: The first digit (from left to right) represents the owner's permission. In octal, `6` is equivalent to `110` in binary, which means read and write permissions are granted to the owner.
+      - `4`: The second digit represents the group's permission. In octal, `4` is equivalent to `100` in binary, which means only read permission is granted to the group.
+      - `4`: The third digit represents the others' (or public) permission. In octal, `4` is equivalent to `100` in binary, which means only read permission is granted to others.
 
 - Close : `file.Close()`
 
   ```go
   file.Close() // file은 변수
   ```
+  
+  :bulb: `defer file.Close()` : `defer`로 메소드의 실행을 현재 메소드의 끝 부분으로 미룰 수 있
 
 
 
-This argument is an octal number that represents the file permission mode for the newly created or opened file. In octal notation, the leading zero indicates that the number is in base 8.
+### GETTING FILE INFO
 
-- `0`: The leading zero indicates octal notation.
-- `6`: The first digit (from left to right) represents the owner's permission. In octal, `6` is equivalent to `110` in binary, which means read and write permissions are granted to the owner.
-- `4`: The second digit represents the group's permission. In octal, `4` is equivalent to `100` in binary, which means only read permission is granted to the group.
-- `4`: The third digit represents the others' (or public) permission. In octal, `4` is equivalent to `100` in binary, which means only read permission is granted to others.
+- `os.Stat`
+
+  ```go
+  var fileInfo os.FileInfo
+  fileInfo, err = os.Stat("a.txt")
+  ```
+
+  - 기능
+    - `fileInfo.Name()`
+    - `fileInfo.Size()`
+    - `fileInfo.ModTime()`
+      - Last modified Time
+    - `fileInfo.IsDir()`
+    - `fileInfo.Mode()`
 
 
 
-defer 메소드의 실행을 현재 메소드의 끝 부분에 실행되도록 미룸
+### CHECKING IF FILE EXISTS
 
+- `os.IsNotExist(err)`
 
+  ```go
+  fileInfo, err = os.Stat("b.txt")
+  // error handling
+  if err != nil {
+      if os.IsNotExist(err) {
+          log.Fatal("The file does not exist")
+      }
+  }
+  ```
 
-ioutil.writeFile() : depre => os.WriteFile()
+  
 
+### RENAMING AND MOVING A FILE
 
+- Rename : `os.Rename()`
 
-ReadFile
+  ```go
+  err = os.Rename(oldPath, newPath) // oldPath, newPath : String
+  // error handling
+  if err != nil {
+      log.Fatal(err)
+  }
+  ```
 
-- io.ReadFull(File, slice:byte[])
+- REMOVING A FILE : `os.Remove("aa.txt")`
+
+  ```go
+  err = os.Remove("aa.txt")
+  // error handling
+  if err != nil {
+      log.Fatal(err)
+  }
+  ```
+
+  
+
+### WRITING TO A FILE
+
+- WRITING BYTES TO FILE by `file.Write()`
+
+  ```go
+  byteSlice := []byte("I learn Golang! 传")   // converting a string to a bytes slice
+  bytesWritten, err := file.Write(byteSlice) 
+  ```
+
+  - `bytesWritten`엔 작성된 byte 수 반환
+
+- WRITING BYTES TO FILE by `os.WriteFile()`
+
+  ```go
+  bs := []byte("Go Programming is cool!")
+  err = os.WriteFile("c.txt", bs, 0644) // ioutil.WriteFile() :  deprecated
+  // error handling
+  if err != nil {
+      log.Fatal(err)
+  }
+  ```
+
+- WRITING TO FILES USING BUFFER
+
+  - Creating a buffered writer from the file variable using `bufio.NewWriter()`
+
+    ```go
+    bufferedWriter := bufio.NewWriter(file)
+    bs := []byte{97, 98, 99}						// declaring a byte slice
+    bytesWritten, err := bufferedWriter.Write(bs)	// writing the byte slice to the buffer in memory
+    ```
+
+  - checking the available buffer
+
+    ```go
+    bytesAvailable := bufferedWriter.Available()
+    log.Printf("Bytes available in buffer: %d\n", bytesAvailable)
+    ```
+
+  - writing a string (not a byte slice) to the buffer in memory
+
+    ```go
+    bytesWritten, err = bufferedWriter.WriteString("\nJust a random string")
+    ```
+
+  - checking how much data is stored in buffer, just waiting to be written to disk
+
+    ```go
+    unflushedBufferSize := bufferedWriter.Buffered()
+    log.Printf("Bytes buffered: %d\n", unflushedBufferSize)
+    ```
+
+  - Writing from buffer to file.
+
+    ```go
+    bufferedWriter.Flush()
+    ```
+
+    
+
+### READING FROM A FILE
+
+- READING INTO A BYTE SLICE USING `io.ReadFull()`
+
   - slice의 크기만큼 읽어서 slice에 담음
-- ioutil.ReadAll : depre => io.ReadAll
-- ioutil.ReadFile : depre => os.ReadFile()
+  - io.ReadFull() returns an error if the file is smaller than the byte slice.
+
+  ```go
+  byteSlice := make([]byte, 2)	 // declaring a byte slice and initializing it with a length of 2
+  numberBytesRead, err := io.ReadFull(file, byteSlice)	
+  ```
+
+  - numberBytesRead : Number of bytes read
+
+- READING WHOLE FILE INTO A BYTESLICE USING `io.ReadAll()`
+
+  -  reads every byte from the file and return a slice of unknown size
+
+  ```go
+  data, err := io.ReadAll(file)
+  ```
+
+- READING WHOLE FILE INTO MEMORY USING `io.ReadFile()`
+
+  - reads a file into byte slice
+  - this function handles opening and closing the file
+
+  ```go
+  data, err = os.ReadFile("test.txt")
+  ```
+
+- READING FILES **USING DELIMITER**
+
+  ```go
+  scanner := bufio.NewScanner(file)	// file from os.Open()
+  // scanner.Split(bufio.ScanLines) : default
+  for scanner.Scan() {
+      fmt.Println(scanner.Text())
+  }
+  ```
 
 
 
-delimiter로 파일 나누어 읽기 : scanner
+### READING FROM A CONSOLE
 
-기본 \n
+- by scanner
+
+  ```go
+  scanner := bufio.NewScanner(os.Stdin)
+  scanner.Scan() //it waits for the input and buffers the input untill a new line
+  
+  // gettting the scanned data
+  text := scanner.Text()   // string type
+  bytes := scanner.Bytes() // uint8[] slice type
+  ```
+
+  - `scanner.Scan() ` : returns false when the scan stops, either by reaching the end of the input or an error
+
+
+
+## Struct
+
+
+
+### Structs in Go
+
+- 개요
+  - A struct is a sequence of **named elements**, called **fields**. 
+    - Each of them has a name and a type.
+  - similar with class in OOP
+    - Unlike traditional Object-Oriented Programming, Go does not have a class-object architecture. 
+    - Rather we have structs which hold complex data structures.
+  - A structs is nothing more that a schema containing a blueprint of data a structure will hold. 
+    - This blueprint is fixed at compile time. 
+    - It’s not allowed to change the name or the type of the fields at runtime. 
+    - You can’t add or remove fields from a struct at runtime.
+
+- creating a struct type
+
+  ```go
+  type book struct {
+      title  string //the fields of the book struct
+      author string //each field must be unique inside a struct
+      year   int
+  }
+  ```
+
+  ```go
+  // combining different fields of the same type on the same line
+  type book1 struct {
+      title, author string
+      year, pages   int
+  }
+  ```
+
+- initializing 
+
+  - without field name(order matters)
+
+    ```go
+    lastBook := book{"The Divine Comedy", "Dante Aligheri", 1320}
+    ```
+
+  - :heavy_check_mark:Declaring a new book value by specifying field: value (order doesn't matter)
+
+    ```go
+    bestBook := book{title: "Animal Farm", author: "George Orwell", year: 1945}
+    ```
+
+    - if we create a new struct value by omitting some fields, they will be zero-valued according to their type
+
+- access to field
+  - selecting a field : `lastBook.pages`
+  - updating a field : `lastBook.author = "The Best"`
+- 비교
+  - it can be compared by `==` with each other
+- 복사
+  - 깊은 복사
+
+
+
+### anonymous struct & fields
+
+- anonymous struct
+
+  - a struct with no explicitly defined struct type alias.
+
+    ```go
+    diana := struct {
+        firstName, lastName string
+        age                 int
+    }{
+        firstName: "Diana",
+        lastName:  "Muller",
+        age:       30,
+    }
+    ```
+
+- anonymous fields
+
+  - fields type becomes fields name.
+
+    ```go
+    type Book struct {
+        string
+        float64
+        bool
+    }
+    ```
+
+    ```go
+    // mixing anonymous with named fields:
+    type Employee1 struct {
+        name   string
+        salary int
+        bool
+    }
+    ```
+
+    :bulb: 같은 타입을 여러 개 anonymous로 지정 X
+
+
+
+### EMBEDDED STRUCTS
+
+- a struct that acts like a field inside another struct.
+
+  ```go
+  type Contact struct {
+      email, address string
+      phone          int
+  }
+  
+  // define a struct type that contains another struct as a field
+  type Employee struct {
+      name        string
+      salary      int
+      contactInfo Contact
+  }
+  ```
+
+  ```go
+  john := Employee{
+      name:   "John Keller",
+      salary: 3000,
+      contactInfo: Contact{
+          email:   "jkeller@company.com",
+          address: "Street 20, London",
+          phone:   042324234,
+      },
+  }
+  ```
 
 
 
