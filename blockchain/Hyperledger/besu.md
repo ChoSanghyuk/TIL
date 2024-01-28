@@ -43,7 +43,7 @@
 
   - The Ethereum Virtual Machine
 
-    - Ethereum 블록체인 내 트랜잭션을 통해서 스마트 컨트의 이용과 실행을 하게 해주는 가상머신
+    - Ethereum 블록체인 내 트랜잭션을 통해서 스마트 컨트랙의 이용과 실행을 하게 해주는 가상머신
 
   - Consensus Algorithms
 
@@ -64,7 +64,7 @@
             - 즉각적인 불변성(finality)를 가지지 않으며, 분기 생성 및 체인 개편이 있을 수 있음을 유의
         
       - Proof of Work
-        - mainnet Ethereum에서의 채굴 시스
+        - mainnet Ethereum에서의 채굴 시스템
 
   - Storage
 
@@ -72,8 +72,8 @@
     - 데이터들을 몇개의 카테고리로 분류
       - Blockchain
         - block header : 데이터의 체인을 형성하며, 블록체인의 상태를 암호화적으로 검증하는 데 사용
-        - block bodies : 각 블록간 트랜잭션을 정렬하여 기
-        - transaction receipts : 트랜잭션 로그와 같이 트랜잭션 실행의 메타 데이터를 포
+        - block bodies : 트랜잭션을 정렬하여 각각의 블록에 기록
+        - transaction receipts : 트랜잭션 로그와 같이 트랜잭션 실행의 메타 데이터를 포함
       - World State
         - 주소(addresses)에서 계좌로의 매핑 
         - 모든 block header들은 stateRoot 해시를 통해 world state를 참조하고 있음
@@ -95,11 +95,12 @@
     - 허가된 네트워크는 오직 특정된 노드들과 계정들만 참여하게끔 함
 
 - 지원 기능
-  - Ethereum 네트워크 내 노드들을 실행하고, 관리하고, 모니터링하기 위한 command line interface, HTTP, WebSockect 기반 APIs
+  - Ethereum 네트워크 내 노드들을 실행하고, 관리하고, 모니터링하기 위한 command line interface HTTP/WebSockect 기반 APIs를 지원한다.
   - Ethereum functionalities
     - 스마트 컨트랙, dapp 개발/전개/운영, 비공개/허가 컨소시엄 네트워크 생성
     - Truffle, Remix, web3j과 같은 툴로 지원
     - 표준 JSON-RPC API를 구현하여 생태계 도구들과의 통합을 간단하게 만듬
+  - private, permissioned 합의 네트워크 생성
 - 비지원 기능
   - 보안상의 이유로 클라이언트 내 키 관리 지원 X
     - 대신 EthSigner이나 다른 Ethereum-호환 지갑을 사용해 관리 O
