@@ -1716,9 +1716,190 @@ if err != nil {
 
 
 
+## Function
 
 
 
+:bulb: Go does **not have pass-by-reference** semantics because Go does **not have reference variables**
+
+- reference variables
+
+  - 개념
+
+    - 같은 메모리 주소를 공유하는 변수
+
+        ```c++
+        int a = 10;
+        int &b = a;
+        int &c = b;
+        
+        printf("%p %p %p\n", &a, &b, &c); // 0x7ffe114f0b14 0x7ffe114f0b14 0x7ffe114f0b14
+        ```
+
+  - In Go
+
+    - 변수끼리 같은 메모리 주소를 공유 불가능
+
+    - 같은 메모리 주소를 pointing은 가능
+
+      ```go
+      var a int
+      var b, c = &a, &a
+      fmt.Println(b, c)   // 0x1040a124 0x1040a124
+      fmt.Println(&b, &c) // 0x1040c108 0x1040c110 b와 csms 
+      ```
+
+- pass-by-reference
+
+  - 메소드 파라미터로 넣을 때, 넣는 변수의 메모리 주소를 그대로 쓰는 메소드 변수 (같은 메모리 주소에 대한 alias)
+
+
+
+
+### function
+
+- 개요
+
+  - A function is a small piece of code that is dedicated to a perform a particular task based on some input values.
+
+  - Go recommends writing function names in simple word or camelCase.
+
+  - Within the same package function names must be unique!
+
+  - One of Go's features is that functions and methods **can return multiple values**.
+
+  - Go **doesn’t support function overloading**.
+
+  - main() and int() are predefined function names.
+
+    ```go
+    func (receiver) name(parameters) (returns) { //code -> function body here }
+    ```
+
+- 선언
+
+  ```go
+  // defining a function with no parameters (return 타입 명시는 필수 아님)
+  func f1() {
+      fmt.Println("This is f1() function")
+  }
+  
+  // defining a function with return type
+  func f4(a float64) float64 {
+      return math.Pow(a, a)
+  }
+  
+  // defining a function that have two parameters of type int and returns two values of type int
+  // 여러 개 return type 반환 가능. 이 경우 ( )로 type들 묶어서 정의
+  func f5(a, b int) (int, int) {
+      return a * b, a + b
+  }
+  ```
+
+- short hand notation
+
+  ```go
+  func f3(a, b, c int, d, e float64, s string) {
+      fmt.Println(a, b, c, d, e, s)
+  }
+  ```
+
+- named return type
+
+  - return type에 변수명 부여 가능
+  - 활용
+    - 메소드 내에서 해당 변수 사용 가능
+    - short hand notation on return type
+    - naked-return (return 키워드 이후 생략 시, 자동으로 named return 반환)
+    - short func에서만 사용 권장
+
+  ```go
+  func sum(a, b int) (s int) {
+      fmt.Println("s:", s) // -> s is a variable with the zero value inside the function
+      s = a + b
+   
+      // it automatically return s
+      return // This is known as a "naked" return.
+  }
+  ```
+
+  
+
+### Variadic functions
+
+- 개념
+  - functions that take a variable number of argument
+- use case
+  1. don't know the number of parameters
+  2. don't want to create temporary slice to pass it to function
+
+- 사용법
+
+  - Ellipsis prefix
+
+    - `...` in front of the parameter type makes a function variadic
+
+      => The function may be called with zero or more arguments for that parameter.
+
+  - If the function takes parameters of different types, only the last parameter of a function can be variadic.
+
+- code case
+
+  - creating a variadic function
+
+    ```go
+    func f1(a ...int) {
+        fmt.Printf("%T\n", a) // => []int, slice of int
+        fmt.Printf("%#v\n", a)
+    }
+    ```
+
+  - mixing variadic and non-variadic parameters
+
+    ```go
+    // non-variadic parameters are always before the variadic parameter
+    func personInformation(age int, names ...string) string {
+        fullName := strings.Join(names, " ")
+        returnString := fmt.Sprintf("Age: %d, Full Name:%s", age, fullName)
+        return returnString
+    }
+    ```
+
+    
+
+readability up
+
+
+
+0 parameter => nil slice
+
+slice를 method에 넣어서 조작했을 때, 원본도 바뀜
+
+
+
+float 명시. 숫자 뒤에 .
+
+
+
+Defer
+
+defer/postpone the execution until the end of surrounding function
+
+defer => stack => 먼저 defer 나중에 수행
+
+
+
+anonymous function
+
+form closure
+
+can return function
+
+
+
+Pointer
+
+Go
 
 
 
