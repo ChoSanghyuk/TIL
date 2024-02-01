@@ -325,6 +325,7 @@
     - float32, float64
       - zero before the decimal point separator can be omitted
         - ex)  -.5
+      - 정수를 float으로 명시하기 위해서는 숫자 뒤에 `.`
     - complex64, complex128
     - byte
       - alias for uint8
@@ -1867,39 +1868,194 @@ if err != nil {
 
     
 
-readability up
+### Defer
+
+- defer/postpone the execution until the end of surrounding function
+
+- defer 호출 시, stack에 쌓임
+
+  => 먼저 defer한 실행일 수록 나중에 수행
 
 
 
-0 parameter => nil slice
+### Anonymous Functions
 
-slice를 method에 넣어서 조작했을 때, 원본도 바뀜
+- 개념
+
+  - which doesn’t contain any name and is declared inline using a function literal
+  - can be used as closures.
+  - can return function
+
+- 예시
+
+  - declare & execute
+
+    ```go
+    func(msg string) {
+        fmt.Println(msg)
+    }("I'm an anonymous function!")
+    ```
+
+  - return function
+
+    ```go
+    // function that takes an int as an argument and returns another function that returns an int
+    func increment(x int) func() int {
+        return func() int {
+            x++
+            return x
+        }
+    }
+    ```
 
 
 
-float 명시. 숫자 뒤에 .
+:bulb: **closure**
+
+- 함수 바깥에 있는 변수를 참조하는 함수값(function value)
+
+  - 함수는 바깥의 변수를 마치 함수 안으로 끌어들인 듯이 그 변수를 읽거나 쓸 수 있다
+
+- 예시
+
+  ```go
+  func nextValue() func() int {
+      i := 0
+      return func() int {
+          i++
+          return i
+      }
+  }
+   
+  func main() {
+      next := nextValue()
+   
+      println(next())  // 1
+      println(next())  // 2
+      println(next())  // 3
+   
+      anotherNext := nextValue()
+      println(anotherNext()) // 1 다시 시작
+      println(anotherNext()) // 2
+  }
+  ```
+
+  - 익명함수 자체가 로컬 변수로 i 를 갖는 것이 아님 (만약 그렇게 되면 함수 호출시 i는 항상 0으로 설정된다) 
+  - 외부 변수 i 가 상태를 계속 유지하는 즉 값을 계속 하나씩 증가시키는 기능 수행
 
 
 
-Defer
 
-defer/postpone the execution until the end of surrounding function
 
-defer => stack => 먼저 defer 나중에 수행
+## Pointer
 
 
 
-anonymous function
+### Pointer 개요
 
-form closure
+- A pointer is a variable that stores the memory address of another variable.
 
-can return function
+  - Everything the CPU does is fetching and storing values into memory cells
+
+  - A variable is just a convenient, alphanumeric nickname or label for a memory location.
+
+- A pointer value is the address of a variable or nil if it hasn’t been initialized yet.
+- Unlike C, Go has no pointer arithmetic.
+
+:bulb: Go는 Primitive type도 address 다 달라짐
 
 
 
-Pointer
+### Pointer 사용
 
-Go
+- the `&`(ampersand) operator also known as address of operator returns the memory address of a variable.
+
+  ```go
+  name := "Andrei"
+  fmt.Println(&name) // -> 0xc0000101e0
+  ```
+
+- 초기화
+
+  ```go
+  // declaring a pointer without initializing it
+  // its zero value is nil
+  var ptr1 *float64
+  _ = ptr1
+  ```
+
+  ```go
+  // creating a pointer using new() built-in function.
+  p := new(int) // it creates a pointer called p that is a pointer to an int type
+  x = 100
+  p = &x // initializing p
+  ```
+
+- THE DEREFERENCING OPERATOR
+
+  - `*` in front of a pointer is called the dereferencing operator
+
+  ```go
+  *p = 10        // If I write *p = 10, this is equivalent to x = 10
+  *p = *p / 2    //dividing x through the pointer
+  fmt.Println(x) // -> 5
+  ```
+
+
+
+### Passing pointer to function
+
+- declaring a function that takes in pointers
+
+  - the function **makes a copy of each pointer but they point to the same address** as the originals
+
+  ```go
+  func changeValuesByPointer(quantity *int, price *float64, name *string, sold *bool) {
+      //changing the values the pointers point to is seen outside the function
+      *quantity = 3
+      *price = 500.5
+      *name = "Mobile Phone"
+      *sold = false
+  }
+  ```
+
+- function that takes pointer to struct
+
+  ```go
+  // declaring a function that takes in a pointer to struct value and modifies the value
+  func changeProductByPointer(p *Product) {
+      (*p).price = 300
+      p.productName = "Bicycle"  // (*p).productName 의 축약 버전
+      // the changes are seen to the outside world
+   
+  }
+  ```
+
+- :bulb: slice와 map은 pointer로 입력하지 않아도, function에서의 조작이 원래 변수에 반영됨
+
+  - don't store actual data but reference. => pass by value ~> point to same reference
+
+- :bulb: Array는 함수로 pass 권장 X
+- :bulb: pass by value is cheaper than pass by reference
+  - pass by reference puts pressure on garbage collector
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
 
 
 
