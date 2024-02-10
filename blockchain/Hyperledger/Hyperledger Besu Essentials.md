@@ -94,13 +94,12 @@
 - `./bin/besu`
 
 - `besu --network=<network> --data-path=<path>/<networkdata-path>`
-
-  - `<network>` : the network you are connecting to. ex) sepolia and goerli
-
-  - `<path>` : connecting to a network other than the network previously connected to, you must either delete the local block data or use the `--data-path` option to specify a different data directory
+- `<network>` : the network you are connecting to. ex) sepolia and goerli
+  
+- `<path>` : connecting to a network other than the network previously connected to, you must either delete the local block data or use the `--data-path` option to specify a different data directory
     - To delete the local block data, delete the `database` directory 
-
-  - ex) `./bin/besu --network=sepolia --data-path=./besu-test-db`
+  
+- ex) `./bin/besu --network=sepolia --data-path=./besu-test-db`
 
 
 
@@ -117,8 +116,9 @@
 
 ```toml
 # Valid TOML config file
+
 data-path="./besudata" # command 실행 기점 상대경로
-# This is the datapath where the blockchain data will be stored
+
 
 # Network
 bootnodes=["enode://001@123:4567", "enode://002@123:4567", "enode://003@123:4567"]
