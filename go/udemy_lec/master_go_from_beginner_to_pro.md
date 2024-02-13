@@ -2041,17 +2041,206 @@ if err != nil {
 
 
 
+## Methods and Interfaces In Go (OOP)
+
+
+
+### Receiver Function 샘플
+
+```go
+func (n names) print() {
+    // iterating and printing all names
+    for i, name := range n {
+        fmt.Println(i, name)
+    }
+}
+```
+
+- `n` is called method's receiver
+
+- `n` is the actual copy of the names we're working with and is available in the function.
+
+- `n` is like this or self from OOP
+  - Go에는 self 같이 자기 명시 X
+  - Input 이름으로 지정하며 주로 type의 앞 글자 사용
+- any variable of type names can call this function on itself like `variable_name.print()`
+
+
+
+### Receiver Function 개요
+
+- Go doesn't have classes, but you can define methods on defined types
+  -  a type may have a method set associated with it which enhances the type with extra behaviour
+- receiver belong to type
+  - func belong to package
+
+- recevier도 pass by value
+
+  - pointer로 넘겨져야 변경 O
+
+    ```go
+    func (c *car) changeCar(newBrand string, newPrice int) {
+        (*c).brand = newBrand
+        (*c).price = newPrice
+        // the changes are seen the outside world
+    }
+    
+    myCar.changeCar // short-cut of (&myCar).changeCar
+    ```
+
+- named type이 pointer type일 때에는 receiver 등록 불가
+
+  ```go
+  type distance *int
+  
+  // ERROR ->  invalid receiver type *distance (distance is a pointer type)
+  func (d *distance) f() {
+  	fmt.Println("say something")
+  }
+  ```
+
+  
+
+### Interface
+
+- 개요
+
+  - an interface contains only the signatures of the methods, but not their implementation
+
+    ```go
+    type shape interface {
+        area() float64
+        perimeter() float64
+    }
+    ```
+
+- 특징
+
+  - Go에서는 Interface implements 명시할 필요 없음
+    - 해당 Interface의 모든 메소드를 정의하면, 자동으로 implement 취급
+
+
+  - dynamic type & polymorphism
+
+    - Interface vlaue는 runtime 중 dynamic하게 하위 타입으로 바뀔 수 있음
+      - 단, Interface의 명시된 메소드만 사용 가능
+
+  - zero value for Interface is nil
+
+    
+
+### type assertion
+
+- 개요
+
+  - provides access to an interface’s concrete value
+
+- 사용
+
+  ```go
+  // declaring an interface value that holds a circle type value
+  var s shape = circle{radius: 2.5}
+  
+  ball, ok := s.(circle)
+  if ok == true {
+  fmt.Printf("Ball Volume:%v\n", ball.volume())
+  }
+  ```
+
+  - 직접적으로 `s.(circle).volume()`을 사용할 수도 있으나, 안전하게 성공 여부 확인 권장
+
+
+
+### type switch
+
+- 개요
+
+  - permits several type assertions in series
+
+- 사용
+
+  ```go
+  switch value := s.(type) {
+  case circle:
+      fmt.Printf("%#v has circle type\n", value)
+  case rectangle:
+      fmt.Printf("%#v has rectangle type\n", value)
+  
+  }
+  ```
+
+  
+
+### Interface Embedding
+
+- 개요
+
+  - Interface 정의 시, 내부에 타 Interface 명시
+
+- 특징
+
+  - Embedding한 Interface의 메소드 모두 사용 O
+  - recurssive embedding => compile error
+
+- 사용
+
+  ```go
+  type geometry interface {
+      shape	// interface
+      object	// interface
+      getColor() string
+  }
+  ```
+
+  - shape와 object에서 명시하는 method들 모두 포함됨
+
+
+
+### Empty Interface
+
+- 개요
+
+  - 어떠한 method도 정의되지 않은 빈 interface
+  - Any Go type satisfies the empty interface => it can represent any value.
+
+  - An empty interface may hold values of any type.
+
+- 사용
+
+  - declaring an empty interface
+
+    ```go
+    type emptyInterface interface {
+    }
+    ```
+
+  - declaring an empty interface value
+
+    ```go
+    var empty interface{}
+    
+    empty = 5
+    empty = "Go"
+    ```
+
+  - declaring a new struct type which has one field of type empty interface
+
+    ```go
+    type person struct {
+        info interface{}
+    }
+    ```
+
+    - unknown type handling
+
+- 주의
+
+  - 꼭 필요한 경우에만 사용
+    - runtime 돌리기 전까지 명확한 type알지 못함 => hard to maintain
 
 
 
 
-
-
-
-
-
-
- 
 
 
 
