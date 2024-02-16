@@ -2240,33 +2240,349 @@ func (n names) print() {
 
 
 
+## Concurrency
 
 
 
+### Concurrency vs Parallelism
+
+- Concurrency 
+  - Independently executing processes or dealing with multiple things at once
+  - load more goroutines at a time. 
+    - If one goroutine blocks, another one is picked up and started. 
+  - On single core CPU you can run ONLY concurrent applications but they are not run in parallel.
+- Parallelism
+  - the simultaneous execution of processes
+  - multiple goroutines executed at the same time. 
+  - It requires multiple CPUs.
 
 
 
+### Goroutine
+
+- lightweight thread of execution
+  - goroutines are key ingredients to achieve concurrency in Go
+  - Goroutines are far smaller that threads, they typically take around 2kB of stack space to initialize compared to a thread which takes a fixed size of 1-2Mb.
+- a function that is capable of running concurrently with other functions. 
+  - To create a goroutine we use the keyword `go` followed by a function invocation
+- a goroutine stack size shrinks and grows as needed.
+  - An OS Thread Stack is fixed size
+- Scheduling a goroutine is much cheaper than scheduling a thread.
+  - OS threads are scheduled by the OS kernel, but goroutines are scheduled by its own Go Scheduler using a technique called m:n scheduling
+    - it multiplexes (or schedules) m goroutines on n OS threads.
+- Goroutines have no identity
+  - There is no notion of identity that is accessible to the programmer.
+
+- maintains the local variable of active and suspended function calls
+  - same with Threads
 
 
 
+### runtime package
+
+- `NumCPU()`
+
+  - returns the number of logical CPUs or cores usable by the current process.
+
+  ```go
+  fmt.Println("No. of CPUs:", runtime.NumCPU()) // => No. of CPUs: 4
+  ```
+
+- `NumGoroutine()`
+
+  - returns the number of goroutines that currently exists.
+
+  ```go
+  fmt.Println("No. of Goroutines:", runtime.NumGoroutine()) // => No. of Goroutines: 1
+  ```
+
+- `GOOS` & `GOARCH`
+
+  - environment variables
+
+  ```go
+  fmt.Println("OS:", runtime.GOOS)     // => OS: linux
+  fmt.Println("Arch:", runtime.GOARCH) // => Arch: amd64
+  ```
+
+- `GOMAXPROCS(n)`
+
+  - sets the maximum number of CPUs that can be executing simultaneously and returns the previous setting.
+    - n < 1  : return current setting
+    - n >=1 : sets the maximum number of CPUs that can be executing simultaneously
+
+  ```go
+  fmt.Println("GOMAXPROCS:", runtime.GOMAXPROCS(0)) // => GOMAXPROCS: 4
+  ```
+
+  
+
+### Goroutines and WaitGroups
+
+- 개요
+
+  - main 안에 Goroutine 사용 시, 실행은 되지만 main이 기다려주지 않음
+  - main이 다시 실행되고, main 종료 시 다른 Goroutine 종료됨
+  - Goroutine 실행을 완료시키기 위해, WaitGroup 사용
+
+- 사용
+
+  1. Create a new variables of a `sync.WaitGroup` (wg)
+
+  2. Call `wg.Add(n)` where `n` is the number of goroutines to wait for
+  3. pass the wg as a pointer to function
+  4. Execute `defer wg.Done()` in each goroutine to indicate to the WaitGroup that the goroutine has finished executing
+  5. Call `wg.Wait()` in main() where we want to block.
+
+- 코드
+
+  ```go
+  func f1(wg *sync.WaitGroup) { // wg is passed as a pointer
+      fmt.Println("f1(goroutine) execution started")
+      for i := 0; i < 3; i++ {
+          fmt.Println("f1, i=", i)
+          // sleep for a second to simulate an expensive task.
+          time.Sleep(time.Second)
+   
+      }
+      fmt.Println("f1 execution finished")
+   
+      //4.Before exiting, call wg.Done() in each goroutine
+      // to indicate to the WaitGroup that the goroutine has finished executing.
+      wg.Done() // (*wg).Done()  
+  }
+   
+  func main() {
+      fmt.Println("main execution started")
+   
+      // 1.Create a new instance of sync.WaitGroup (we’ll call it symply wg)
+      // This WaitGroup is used to wait for all the goroutines that have been launched to finish.
+      var wg sync.WaitGroup
+   
+      // 2.Call wg.Add(n) method before attempting to launch the go routine.
+      wg.Add(1) //  n which is 1 is the number of goroutines to wait for
+   
+      // Launching a goroutine
+      go f1(&wg) // 3. it takes in a pointer to sync.WaitGroup
+   
+      // 5.
+      // Finally, we call wg.Wait()to block the execution of main() until the goroutines
+      // in the WaitGroup have successfully completed.
+      wg.Wait()
+   
+      fmt.Println("main execution stopped")
+  }
+  ```
+
+  
+
+### Data race
+
+- 개요
+  - 여러 쓰레드/프로세스가 공유자원에 동시에 접근하려 할 때, 일어나는 경쟁 상황
+- 감지
+  - `go run -race main.go`으로 실행 시, Data race 발생 감지함
 
 
 
+### Mutex
 
+- 개요
 
+  - mutual exclusion
+  - make sure only one goroutine can access a variable at a time to avoid conflicts
+  -  define a block of code to be executed in mutual exclusion by surrounding it with a call to `Lock` and `Unlock`
 
+- 사용
 
+  1. Declaring a mutex. It's available in sync package
+  2. Lock the access to the shared value
+  3. Unlock the variable after it's incremented (or use defer)
 
+- 코드
 
+  ```go
+  func main() {
+   
+      const gr = 100
+      var wg sync.WaitGroup
+      wg.Add(gr * 2)
+   
+      // declaring a shared value
+      var n int = 0
+   
+      // 1.Declaring a mutex. It's available in sync package
+      var m sync.Mutex
+   
+      for i := 0; i < gr; i++ {
+          go func() {
+              time.Sleep(time.Second / 10)
+   
+              // 2.Lock the access to the shared value
+              m.Lock()
+              n++
+   
+              // 3.Unlock the variable after it's incremented
+              m.Unlock()
+   
+              wg.Done()
+          }()
+   
+          // Doing the same for the 2nd goroutine
+          go func() {
+              time.Sleep(time.Second / 10)
+              m.Lock()
+              defer m.Unlock()
+              n--
+              wg.Done()
+          }()
+   
+      }
+      wg.Wait()
+   
+      // printing the final value of n
+      fmt.Println(n) // the final final of n will be always 0
+  }
+  ```
 
+  
 
+### channel
 
+- 개요
 
+  - goroutine 간 데이타를 주고 받는 통로
+  - make() 함수를 통해 미리 생성되어야 하며, 채널 연산자 <- 을 통해 데이타를 보내고 받는다.
+  - blocking operation
+    - 상대편이 준비될 때까지 채널에서 대기함으로써 별도의 lock을 걸지 않고 데이타를 동기화하는데 사용
+    - 수신자와 송신자가 서로를 기다리는 속성 => Go루틴이 끝날 때까지 기다리는 기능을 구현 O
 
+- 코드
 
+  - Declare & Initialize
 
+    ```go
+    // Declaring a channel of type `chan int`
+    var c1 chan int
+    fmt.Println(c1) // => nil (its zero value is nil)
+    
+    // Initializing the channel
+    c1 = make(chan int)
+    fmt.Println(c1) // => 0xc000078060 (the channel stores an address)
+    
+    // Declaring and initializing a channel at the same time
+    c2 := make(chan int)
+    
+    // Declaring and initilizing a RECEIVE-ONLY channel
+    c3 := make(<-chan string)
+    
+    // Declaring and initilizing a SEND-ONLY channel
+    c4 := make(chan<- string)
+    ```
 
+  - The **arrow** indicates the direction of data flow
 
+    ```go
+    // Sending a value into the channel
+    c1 <- 10
+    
+    // Receiving a value from the channel
+    num := <-c1
+    ```
 
+  - Waiting for a value to be sent into the channel
 
+    ```go
+    fmt.Println(<-c1)
+    ```
+
+  - Closing a channel
+
+    ```go
+    close(c1)
+    ```
+
+    - channel이 closed 되어도, receive에는 문제가 없음
+    - 무조건적으로 close 해야하는 것이 아니며, close할 경우 더 이상 send되지 않음을 명시 (range의 끝 정해짐)
+
+  - range channel
+
+    ```go
+    for url := range c { 				//It means "wait for the channel to return some values"
+        go func(u string) {
+            time.Sleep(2 * time.Second) // pause for 2 seconds
+            checkURL(u, c)
+        }(url)
+    }
+    ```
+
+    
+
+### Unbuffered vs Buffered Channel
+
+- Unbuffered Channel
+
+  - buffer 명시 없이 생성 시, Unbuffered Channel로 생성
+
+    ```go
+    c1 := make(chan int) //unbuffered channel
+    ```
+
+  - 하나의 값을 send 하였다면, receive 될 때까지 기다림
+
+  -  give stronger synchronization guarantees because every send operation is synchronized with its corresponding receive
+
+- Buffered Channel
+
+  - 생성 시, buffer 크기 명시
+
+    ```go
+    c1 := make(chan int, 3)
+    ```
+
+  - the sender of this buffered channel will block only when there is no empty slot in the channel
+
+    
+
+### select statement
+
+- 개요
+
+  - the select statement lets a goroutine wait on multiple communication operations
+  - A select blocks until one of its cases can run, then it executes that case.
+  - can use select with a default clause to implement non-blocking sends, receives
+  - Select is only used with channels.
+
+- 코드
+
+  ```go
+  go func() {
+      time.Sleep(2 * time.Second)
+      // sending a message into the channel
+      c1 <- "Hello!"
+  }()
+  
+  // starting the second goroutine using an anonymous function
+  go func() {
+      time.Sleep(1 * time.Second)
+      // sending a message into the channel
+      c2 <- "Salut!"
+  }()
+  
+  // using select to wait on both goroutines
+  for i := 0; i < 2; i++ {
+      select {
+      case msg1 := <-c1:
+          fmt.Println("Received", msg1)
+      case msg2 := <-c2:
+          fmt.Println("Received", msg2)
+  //    case default:			// channel에 값이 없다면 바로 실행됨 => goroutine 기다리지 않음
+  //        fmt.Println("no activity", msg2)
+      }
+      
+      
+  }
+  ```
+
+  - total execution time is only ~2 seconds **since the goroutines executed concurrently**.
 
