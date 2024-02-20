@@ -2586,3 +2586,172 @@ func (n names) print() {
 
   - total execution time is only ~2 seconds **since the goroutines executed concurrently**.
 
+
+
+
+
+## Packages and Moduels
+
+
+
+### gopath
+
+- workspace
+  - Go programmers typically keep all their Go code in a single workspace.
+  - A workspace is nothing more than a directory in your file system whose path is stored in the environment variable called GOPATH.
+    - On Windows , it's in %USERPROFILE%\go (For Example: c:\Users\ad\go)
+    - On Mac & Linux, it's in: ~/go (For Example: /home/john/go)
+  - You can print out the values of the environment variables by running the `go env` command
+- Go Workspace (GOPATH) 
+  - The workspace directory (GOPATH) contains the following 3 subdirectories at its root
+    - src
+      - contains the source files for your own or other downloaded packages.
+    - pkg
+      - contains go package objects a.k.a. package archives. 
+      - These are non-executable files or shared libraries ending in .a
+    - bin
+      - contains compiled and executable Go programs. 
+      - When you run go install on a program directory, Go will put the executable file under this folder 
+- Go Packages
+  - A package is a project directory containing .go files with the same package statement at the beginning. 
+  - A package contains many source files each ending in .go extension and belonging to a single directory
+  - There are 2 types of packages
+    - **executable packages** that generate executable files which can be run. The name of an executable package is predefined and is **called main**.
+    - **non-executable packages** (libraries or dependencies) that are used by other packages and can have any name. They can not be executed, only imported.
+
+
+
+### Package
+
+- files in same directory should belong to same package
+- import 시, directory name으로 명시
+  - name of the files in the packages doesn't matter (package directory가 중요)
+  - package 내용 사용할 때에는 packge 이름으로 접근
+  - :memo: directory name과 package name 같게 설정 권장
+  
+- import pahts are relative to `$GOPATH/src`
+  - :memo: 경로에 non-ASCII코드 있으면 에러 가능성 有 => `$GOROOT/src` 참조
+
+- Function's name should start with capital letter to be exported
+  - public function
+- 동일한 package도 alias만 설정한다면 중복 import O
+
+
+
+### scope
+
+- file scope
+  - import 문
+
+- package scope
+  - const, variable, function
+
+- local scope
+
+
+
+
+
+### init method
+
+- 개요
+  - 파라미터, return type 없음
+  - pakcage initialize 될 때 실행
+  - `main()`보다 항상 먼저 실행
+  - 별도 실행 불가
+  - multiple init func O
+- 용도
+  - initialize global varaiable that can not be initialized otherwise in global context
+    - ex) array, slice를 for문으로 값 설정 (for 문은 method 밖에서 실행 X)
+
+
+
+### Module
+
+- 개요
+  
+  - 모듈은 패키지(Package)의 모음으로써, 한 개의 모듈은 다수의 패키지를 포함할 수 있음 (Go path 대체 O)
+  - 패키지들의 종속성을 관리
+  - 패키지를 트리 형식으로 관리하며, 루트(root) 폴더에 `go.mod` 파일을 생성하여 모듈을 정의하고, 종속성 정보를 관리
+    - A file called `go.mod` defines the module’s path, which is also the import path, and its dependency requirements
+  
+- 모듈 생성
+
+  - `go mod init MODULE_NAME`
+
+    - 모듈의 이름은 유니크해야 함
+
+      => GitHub 저장소 주소를 활용 or URL 사용
+
+- 모듈 import
+
+  - 공통
+    - package 단위로 import
+    - 외부 패키지를 사용할 땐, 모듈 내에서 `go mod tidy`로 외부 패키지를 다운로드 필요  (필요한건가???)
+  - local 모듈
+    - 모듈을 원격에서 가져오는 것이 아닌, local에서 가져옴을 명시해야 함
+    - `go mod edit -replace MODULE_NAME=../greeting`
+  - 원격 모듈
+    - github url 앞 http 생략
+
+- 모듈 버전 관리
+
+  - 모듈 git repository에 올릴 때 버전 표시
+
+    ```bash
+    git tag v1.0.0
+    git push origin master -- tags
+    ```
+
+    ```
+    git tag v1.0.1
+    git push --tag ???
+    ```
+
+  - 새 버전의 모듈 사용 시, 사용하고자 하는 모듈의 폴더에서 manually update 필요
+
+    - 특정 버전 사용 시, 뒤에 `@버전` 첨부
+
+      ```bash
+      go get MODULE_NAME@v1.0.1
+      ```
+
+    - 최신 버전 사용 시
+
+      ```bash
+      go get -u MODULE_NAME
+      ```
+
+  - :bulb: Semantic Versioning
+
+    - major.minor.patch version
+
+- 모듈 변경 사항 적용
+
+  ```bash
+  go mod tidy
+  ```
+
+  1. **Adds Missing Dependencies**
+     - add dependencies which are necessary but are not yet listed in your `go.mod` file.
+  2. **Removes Unused Dependencies**
+     - removes any dependencies listed in your `go.mod` file that are not necessary
+  3. **Updates Module Dependencies**
+     - updates the module's dependencies according to the versioning rules specified in your `go.mod` file.
+  4. **Prunes Unnecessary Versions**
+     - removes any versions of dependencies that are no longer necessary
+
+
+
+
+
+2.. git에서 버전관리하면서 모듈 활용  (stored locally in GOPATH/pkg/mod   ===> 안되던데... git에 올려보면서 확인해봐)
+
+3.. checksum 파일 역할 및 왜 안 생기는지  (checksum ??? "Importing and Using go module" 7분대)
+
+
+
+
+
+cat go.mod 역할
+
