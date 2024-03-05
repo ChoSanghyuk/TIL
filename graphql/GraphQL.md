@@ -440,6 +440,8 @@
 
   - GraphQL allows you to request `__typename`, a meta field, at any point in a query to get the name of the object type at that point.
 
+  - The `__typename` field resolves to a `String` which lets you differentiate different data types from each other on the client.
+  
     ```json
     {
       search(text: "an") {
@@ -475,54 +477,280 @@
       }
     }
     ```
-
+  
     
 
 
 
+## Schemas and Types
 
 
 
+### Type system
+
+- 스키마 필요 이유
+  - useful to have an exact description of the data we can ask for 
+    - what fields can we select? 
+    - What kinds of objects might they return? 
+    - What fields are available on those sub-objects?
+
+- defines a set of types which completely describe the set of possible data you can query on that service
 
 
 
+### Object types
+
+- 개요
+
+  - The most basic components of a GraphQL schema
+  - represent a kind of object you can fetch from your service, and what fields it has
+
+- 예시
+
+  ```
+  type Character {
+    name: String!
+    appearsIn: [Episode!]!
+  }
+  ```
+
+  - `Character` is a *GraphQL Object Type*, meaning it's a type with some fields
+  - `name` and `appearsIn` are *fields* on the `Character` type
+    - can appear in any part of a GraphQL query that operates on the `Character` type.
+  - `String` is one of the built-in *scalar* types
+    - a single scalar object, and can't have sub-selections in the query
+    - `String!` means that the field is *non-nullable*,
+  - `[Episode!]!` represents an *array* of `Episode` objects
 
 
 
+### Arguments
+
+- 개요
+
+  - Every field on a GraphQL object type can have zero or more arguments
+  - All arguments are named
+    - passed by name specifically
+  - Arguments can be either required or optional
+    - When an argument is optional, we can define a *default value*
+
+- 예시
+
+  ```
+  type Starship {
+    id: ID!
+    name: String!
+    length(unit: LengthUnit = METER): Float
+  }
+  ```
+
+  - the `length` field has one defined argument, `unit`
+  - if the `unit` argument is not passed, it will be set to `METER` by default.
 
 
 
+### The Query and Mutation types
+
+- 개요
+
+  - they are special because they define the *entry point* of every GraphQL query
+  - Every GraphQL service has a `query` type and may or may not have a `mutation` type
+  - It's important to remember that other than the special status of being the "entry point" into the schema, the `Query` and `Mutation` types are the same as any other GraphQL object type, and their fields **work exactly the same way.**
+
+- 예시
+
+  ```
+  query {
+    hero {
+      name
+    }
+    droid(id: "2000") {
+      name
+    }
+  }
+  ```
+
+  - this means that the GraphQL service needs to have a `Query` type with `hero` and `droid` fields:
+
+  ```
+  type Query {
+    hero(episode: Episode): Character
+    droid(id: ID!): Droid
+  }
+  ```
+
+:bulb: Mutations work in a similar way
+
+- you define fields on the `Mutation` type, and those are available as the root mutation fields you can call in your query
 
 
 
+### Scalar types
+
+- 개요
+
+  -  represent the leaves of the query
+    - object type has a name and fields, but at some point those fields have to resolve to some concrete data
+
+- 종류
+
+  - `Int`: A signed 32‐bit integer.
+  - `Float`: A signed double-precision floating-point value.
+  - `String`: A UTF‐8 character sequence.
+  - `Boolean`: `true` or `false`.
+  - `ID`: The ID scalar type represents a unique identifier, often used to refetch an object or as the key for a cache. The ID type is serialized in the same way as a String; however, defining it as an `ID` signifies that it is not intended to be human‐readable
+
+- custom scalar
+
+  - specify custom scalar types
+
+    ```
+    scalar Date
+    ```
+
+    - we could define a `Date` type
+    - it's up to our implementation to define how that type should be serialized, deserialized, and validated.
 
 
 
+### Enumeration types
+
+- 개요
+  - special kind of scalar that is restricted to a particular set of allowed values
+  - allows you to
+    - Validate that any arguments of this type are one of the allowed values
+    - Communicate through the type system that a field will always be one of a finite set of values
+
+- Definition
+
+  ```
+  enum Episode {
+    NEWHOPE
+    EMPIRE
+    JEDI
+  }
+  ```
+
+  - wherever we use the type `Episode` in our schema, we expect it to be exactly one of `NEWHOPE`, `EMPIRE`, or `JEDI`.
 
 
 
+### Lists and Non-Null
+
+- 개요
+  - Object types, scalars, and enums are the only kinds of types you can define
+  - you can apply additional ***type modifiers*** that affect validation of those values
+    - `!`
+    - `[]`
+
+- 예시
+
+  ```json
+  myField: [String!]
+  ----------------------
+  myField: null // valid
+  myField: [] // valid
+  myField: ["a", "b"] // valid
+  myField: ["a", null, "b"] // error
+  ```
+
+  
+
+### Interfaces
+
+- 개요
+
+  - an abstract type that includes a certain set of fields that a type must include to implement the interface
+  - useful when you want to return an object or set of objects, but those might be of several different types
+
+- 예시
+
+  ```
+  interface Character {
+    id: ID!
+    name: String!
+    friends: [Character]
+    appearsIn: [Episode]!
+  }
+  ```
+
+  - you could have an interface `Character` that represents any character in the Star Wars trilogy
+  - any type that *implements* `Character` needs to have these exact fields, with these arguments and return types.
+
+  ```
+  type Human implements Character {
+    id: ID!
+    name: String!
+    friends: [Character]
+    appearsIn: [Episode]!
+    starships: [Starship]
+    totalCredits: Int
+  }
+  
+  type Droid implements Character {
+    id: ID!
+    name: String!
+    friends: [Character]
+    appearsIn: [Episode]!
+    primaryFunction: String
+  }
+  ```
+
+  - both of these types have all of the fields from the `Character` interface, but also bring in extra fields
 
 
 
+### Union types
+
+- 개요
+  - share similarities with interfaces; however, they lack the ability to define any shared fields among the constituent types
+  - members of a union type need to be concrete object types;
+
+- 예시
+
+  ```
+  union SearchResult = Human | Droid | Starship
+  ```
+
+  - Wherever we return a `SearchResult` type in our schema, we might get a `Human`, a `Droid`, or a `Starship`.
 
 
 
+### Input types
 
+- 개요
+  - you can also easily pass complex objects
+  - This is particularly valuable in the case of mutations, where you might want to pass in a whole object to be created.
+  - input types look exactly the same as regular object types, but with the keyword `input` instead of `type`
+  -  Input object types also can't have arguments on their fields
 
+- 예시
 
+  ```
+  input ReviewInput {
+    stars: Int!
+    commentary: String
+  }
+  ```
 
+  ```
+  mutation CreateReviewForEpisode($ep: Episode!, $review: ReviewInput!) {
+    createReview(episode: $ep, review: $review) {
+      stars
+      commentary
+    }
+  }
+  ------------------------------------------------------------------------VARAIBLES
+  {
+    "ep": "JEDI",
+    "review": {
+      "stars": 5,
+      "commentary": "This is a great movie!"
+    }
+  }
+  ```
 
-
-
-
-
-
-
-
-
-
-
-
+  
 
 
 
