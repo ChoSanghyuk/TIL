@@ -17,3 +17,10 @@
 - spring
 - terminal-command
 
+
+
+
+
+
+
+git 단축어 테스트 중
