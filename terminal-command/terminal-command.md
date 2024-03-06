@@ -24,6 +24,10 @@
 - `$` : 변수에 접근할 수 있는 문자
 - `>` : 출력 결과 저장
   - `find ./ -name "*filname" -and -path "*path*" > data.txt`
+  - 파일 미존재 시 생성, 파일 존재 시 **덮어쓰기**
+- `>>` : 출력 결과 저장
+  - 파일 미존재 시 생성, 파일 존재 시 **이어쓰기**
+
 
 
 
@@ -214,37 +218,6 @@
   - N : `*`시 위쪽으로 찾기
 
 유용 :link: https://iamfreeman.tistory.com/entry/vi-vim-%ED%8E%B8%EC%A7%91%EA%B8%B0-%EB%AA%85%EB%A0%B9%EC%96%B4-%EC%A0%95%EB%A6%AC-%EB%8B%A8%EC%B6%95%ED%82%A4-%EB%AA%A8%EC%9D%8C-%EB%AA%A9%EB%A1%9D
-
-
-
-## Control Flow
-
-### while 문으로 문서 읽기
-
-```bash
-while IFS= read -r item; do
-echo "Item : $item"
-done < "list.txt"
-```
-
-- `IFS=` : IFS(Internal Field Separator)를 빈 문자열로 세팅
-  - `IFS=$'\t'` : 탭으로 라인 분리시킴
-- `read -r item`: 한줄씩 읽어 item에 값 배정
-- `do` : while문에 실행 코드 시작
-- `done` : while문에 실행 코드 끝
-- `<` : while 문에 넣은 문서
-
-
-
-### for 문으로 숫자 범위 탐색하기
-
-```bash
-for i in {1..5}; do
-  echo "Number: $i"
-done
-```
-
-- 1부터 5까지.1>
 
 
 
