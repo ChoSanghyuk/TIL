@@ -2122,7 +2122,7 @@ func (n names) print() {
 
   - dynamic type & polymorphism
 
-    - Interface vlaue는 runtime 중 dynamic하게 하위 타입으로 바뀔 수 있음
+    - Interface value는 runtime 중 dynamic하게 하위 타입으로 바뀔 수 있음
       - 단, Interface의 명시된 메소드만 사용 가능
 
   - zero value for Interface is nil
