@@ -255,7 +255,7 @@
   
   // 3
   const (
-      min1 = -500
+      min1 = 500
       max1 //gets its type and value form the previous constant. It's 500
       max2 //in a grouped constants, a constant repeats the previous one -> 500
   )
@@ -777,7 +777,7 @@
   - Scope means visibility.
   - The scope or the lifetime of a variable is the interval of time during which it exists as the program executes.
   - **A name cannot be declared again in the same scope** (for example a function in the package scope), but it can be declared in another scope.
-    - scope가 다른면 덮어쓰기 가능
+    - scope가 다르면 덮어쓰기 가능
 - 종류
   - File Scope
     - import statements
@@ -1747,7 +1747,7 @@ if err != nil {
       var a int
       var b, c = &a, &a
       fmt.Println(b, c)   // 0x1040a124 0x1040a124
-      fmt.Println(&b, &c) // 0x1040c108 0x1040c110 b와 csms 
+      fmt.Println(&b, &c) // 0x1040c108 0x1040c110
       ```
 
 - pass-by-reference
@@ -1997,7 +1997,7 @@ if err != nil {
 
   ```go
   *p = 10        // If I write *p = 10, this is equivalent to x = 10
-  *p = *p / 2    //dividing x through the pointer
+  *p = *p / 2    // dividing x through the pointer
   fmt.Println(x) // -> 5
   ```
 
@@ -2122,7 +2122,7 @@ func (n names) print() {
 
   - dynamic type & polymorphism
 
-    - Interface vlaue는 runtime 중 dynamic하게 하위 타입으로 바뀔 수 있음
+    - Interface value는 runtime 중 dynamic하게 하위 타입으로 바뀔 수 있음
       - 단, Interface의 명시된 메소드만 사용 가능
 
   - zero value for Interface is nil
