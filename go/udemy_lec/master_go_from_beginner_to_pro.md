@@ -803,7 +803,7 @@
 
   - Every element in an array (or slice) must be of same type
 
-  - Go stores the elements of the array in contiguous memory locations and this way it’s very efficient
+  - Go stores the elements of the array in continuous memory locations and this way it’s very efficient
 
   - The length and the elements type determine the type of an array. 
     - The length belongs to array type and it’s determined at compile time
@@ -832,7 +832,7 @@
     - array 길이 지정을 compiler에게 맡김 => 자동 지정
   - multiple lines declaration
     - for better readability
-    - **the ending comma is mandatory
+    - **the ending comma is mandatory**
 
 - Arrays with keyed elements
 
@@ -922,7 +922,7 @@ fmt.Println(mm == nil, cap(mm)) //false
 
   - slice는 오직 nil과만 비교 될 수 있음
 
-    - `==`를 통한 비교는 nil과만 가
+    - `==`를 통한 비교는 nil과만 가능
 
 - index
 
@@ -1090,14 +1090,14 @@ fmt.Println(mm == nil, cap(mm)) //false
       - i부터 시작하는 하나의 문자열 반환. 이때 사용된 byte 개수 반환
   
   
-      ```go
-      for i := 0; i < len(str); {
-          // it returns the rune in string in variable r and its size in bytes in variable size
-          r, size := utf8.DecodeRuneInString(str[i:]) 
-          fmt.Printf("%c", r) 		       // printing out each rune
-          i += size           			   // incrementing i by the size of the rune in bytes
-      }
-      ```
+  ```go
+  for i := 0; i < len(str); {
+      // it returns the rune in string in variable r and its size in bytes in variable size
+      r, size := utf8.DecodeRuneInString(str[i:]) 
+      fmt.Printf("%c", r) 		       // printing out each rune
+      i += size           			   // incrementing i by the size of the rune in bytes
+  }
+  ```
   
   - `range`로 bytes => string
   
@@ -1116,7 +1116,7 @@ fmt.Println(mm == nil, cap(mm)) //false
     fmt.Println(s1[0:3]) // -> 안 - the unicode representation of bytes from index 0 and 2.
     
     // 1st step: converting string to rune slice
-    rs := []rune(s2)
+    rs := []rune(s1)
     
     // 2st step: slicing the rune slice
     fmt.Println(string(rs[0:3])) // => 안녕하
