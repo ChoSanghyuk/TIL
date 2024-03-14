@@ -2626,10 +2626,10 @@ func (n names) print() {
 - files in same directory should belong to same package
 - import 시, directory name으로 명시
   - name of the files in the packages doesn't matter (package directory가 중요)
-  - package 내용 사용할 때에는 packge 이름으로 접근
+  - package 내용 사용할 때에는 package 이름으로 접근
   - :memo: directory name과 package name 같게 설정 권장
   
-- import pahts are relative to `$GOPATH/src`
+- import paths are relative to `$GOPATH/src`
   - :memo: 경로에 non-ASCII코드 있으면 에러 가능성 有 => `$GOROOT/src` 참조
 
 - Function's name should start with capital letter to be exported
@@ -2722,7 +2722,7 @@ func (n names) print() {
       go get -u MODULE_NAME
       ```
 
-  - :bulb: Semantic Versioning
+  - :bulb: Semantic Version
 
     - major.minor.patch version
 
