@@ -47,15 +47,17 @@
 - `rm <filename>` : 파일 삭제
 - `mkdir <dirname>` : 폴더 생성
 - `mkdir -p <dirname1/dirname2>` : 중간 폴더도 같이 생성
+- `cp -r <폴더> <목적지>` : 하위 폴더 및 파일까지 같이 복사 이동
 - `rm -r <dirname>` : 지정한 폴더 및 파일 삭제
 - `rm - rf <dirname>` : 지정판 폴더 및 파일 강제 삭제
 - `ls` :  현재 위치한 폴더 내부의 파일/폴더 출력
 - `ls -a` : 현재 위차한 홀더 내부의 모든 파일 / 폴더 출력
   - `ls -al ./폴더` : 대상 폴더 내부 확인
-
 - `code . `  : 해당 디렉토리로 visual studio code 열기
 - `vim <filename>` : 파일 오픈 (없으면 파일 생성)
 - `vi <filename>` : 파일 오픈 
+
+- `cat <filename>` : 파일 내용 출력
 
 
 
