@@ -64,6 +64,7 @@ $ git checkout -b <브랜치이름>
 - 브랜치 생성 후 이동
 
 ```
+$ git fetch origin
 $ git checkout -b "develop" "origin/develop"
 ```
 

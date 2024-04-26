@@ -2,6 +2,12 @@
 
 
 
+## Blockchain
+
+- [ ] upgradeable 스터디 내용 정리
+
+
+
 ## Java
 
 - [x] Enum
