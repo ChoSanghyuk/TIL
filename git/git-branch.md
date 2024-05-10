@@ -122,6 +122,23 @@ $ git remote update
 
 
 
+### 변경사항 타 브랜치에 반영하기
+
+```bash
+$ git stash
+$ git checkout other-branch
+$ git stash pop
+```
+
+- `git stash` : 변경사항 임시 저장
+- `git stash pop` : 임시 저장 내용 반영
+
+
+
+
+
+
+
 ## branch 삭제
 
 ### 로컬 branch 삭제
@@ -183,6 +200,10 @@ $ git merge <branch>
 
 ## branch 강제 엎어치기
 
+
+
+### 전체 엎어치기
+
 1. 백업
 
 ```bash
@@ -206,6 +227,19 @@ git reset --hard master
 ```bash
 git push origin develop --force
 ```
+
+
+
+### 특정 파일만 엎어치기
+
+```bash
+git fetch origin
+git checkout origin/{브랜치} {파일경로}
+```
+
+
+
+
 
 
 
