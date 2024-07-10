@@ -264,3 +264,10 @@ $ git status
 $ git log --oneline
 ```
 
+
+
+```
+$ git show <commit hash>
+```
+
+- 해당 commit의 변경사항 보여줌
