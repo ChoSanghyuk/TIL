@@ -1,8 +1,22 @@
-# Git Basic 01
+# Git 사용법
 
-## 개요
 
-:green_apple: git bash를 이용하여 github 관리하기 
+
+:green_apple: 목차
+
+- 주의사항
+- 닉네임 등록
+- 연결
+- 업로드
+- 다운로드
+- 내역 취소
+- Local / Head Replace
+- 비교
+- 상태 확인
+- gitignore
+- Git 에러 해결
+
+
 
 
 
@@ -206,8 +220,6 @@ git checkout file.md
 
 ## 비교
 
-
-
 ```
 $ git diff <비교대상 commit hash> <기준 commit hash>
 ```
@@ -241,7 +253,7 @@ $ git diff <비교대상 branch 이름> <기준 branch 이름>
 
 
 
-## 상태
+## 상태 확인
 
 
 ```
@@ -271,3 +283,55 @@ $ git show <commit hash>
 ```
 
 - 해당 commit의 변경사항 보여줌
+
+
+
+## .gitignore
+
+
+
+### 사용법
+
+- wildcard
+
+  - 폴더 : `**`
+
+  - 여러 글자 : `*`
+
+- 예외 처리
+  - `!{대상파일}`
+
+
+
+### 캐시 삭제
+
+```sh
+git rm -r --cached .
+```
+
+- .gitignore 적용 안 될 시, 캐시 삭제
+
+
+
+## Git 에러 해결
+
+### dirty_worktree
+
+- 개요
+  - 다른 사람의 Commit 내려받지 못함
+- 해결
+  1. Reset Hard 후 Pull
+  2. local branch 삭제 후 remote tracking으로 다시 다운
+
+
+
+### merge 충돌 소스 해결
+
+- `<<<<<<HEAD`
+  - 충돌이 시작된 부분
+- feature 브랜치에서의 merge request 부분
+- `======`
+  - merge request한 변경 사항의 끝
+- target 브랜치에서 충돌난 최신 변경사항
+- `>>>>>>`
+  - 충돌 종료 지점
