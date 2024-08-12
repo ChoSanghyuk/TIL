@@ -518,7 +518,26 @@ type Mutation {
   http://localhost:8547/graphql
   ```
 
-  
+
+```sh
+curl -X POST -H "Content-Type: application/json" --data '{ "query": "query {block(number: 389){gasLimit, gasUsed}}"}' http://localhost:8547/graphql
+```
+
+
+
+```
+mutation($data1: Bytes!, $data2: Bytes!) {
+  t1: sendRawTransaction(data: $data1), t2: sendRawTransaction(data: $data2)
+}
+```
+
+
+
+```
+mutation($mutData0: Bytes!, $mutData1: Bytes!) {
+		tx0: sendRawTransaction(data: $mutData0) , tx1: sendRawTransaction(data: $mutData1)
+	}
+```
 
 
 
