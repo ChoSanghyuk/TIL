@@ -541,6 +541,53 @@ mutation($mutData0: Bytes!, $mutData1: Bytes!) {
 
 
 
+
+
+```sh
+curl -X POST -H "Content-Type: application/json" -d'{ 
+"query" : "query {block(number: 3715){ transactions{hash} }}"}' \
+http://localhost:8547/graphql
+```
+
+
+
+```sh
+curl -X POST -H "Content-Type: application/json" -d'{ 
+"query" : "query {transaction(hash: \"0xa81fd5469698659007209efdf32139cb241d3159c86bf24f5e43efe0ceb669b1\"){ hash, raw }}"}' \
+http://localhost:8547/graphql
+```
+
+```
+curl -X POST -H "Content-Type: application/json" -d'{ "query" : "query getReceipt($txHash0: Bytes32!) {
+	tx0 : transaction(hash: $txHash0){
+		...receiptFields
+	}
+	}
+
+	fragment receiptFields on Transaction {
+		createdContract{
+				address
+			},
+			gasUsed,
+			effectiveGasPrice,
+			block{
+				hash,
+				number
+			},
+			index,
+			rawReceipt
+	}
+", "variables" : {"txHash0" : "0xa4ba3d49a84981185771faa2aa0f5ef2e5466676f1425fd3fbc2fedee3e345f5"}' http://localhost:8547/graphql
+```
+
+
+
+
+
+
+
+
+
 ## Go Module (초안)
 
 
