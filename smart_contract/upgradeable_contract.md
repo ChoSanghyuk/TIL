@@ -2,8 +2,6 @@
 
 
 
-
-
 https://medium.com/@aiden.p/%EC%97%85%EA%B7%B8%EB%A0%88%EC%9D%B4%EB%8D%94%EB%B8%94-%EC%BB%A8%ED%8A%B8%EB%9E%99%ED%8A%B8-%EC%94%A8-%EB%A6%AC%EC%A6%88-part-1-%EC%97%85%EA%B7%B8%EB%A0%88%EC%9D%B4%EB%8D%94%EB%B8%94-%EC%BB%A8%ED%8A%B8%EB%9E%99%ED%8A%B8%EB%9E%80-b433225ebf58
 
 
@@ -26,7 +24,8 @@ https://medium.com/@aiden.p/%EC%97%85%EA%B7%B8%EB%A0%88%EC%9D%B4%EB%8D%94%EB%B8%
   :bulb: 솔리디티는 다른 컨트랙트를 호출할 때, 크게 `call`과 `delegatecall` 이다.
 
   -  `call`이 바로 우리가 통상적으로 컨트랙트를 호출할 때 사용하는 opcode
-  - `delegatecall`은 다른 컨트랙트의 코드를 사용하되, 실행 환경(Context)은 기존 컨트랙트에서 수행될 수 있도록 한다.
+     -  opcode(operation code) : low-level instruction used in EVM to perform arithmetic calculations, data storage and retrieval, control flow
+  -  `delegatecall`은 다른 컨트랙트의 코드를 사용하되, 실행 환경(Context)은 기존 컨트랙트에서 수행될 수 있도록 한다.
     - A 컨트랙트가 B 컨트랙트를 호출할 때, `delegatecall`을 이용하게 되면 B 컨트랙트의 Code를 사용하지만, Storage는 A 컨트랙트를 사용하게 된다. 트랜잭션 실행의 컨텍스트(Context)가 그대로 유지되는것이 `delegatecall`의 핵심이다.
 
 - 문제점
@@ -35,11 +34,19 @@ https://medium.com/@aiden.p/%EC%97%85%EA%B7%B8%EB%A0%88%EC%9D%B4%EB%8D%94%EB%B8%
 
 
 
-### EIP-1967: Standard Proxy Storage Slots
+### 슬롯 충돌
+
+#### 프록시 슬롯 - 로직 컨트랙트 슬롯 충돌 
+
+EIP-1967: Standard Proxy Storage Slots
 
 스토리지 슬롯을 순차적으로 사용하면 충돌 가능성이 높으니, **슬롯을 랜덤에 가깝게(pseudo-random) 배정**하면 된다는 것이다.
 
 저장하고 싶은 변수의 이름을 keccak256으로 해싱한 후 1을 뺀 값을 슬롯 넘버로 사용하는 것이다. 이 때 주의해야 할 점은 해싱에 사용되는 값을 **절대로 중복해서 사용하지 않아야 한다**는 것이다. 그렇지 않다면 동일하게 스토리지 충돌이 발생하게 된다.
+
+#### 로직 컨트랙트 업그레이드 시 슬롯 충돌
+
+EIP-1967으로도 피해갈 수 없는 스토리지 충돌이 존재한다. 바로 이전 버전의 로직 컨트랙트와 업그레이드된 새로운 버전의 로직 컨트랙트의 스토리지 충돌
 
 이러한 충돌을 피하기 위해서는 업그레이드시 상태 변수의 선언 순서에 주의를 기울여야 한다.
 
@@ -101,7 +108,7 @@ If you upgrade a contract and change the order the elements in the struct or add
 
 
 
-목할점은 프록시 컨트랙트의 기능 구현은 로직 컨트랙트에서 이뤄지는것이 맞지만, 업그레이드 관련 기능을 수행하는 함수는 여전히 필요하다는 것이다. 이 때, 로직 컨트랙트도 동일한 함수를 가지고 있으면 어떻게 되는걸까? 호출자가 프록시 컨트랙트의 업그레이드 함수를 호출하는건지, 로직 컨트랙트의 그것을 호출하는건지 그 의도를 알 수 없게 된다.
+주목할점은 프록시 컨트랙트의 기능 구현은 로직 컨트랙트에서 이뤄지는것이 맞지만, 업그레이드 관련 기능을 수행하는 함수는 여전히 필요하다는 것이다. 이 때, 로직 컨트랙트도 동일한 함수를 가지고 있으면 어떻게 되는걸까? 호출자가 프록시 컨트랙트의 업그레이드 함수를 호출하는건지, 로직 컨트랙트의 그것을 호출하는건지 그 의도를 알 수 없게 된다.
 
 솔리디티에서 함수 식별자는 함수 시그니처(signature)를 해싱하여 앞의 4바이트만 사용. 솔리디티 컴파일러는 같은 컨트랙트 내에서 시그니처가 다른데도 불구하고 식별자가 겹치는 경우를 미리 방지한다. 하지만, 프록시와 로직 컨트랙트는 구분된 ‘다른’ 컨트랙트이다
 
@@ -175,6 +182,9 @@ UUPS 패턴을 사용할 때 조심해야 할 점은 반드시 업그레이드�
 
 **동일한 로직**을 사용하는 **대규모의** 컨트랙트를 **한번에 업그레이드** 해야하는 경우 사용하면 된다.
 
+- **동일한 로직**을 사용하는 컨트랙트를 **대규모로 배포**하고 **동시에 업그레이드 가능**하게 하려면 **비콘 프록시**를 사용하자.
+- **비콘 프록시는 만능이 아니다.** 기존 프록시 패턴에 비해 컨트랙트 호출을 위해 거쳐야 하는 컨트랙트가 하나 더 추가된다. 즉, 트랜잭션 실행을 위한 가스 부담이 증가하게 되므로, 반드시 목적에 맞게 잘 사용해야 한다.
+
 
 
 
@@ -194,6 +204,83 @@ UUPS 패턴을 사용할 때 조심해야 할 점은 반드시 업그레이드�
 오직 forward() 함수만 구현된다. `forward()` 함수의 기능도 매우 단순하다. 모든 컨트랙트 호출을 `IMPLEMENTATION_ADDR` 주소의 컨트랙트로 `delegatecall` 하는 것이다. 미니멀 프록시 컨트랙트에서 필요한 기능은 이처럼 매우 매우 단순하다.
 
 솔리디티 코드로 작성되는것이 아닌, 동일한 기능을 수행하는 EVM 바이트코드로 구현
+
+
+
+---
+
+
+
+Delegating **proxy contracts** are widely used for both upgradeability and gas savings. These proxies rely on a **logic contract** (also known as implementation contract or master copy) that is called using `delegatecall`. This allows proxies to keep a persistent state (storage and balance) while the code is delegated to the logic contract.
+
+To avoid clashes in storage usage between the proxy and logic contract, the address of the logic contract is typically saved in a specific storage slot guaranteed to be never allocated by a compiler.
+
+
+
+
+
+Solidity maps variables to storage based on the order in which they were declared, after the contract inheritance chain is linearized: the first variable is assigned the first slot, and so on. The exception is values in dynamic arrays and mappings, which are stored in the hash of the concatenation of the key and the storage slot
+
+
+
+https://eips.ethereum.org/EIPS/eip-1967
+
+
+
+---
+
+
+
+
+
+why subtract 1
+
+as there's no known input that would result in this value if it was hashed
+
+Furthermore, a `-1` offset is added so the preimage of the hash cannot be known, further reducing the chances of a possible attack.
+
+https://stackoverflow.com/questions/75366863/why-in-solidity-proxies-from-positions-index-subtract-one
+
+---
+
+Upgradeable smart contracts use three contracts: Proxy, Implementation, and ProxyAdmin. This pattern enables iterative releases and patching of source code.
+
+
+
+
+
+https://docs.alchemy.com/docs/upgradeable-smart-contracts
+
+
+
+---
+
+
+
+ initializer functions following the naming convention `__{ContractName}_init`. Since these are internal, you must always define your own public initializer function and call the parent initializer of the contract you extend.
+
+
+
+
+
+
+
+---
+
+**컨트랙트 구조**
+
+우선, 이더리움 계정이 어떠한 구조를 가지는 지부터 살펴보겠다. 이더리움 계정들은 다음 4의 필드를 가진다.
+
+- nonce :  A counter that indicates the number of transactions sent from an externally-owned account or the number of contracts created by a contract account.
+- balance : he number of wei owned by this address
+- code hash : refers to the *code* of an account on the Ethereum virtual machine 
+- storageRoot(storage hash)
+
+`codeHash` – This hash refers to the *code* of an account on the Ethereum virtual machine (EVM). Contract accounts have code fragments programmed in that can perform different operations. This EVM code gets executed if the account gets a message call. It cannot be changed, unlike the other account fields. All such code fragments are contained in the state database under their corresponding hashes for later retrieval. This hash value is known as a codeHash. For externally owned accounts, the codeHash field is the hash of an empty string.
+
+`storageRoot` – Sometimes known as a storage hash. A 256-bit hash of the root node of a Merkle Patricia trie that encodes the storage contents of the account (a mapping between 256-bit integer values), encoded into the trie as a mapping from the Keccak 256-bit hash of the 256-bit integer keys to the RLP-encoded 256-bit integer values. This trie encodes the hash of the storage contents of this account, and is empty by default.
+
+https://ethereum.org/en/developers/docs/accounts/
 
 
 

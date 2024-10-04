@@ -149,6 +149,14 @@ $ git clone <url> <폴더이름>
 
 
 ```
+$ git clone -b <branch> <url> <폴더이름>
+```
+
+- 특정 브랜치만 clone
+
+
+
+```
 $ git pull origin master
 ```
 
