@@ -14,6 +14,15 @@ strconv.ParseUint(info.BesuNetwork["gasLimit"], 10, 64)
 
 
 
+## bitwise
+
+- AND : `&`
+- OR :`|`
+- XOR : `^` (같으면 0, 달라야 1)
+- NOT : `~`
+- LeftShift : `num << shift`
+- RightShift : `num >> shift`
+
 
 
 ## Number
@@ -45,3 +54,13 @@ strconv.ParseUint(info.BesuNetwork["gasLimit"], 10, 64)
 - slice <=> 문자열
   - slice로 쪼개기 : `strings.Split(s, " ")`
   - 문자열로 합치기 : `strings.Join(words, " ")`
+
+
+
+### `strconv`
+
+- 10진수 => 2진수 형태의 문자열
+  - `s := strconv.FormatInt(number, 2)`
+  - :memo: `b := []byte(s)` 로 룬 slice 형태로 변환 가능
+- 2진수 형태 문자열 => 10진수
+  - `strconv.ParseInt(string(b), 2, 64)`
