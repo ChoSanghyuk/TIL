@@ -198,6 +198,29 @@ $ git revert <commit hash>
 
 
 
+### 특정 파일에만 revert 적용
+
+```
+$ git revert <commit hash> -n
+```
+
+- `-n` (`--no-commit`) : revert 결과 commit X
+
+```
+$ git reset
+$ git add <file1> <file2>
+```
+
+- `git reset`의 default mode가 `--mixed`
+
+```
+git commit -m ".."
+```
+
+
+
+
+
 ### COMMIT 되지 않은 사항 폐기
 
 ```
