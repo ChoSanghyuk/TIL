@@ -38,9 +38,76 @@ strconv.ParseUint(info.BesuNetwork["gasLimit"], 10, 64)
 
 
 
-### Slice
+## Slice
 
-- :memo: `for i, s := range mySlice` 할 때, s를 직접적으로 수정해도 `mySlice`에는 반영 X
+
+
+### 생성
+
+```go
+sl := make([]string, 0, len(s)) // 타입, 길이, capacity
+```
+
+
+
+### 합치기
+
+- go 버전 1.22 이후
+
+```go
+import "slices"
+
+arr = slices.Concat(arr[:lastZero+1], arr[i-2:i+1], arr[lastZero+1:i-2], arr[i+1:])
+```
+
+- go 버전 1.22 이전
+
+```go
+temp := make([]byte, 0, len(new)) 
+temp = append(temp, new[:lastZero+1]...)
+temp = append(temp, new[i-2:i+1]...)
+// ...
+```
+
+
+
+
+
+### :memo: memo
+
+-  `for i, s := range mySlice` 할 때, s를 직접적으로 수정해도 `mySlice`에는 반영 X
+
+
+
+
+
+## Stack
+
+**sample**
+
+```go
+type Stack []rune
+
+func (s Stack) isEmpty() bool {
+	return len(s) == 0
+}
+
+func (s *Stack) Push(x rune) {
+	*s = append(*s, x)
+}
+
+func (s *Stack) Pop() rune {
+	old := *s
+	item := old[len(old)-1]
+	// old[len(old)-1] = 0
+	*s = old[:len(old)-1]
+	return item
+}
+```
+
+
+
+
 
 
 
