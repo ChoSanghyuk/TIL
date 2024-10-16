@@ -12,7 +12,7 @@
 - 벨만 포드
 - 보이어-무어
 - 브루트포스
-- 서로소 집합
+- 서로소 집합ㄱ
 - 이분탐색
 - 이진 검색(Binary Search)
 - 정렬
@@ -360,7 +360,7 @@ $$
   4. w에 인접한 모든 정점 v에 대해 D[v] = min( D[v], D[w]+A[w] [v] )
   5. 모든 곳 방문할 때까지 3,4 반복
   
-  - `!! 힙 사용시, 기존 D[v]보다 D[w]+A[w] [v]가 작을 때에만 heap에 넣어줌`
+  - `!! 힙 사용시, 기존 D[v]보다 D[w]+A[w][v]가 작을 때에만 heap에 넣어줌`
   
     
 
@@ -431,7 +431,7 @@ $$
  public static int gcd(int p, int q)
  {
 	if (q == 0) return p;
-	return gcd(q, p%q);
+	return gcd(q, p%q); // p < q인 경우, 여기서  q,p로 조정
  }
 ```
 
