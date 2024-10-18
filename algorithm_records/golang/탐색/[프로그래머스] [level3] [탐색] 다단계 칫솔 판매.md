@@ -2,7 +2,7 @@
 
 :link: https://school.programmers.co.kr/learn/courses/30/lessons/77486
 
-:memo: 문제 설명에서 진행되는 프로세스를 정확하게 이해하는 것이 중요. 판매를 다 한 다음 정산을 하는 것이 아니라, 판매때마다 정산이 발생
+:memo: 문제 설명에서 진행되는 프로세스를 정확하게 이해하는 것이 중요. 판매를 다 한 다음 정산을 하는 것이 아니라, 판매 때마다 정산이 발생
 
 ```go
 func solution(enroll []string, referral []string, seller []string, amount []int) []int {
