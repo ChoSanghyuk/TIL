@@ -214,6 +214,18 @@ temp = append(temp, new[i-2:i+1]...)
 
 
 
+### 정렬
+
+```go
+import "sort"
+
+sort.Slice(mySlice, func(i, j int) bool {
+    return rtn[i] < rtn[j]
+})
+```
+
+
+
 
 
 ### :memo: memo
