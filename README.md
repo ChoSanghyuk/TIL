@@ -102,6 +102,8 @@
 - [ ] invest에서 사용한 내용 blog 정리
 - [ ] eng resume
 - [ ] CBDC (blog)
+- [ ] ERC 비교 : ERC20 vs ERC1400 vs ERC3643
+- [ ] 지갑 : 수탑형 비수탁형, cold hot
 
 
 
