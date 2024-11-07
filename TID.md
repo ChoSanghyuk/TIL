@@ -28,7 +28,7 @@
   - [x] 오전엔 전체 현재 가격 메시지
   - [x] Sell 메시지는 가지고 있을때만
   - [x] README 정리
-- [ ] CI/CD 개발 (jenkins)
+- [x] CI/CD 개발 (~~jenkins~~ => github webhook)
 - [ ] blog 오타 수정
 
 
