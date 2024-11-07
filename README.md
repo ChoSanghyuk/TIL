@@ -96,11 +96,11 @@
 
 ## TODO
 
-- [ ] 업그레이더블 테스트
+- [x] 업그레이더블 테스트
 - [ ] 테더 스테이킹
 - [ ] 드랍 트랜잭션 (blog)
-- [ ] invest에서 사용한 내용 blog 정리
-- [ ] eng resume
+- [x] invest에서 사용한 내용 blog 정리
+- [x] eng resume
 - [ ] CBDC (blog)
 - [ ] ERC 비교 : ERC20 vs ERC1400 vs ERC3643
 - [ ] 지갑 : 수탑형 비수탁형, cold hot
