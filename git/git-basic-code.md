@@ -366,3 +366,52 @@ git rm -r --cached .
 - target 브랜치에서 충돌난 최신 변경사항
 - `>>>>>>`
   - 충돌 종료 지점
+
+
+
+
+
+### divergent branches
+
+- 오류 내용
+
+  ```
+  You have divergent branches and need to specify how to reconcile them.
+  ```
+
+- 해결
+
+  - ` git branch --set-upstream-to=origin/main `
+  - `git merge --no-ff`
+  - `git pull origin main`
+  - `git push origin main`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
