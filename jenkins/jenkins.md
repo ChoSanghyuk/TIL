@@ -50,8 +50,6 @@
 
 
 
-
-
 install some plugins from Manage Plugins. Go ahead and install Go, Docker, and the Docker plugin from the Available tab in Manage Plugins.
 
 configure these plugins globally by going to `Manage Jenkins -> Global Tool Configuration.`
@@ -75,7 +73,12 @@ https://mattermost.com/blog/how-to-set-up-a-jenkins-ci-cd-pipeline-for-your-gola
 
 
 
-**Define Your CI/CD Steps**
 
 
+### 개인 프로젝트에 jenkins 미도입 사유
+
+- git push 시, 배포 자동화는 github webhook으로 충분히 가능
+- jenkins를 사용하고자 한다면, 
+  - free style project - 실행 후 session을 죽여서 프로젝트도 같이 따운 됨(`nohup`, `BUILD_ID=dontKillMe` 로도 해결 X)
+  - pipeline - 기본적으로 github 읽어서 실행. config만 별도로 읽도록 설정하기 귀찮고, 배포 자동화 때문만을 위해 docker 사용할 이유 없음
 
