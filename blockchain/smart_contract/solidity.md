@@ -36,13 +36,15 @@
 
 
 
-
-
-
-
-
-
 ## Contracts
+
+
+
+### Creating Contracts
+
+- A constructor is optional
+- Only one constructor is allowed, which means overloading is not supported
+- The deployed code does not include the constructor code or internal functions only called from the constructor
 
 
 
@@ -54,16 +56,17 @@
 
   - public
 
-    -  compiler automatically generates getter functions for them
+    - compiler automatically generates getter functions for them
 
-    => allows other contracts to read their values
+      => allows other contracts to read their values
 
     - Setter functions are not generated so other contracts cannot directly modify their values
-    - 외부에서의 접근은 getter을 통해서만 접근되며, 내부에서의 접근만 storage로부터 직접 접근함
+    - 외부에서의 접근은 getter을 자동으로 호출하여 접근, 내부에서의 접근은 storage로부터 직접 접근함
 
   - internal
 
     - can only be accessed from within the contract they are defined in and **in derived contracts**
+      - cannot be accessed externally
     - default visibility level
 
   - private
@@ -129,8 +132,8 @@
       }
   }
   ```
-
-
+  
+  - 복합타입이 포함된 struct 타입에 대해서는, 복합필드를 제외한 필드들만 자동 getter로 반환함
 
 ### Function Modifiers
 
@@ -146,6 +149,11 @@
   - cannot implicitly access or change the arguments and return values of functions they modify
     - Their values can only be passed to them explicitly at the point of invocation
   - Symbols introduced in the modifier are not visible in the function (as they might change by overriding).
+    - <=> Arbitrary expressions are allowed for modifier arguments and in this context, all symbols visible from the function are visible in the modifier.
+  - Explicit returns from a modifier or function body only leave the current modifier or function body
+    - Return variables are assigned and control flow continues after the `_` in the preceding modifier
+    - An explicit return from a modifier with `return;` does not affect the values returned by the function
+    - The modifier can, however, choose not to execute the function body at all and in that case the return variables are set to their default values
 - 사용
   - Multiple modifiers are applied to a function by specifying them in a whitespace-separated list and are evaluated in the order presented.
   - The placeholder statement (`_`) is used to denote where the body of the function being modified should be inserted
@@ -231,6 +239,64 @@ contract Mutex {
 
 
 
+### Transient Storage
+
+- 개요
+
+  - another data location besides memory, storage, calldata (and return-data and code)
+  - data in transient storage is not permanent, but is scoped to the current transaction only, after which it will be reset to zero.
+    - new data location behaves as a key-value store similar to storage, but gas costs are much lower
+
+- 특징
+
+  - Transient storage variables cannot be initialized in place, i.e., they cannot be assigned to upon declaration
+  - `constant` and `immutable` variables conflict with transient storage
+  - have completely independent address space from storage
+    - need distinct names though
+  - can have visibility as well
+  - such use of `transient` as a data location is only allowed for value type.
+    - Reference types(array, mapping, struct, ... ) are not yet supported.
+
+- canonical use cases
+
+  - cheaper reentrancy locks
+
+    ```solidity
+    // SPDX-License-Identifier: GPL-3.0
+    pragma solidity ^0.8.28;
+    
+    contract Generosity {
+        mapping(address => bool) sentGifts;
+        bool transient locked;
+    
+        modifier nonReentrant {
+            require(!locked, "Reentrancy attempt");
+            locked = true;
+            _;
+            // Unlocks the guard, making the pattern composable.
+            // After the function exits, it can be called again, even in the same transaction.
+            locked = false;
+        }
+    
+        function claimGift() nonReentrant public {
+            require(address(this).balance >= 1 ether);
+            require(!sentGifts[msg.sender]);
+            (bool success, ) = msg.sender.call{value: 1 ether}("");
+            require(success);
+    
+            // In a reentrant function, doing this last would open up the vulnerability
+            sentGifts[msg.sender] = true;
+        }
+    }
+    ```
+
+:bulb: Composability of Smart Contracts and the Caveats of Transient Storage
+
+- transient 이전에는 단일 트랜잭션 내 여러 external calls과 여러 transaction call이 구분되지 않았음
+- transient를 쓸 때에는 가스비에 있어서 이점이 있지만, 컨트랙트의 활용이 단일 트랜잭션 내에서의 사용으로 국한됨을 인지해야 함
+
+
+
 ### `constant` and `immutable` State Variables
 
 - 공통점
@@ -277,11 +343,12 @@ contract Mutex {
 
     - return variables are declared with the same syntax after the `returns` keyword
     - names of return variables can be omitted
-      - can provide return values (either a single or multiple ones directly
+      - can provide return values (either a single or multiple ones directly)
+      - You can either explicitly assign to return variables, or you can provide return values directly with the `return` statement:
     - Return variables can be used as any other local variable and they are initialized with their default value assigned.
     - the statement `return (v0, v1, ..., vn)` can be used to return multiple values
       - The number of components must be the same as the number of return variables and their types have to match
-
+    
     ```solidity
     contract Simple {
         function arithmetic(uint a, uint b)
@@ -384,7 +451,7 @@ contract Mutex {
 
     - also applies to inherited functions
     - It is an error if two externally visible functions differ by their Solidity types but not by their external types.
-      - 인자가 다르지만 external types가 다르지 
+      - ex) `uint256` and `uint` are treated as the **same external type**
 
     - overload resolution and argument matching
 
