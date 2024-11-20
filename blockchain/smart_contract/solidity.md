@@ -365,6 +365,10 @@ contract Mutex {
 
 - State Mutability
 
+  :bulb: `STATICCALL` is used when `view` functions are called, which enforces the state to stay unmodified
+
+  :bulb:  For library `view` functions `DELEGATECALL` is used, because there is no combined `DELEGATECALL` and `STATICCALL` [:link:](https://docs.soliditylang.org/en/v0.8.28/contracts.html#view-functions)
+
   - `view` function
 
     - in case they promise not to modify the state
@@ -397,7 +401,10 @@ contract Mutex {
         - Using inline assembly that contains certain opcodes.
     - Pure functions are able to use the `revert()` and `require()` functions to revert potential state changes when an error occurs.
       - Reverting a state change is not considered a “state modification”
+      - 어차피 `view`나 `pure`은 상태 변화 못 하니, revert가 의미 없어짐. try-catch로 revert 잡고 트랜잭션 전파 X는 방법도 사용
       - in line with the `STATICCALL` opcode.
+
+  :warning:It is not possible to prevent functions from reading the state at the level of the EVM (only `view` can be enforced at the EVM level, `pure` can not).
 
 - Special Functions
 
@@ -410,8 +417,13 @@ contract Mutex {
     - 특징
       - This function cannot have arguments, cannot return anything and must have `external` visibility and `payable` state mutability
       - can be virtual, can override and can have modifiers
+      - If no such function exists, but a payable fallback function exists, the fallback function will be called on a plain Ether transfer.
 
-    :bulb: If no such function exists, but a payable fallback function exists, the fallback function will be called on a plain Ether transfer. If neither a receive Ether nor a payable fallback function is present, the contract cannot receive Ether
+    :bulb: If neither a receive Ether nor a payable fallback function is present, the contract cannot receive Ether through a transaction that does not represent a payable function call
+
+    :memo: 이더를 보내는 방법에는 direct로 전송하는 것과 payable 함수를 통해 보내는 것이 있는데, 전자만 `receive`와 `payable fallback` 없으면 못 받음
+
+    :memo: "it can only rely on 2300 gas being available", leaving little room to perform other operations except basic logging.
 
   - Fallback Function
 
@@ -421,7 +433,7 @@ contract Mutex {
 
         1. none of the other functions match the given function signature
         2. if no data was supplied at all 
-        3. there is no [receive Ether function
+        3. there is no `receive` Ether function
 
       - can have at most one `fallback` function
 
@@ -433,13 +445,13 @@ contract Mutex {
 
     - 특징
 
-      - must have `external` visibility. A fallback function can be virtual, can override and can have modifiers
+      - must have `external` visibility. 
+      - can be virtual, can override and can have modifiers
       - The fallback function always receives data, but in order to also receive Ether it must be marked `payable`.
       - If the version with parameters is used, `input` will contain the full data sent to the contract (equal to `msg.data`) and can return data in `output`. 
         - The returned data will not be ABI-encoded
         - Instead it will be returned without modifications (not even padding)
-
-  :memo: "it can only rely on 2300 gas being available" 라는 설명이 있지만, 현재 단계에서는 아직 이해 X
+      - In the worst case, if a payable fallback function is also used in place of a receive function, it can only rely on 2300 gas being available
 
 - Function Overloading
 
@@ -450,13 +462,14 @@ contract Mutex {
   - 특징
 
     - also applies to inherited functions
+    
     - It is an error if two externally visible functions differ by their Solidity types but not by their external types.
       - ex) `uint256` and `uint` are treated as the **same external type**
-
+    
     - overload resolution and argument matching
-
+    
       - If there is not exactly one candidate, resolution fails.
-
+    
       ```solidity
       contract A {
           function f(uint8 val) public pure returns (uint8 out) {
@@ -468,7 +481,7 @@ contract Mutex {
           }
       }
       ```
-
+    
       => Calling `f(50)` would create a type error since `50` can be implicitly converted both to `uint8` and `uint256` types
 
 
@@ -511,7 +524,7 @@ payable
 
 - 토픽
 
-  - You can add the attribute `indexed` to up to three parameters which adds them to a special data structure known as “topics” instead of the data part of the log
+  - You can add the attribute `indexed` to **up to three parameters** which adds them to a special data structure known as “topics” instead of the data part of the log
   - A topic can only hold a single word (32 bytes) so if you use a reference type for an indexed argument, the Keccak-256 hash of the value is stored as a topic instead.
     - All parameters without the `indexed` attribute are ABI-encoded into the data part of the log
   - Topics allow you to search for events
@@ -520,14 +533,12 @@ payable
 
 - `anonymous` specifier
 
-  - it is not possible to filter for specific anonymous events by name, you can only filter by the contract address.
+  - it is not possible to filter for specific anonymous events by name, you can **only filter by the contract address**. (원래는 topics 처음에 event signature가 있는데, `anonymous` 지정 시 없어짐)
   - The advantage of anonymous events is that they are cheaper to deploy and call
 
   ```solidity
   event MyEvent(uint indexed id, uint value) anonymous;
   ```
-
-  
 
 - Members of Event
 
@@ -536,13 +547,177 @@ payable
 
 
 
+### Custom Errors
 
+- 개요
+
+  - provide a convenient and gas-efficient way to explain to the user why an operation failed
+  - can be defined inside and outside of contracts (including interfaces and libraries)
+
+- 특징
+
+  - have to be used together with the revert statement or the require function
+
+    - false => all changes in the current call are reverted, and the error data passed back to the caller
+    - Instances of errors can only be created using `revert` statements, or as the second argument to `require` functions.
+
+  - memory allocation for the error-based revert reason will only happen in the reverting case
+
+    => gas-efficient
+
+  - Errors cannot be overloaded or overridden but are inherited
+
+  - same error can be defined in multiple places as long as the scopes are distinct
+
+  - an error can only be caught when coming from an external call, reverts happening in internal calls or inside the same function cannot be caught.
+
+
+
+### Inheritance
+
+- Solidity supports multiple inheritance including polymorphism.
+  - a function call always executes the function of the same name (and parameter types) in the most derived contract in the inheritance hierarchy
+    - the most derived : 상속 계층 구조의 맨 아래에 있는 계약
+  - has to be explicitly enabled on each function in the hierarchy using the `virtual` and `override` keywords
+  - possible to call functions further up in the inheritance hierarchy internally by explicitly specifying the contract using `ContractName.functionName()` or using `super.functionName()` 
+- When a contract inherits from other contracts, only a single contract is created on the blockchain, and the code from all the base contracts is compiled into the created contract.
+- State variable shadowing is considered as an error.
+  - State variable shadowing : 상속 관계에 있는 계약 간에 동일한 이름의 상태 변수(State Variable)가 선언
+- 동일한 함수를 가진 두 컨트랙트를 상속받아서 `super.함수`할 경우에는, 최종 상속 그래프에서 다음 기본 계약의 함수를 호출함
+  - 최종 상속 그래프 : solidity에서 다중 상속을 지원할 때 C3 선형화 알고리즘으로, 상속 관계를 단일 선형 순서로 정리
+  - 다음 기본 계약 : 상속에서 더 먼저 나열된 계약 `contract A is B, C` 일 경우, B가 다음 기본 계약
+
+#### Function Overriding
+
+- The overriding function must then use the `override` keyword in the function header
+- may only change the visibility of the overridden function from `external` to `public`. 
+- mutability may be changed to a more strict one following the order:
+  - `nonpayable` => `view` => `pure`
+  - `payable` is an exception and cannot be changed to any other mutability. 
+- If you do not mark a function that overrides as `virtual`, derived contracts can no longer change the behavior of that function
+- :bulb: Functions with the `private` visibility cannot be `virtual`
+- the `override` keyword is not required when overriding an interface function, except for the case where the function is defined in multiple bases.
+
+#### Modifier Overriding
+
+- works in the same way as function overriding
+
+#### Constructors
+
+- If there is no constructor, the contract will assume the default constructor, which is equivalent to `constructor() {}`. 
+- You can use internal parameters in a constructor (for example storage pointers).
+  - the contract has to be marked [abstract](https://docs.soliditylang.org/en/v0.8.28/contracts.html#abstract-contract), because these parameters cannot be assigned valid values from outside but only through the constructors of derived contracts.
+
+#### Arguments for Base Constructors
+
+- The constructors of all the base contracts will be called following the linearization rules
+
+  - If the base constructors have arguments, derived contracts need to specify all of them
+
+    1. directly in the inheritance list `contract Derived1 is Base(7)`
+    2. a modifier is invoked as part of the derived constructor `constructor(uint y) Base(y * y)`
+
+    :bulb: Specifying arguments in both places is an error.
+
+  - If a derived contract does not specify the arguments to all of its base contracts’ constructors, it must be declared abstract.
+
+    - 나중에 추후 상속하는 애가 명시 안 된 부모꺼까지 다 명시해야함
+
+#### Multiple Inheritance and Linearization
+
+- the order in which the base classes are given in the `is` directive is important
+
+  - You have to list the direct base contracts in the order **from “most base-like” to “most derived”**
+
+  - when a function is called that is defined multiple times in different contracts, the given bases are searched from right to left
+    - :bulb: 같은 이름의 함수 override할 때에는 right-to-left이지만, 앞선 `super.함수` 일 때는 left-to-right임
+
+- The constructors will always be executed in the linearized order, regardless of the order in which their arguments are provided in the inheriting contract’s constructor.
+
+
+
+### Abstract Contracts
+
+- Contracts must be marked as abstract when at least one of their functions is not implemented or when they do not provide arguments for all of their base contract constructors.
+
+- a contract may still be marked abstract, such as when you do not intend for the contract to be created directly
+
+- An abstract contract is declared using the `abstract` keyword
+
+  ```solidity
+  abstract contract Feline {
+      function utterance() public virtual returns (bytes32);
+  }
+  ```
+
+- a function without implementation is different from a Function Type
+
+  - function without implementation : `function foo(address) external returns (address);`
+  - Function Type : `function(address) external returns (address) foo;`
+
+
+
+#### Interfaces
+
+- 개요 - similar to abstract contracts, but there are further restrictions:
+  - cannot have any functions implemented
+  - cannot inherit from other contracts (but they can inherit from other interfaces)
+  - All declared functions must be external in the interface, even if they are public in the contract
+  - cannot declare a constructor
+  - cannot declare state variables
+  - cannot declare modifiers
+
+- 선언 - Interfaces are denoted by their own keyword:
+
+  ```solidity
+  interface Token {
+      enum TokenType { Fungible, NonFungible }
+      struct Coin { string obverse; string reverse; }
+      function transfer(address recipient, uint amount) external;
+  }
+  ```
+
+- 특징
+
+  - All functions declared in interfaces are implicitly `virtual` and any functions that override them do not need the `override` keyword
+
+
+
+### Libraries
+
+- 개요
+  - libraries are deployed only once at a specific address and their code is reused using the `DELEGATECALL`
+  - if library functions are called, their code is executed in the context of the calling contract
+
+- 특징
+
+  - As a library is an isolated piece of source code, it can only access state variables of the calling contract if they are explicitly supplied
+
+  - Library functions can only be called directly, if they do not modify the state (`view` or `pure`)
+
+  - not possible to destroy a library.
+
+  - calls to library functions look just like calls to functions of explicit base contracts
+
+  - If you use libraries, be aware that an actual external function call is performed.
+    - `msg.sender`, `msg.value` and `this` will retain their values in this call, though
+
+- restrictions
+
+  - cannot have state variables
+  - cannot inherit nor be inherited
+  - cannot receive Ether
+  - cannot be destroyed
+
+- Library Linking
+
+  - It is possible to obtain the address of a library by converting the library type to the `address` type, i.e. using `address(LibraryName)`.
+  - As the compiler does not know the address where the library will be deployed, the compiled hex code will contain placeholders of the form `__$30bbc0abd4d6364515865950d3e0d10953$__`
+  -  [Library Linking](https://docs.soliditylang.org/en/v0.8.28/using-the-compiler.html#library-linking)
 
 
 
 ## Style Guide
-
-
 
 ### Function
 
@@ -555,41 +730,32 @@ payable
 - For short function declarations, it is recommended for the opening brace of the function body to be kept on the same line as the function declaration
 - For long function declarations, it is recommended to drop each argument onto its own line at the same indentation level as the function body
   - The closing parenthesis and opening bracket should be placed on their own line as well at the same indentation level as the function declaration.
-  - 
+
+#### function Signatures and Selectors in Libraries
+
+- While external calls to public or external library functions are possible, the calling convention for such calls is considered to be internal to Solidity and not the same as specified for the regular contract ABI
+  - External library functions support more argument types than external contract functions
+    - recursive structs
+    - storage pointers
+  - function signatures are computed following an internal naming schema and arguments of types not supported in the contract ABI use an internal encoding.
+    - :link: [used identifiers for the types in the signatures](https://docs.soliditylang.org/en/v0.8.28/contracts.html#function-signatures-and-selectors-in-libraries)
 
 
 
+### Using For
 
+- 개요
 
+  - 특정 데이터 타입에 대해 **라이브러리 함수**를 연결하여, 해당 타입의 변수에서 직접 라이브러리 함수처럼 호출할 수 있도록 해주는 기능
 
+- 구문
 
+  ```solidity
+  using LibraryName for DataType;
+  ```
 
+- 동작
 
+  - 특정 데이터 타입의 변수에서 해당 타입에 연관된 **라이브러리 함수**를 **인스턴스 메서드처럼 호출** 가능. `value.functionName()`
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    =  `LibraryName.functionName(value)`
