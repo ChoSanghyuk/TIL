@@ -51,10 +51,11 @@ let vector:Vec<String> =  Vec::with_capacity(3); // 배열 크기 미리 지정
 ```
 
 - 메소드
+  - 요소 추가 : `vector.push(element);`
+  - 합산 : `vector.iter().sum();`
 
-```rust
-vector.push(element); // 요소 추가
-```
+
+
 
 
 
@@ -88,7 +89,7 @@ deque.pop_back().unwrap(); // 좌측 pop (Option 반환)
 
 ## IO
 
-### Console
+### Console 읽기
 
 - 한 줄 읽어오기
 
@@ -119,6 +120,22 @@ let is_queue:Vec<u32> = (0..n).map(|_| input.next().unwrap().parse().unwrap()).c
 
 
 
+### Buffer Write
+
+```rust
+use std::io::Write;
+```
+
+- `writeln!`
+  - Writes formatted data into a buffer, with a newline appended
+  - ex) `writeln!(&mut fptr, "{}", result).ok();`
+
+
+
+
+
+
+
 ## Debug
 
 ### Formatted Print
@@ -143,27 +160,20 @@ let is_queue:Vec<u32> = (0..n).map(|_| input.next().unwrap().parse().unwrap()).c
     - Arguments start at 0 immediately after the format string.
 
   - specifying the format character. (10진수로 표현된 값을 해당 진법으로 변환해줌)
-
     - `{:b}` : binary
     - `{:o}` : octal
     - `{:x}` : hex
-
   - padding
-
     - `println!("{number:>5}", number=1);` => `"    1"`
       - right-justify text with a specified width (총 5칸을 만드는 것으로, 4칸 공백 추가됨)
     - `println!("{number:0>5}", number=1);` => `00001`
     - `println!("{number:0<5}", number=1);` => `10000`
-
   - named arguments
-
     - `println!("{number:0>width$}", number=1, width=5);` 
 
-    
 
 
-
-
+### Debugging
 
 - 기본 사용 방법
   - struct / enum에 `#[derive(Debug)]` 적용 시 사용 O
@@ -173,6 +183,12 @@ let is_queue:Vec<u32> = (0..n).map(|_| input.next().unwrap().parse().unwrap()).c
 println!("{:?}", puzzle)	// 기본 Debug
 println!("{:#?}", puzzle)	// Pretty Debug
 ```
+
+
+
+
+
+
 
 
 
