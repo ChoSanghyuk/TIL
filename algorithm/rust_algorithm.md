@@ -94,7 +94,10 @@ deque.pop_back().unwrap(); // 좌측 pop (Option 반환)
 
 ```rust
 let mut store= String::new();
+// 1안
 io::stdin().read_line(&mut store).unwrap();
+// 2안
+io::stdin().read_line(&mut store).ok().expect("read error");
 ```
 
 - buffer에 console 전체 읽어오기
@@ -117,6 +120,50 @@ let is_queue:Vec<u32> = (0..n).map(|_| input.next().unwrap().parse().unwrap()).c
 
 
 ## Debug
+
+### Formatted Print
+
+- 종류
+
+  - `format!` : write formatted text to [`String`](https://doc.rust-lang.org/rust-by-example/std/str.html)
+
+  - `print!` :  same as `format!` but the text is printed to the console (io::stdout).
+
+  - `println!` : same as `print!` but a newline is appended.
+
+  - `eprint!` : same as `print!` but the text is printed to the standard error (io::stderr).
+
+  - `eprintln!` : same as `eprint!` but a newline is appended.
+
+- 사용
+
+  - `{}` will be automatically replaced with any arguments. These will be stringified.
+  - Positional arguments can be used. 
+    - Specifying an integer inside `{}` determines which additional argument will be replaced
+    - Arguments start at 0 immediately after the format string.
+
+  - specifying the format character. (10진수로 표현된 값을 해당 진법으로 변환해줌)
+
+    - `{:b}` : binary
+    - `{:o}` : octal
+    - `{:x}` : hex
+
+  - padding
+
+    - `println!("{number:>5}", number=1);` => `"    1"`
+      - right-justify text with a specified width (총 5칸을 만드는 것으로, 4칸 공백 추가됨)
+    - `println!("{number:0>5}", number=1);` => `00001`
+    - `println!("{number:0<5}", number=1);` => `10000`
+
+  - named arguments
+
+    - `println!("{number:0>width$}", number=1, width=5);` 
+
+    
+
+
+
+
 
 - 기본 사용 방법
   - struct / enum에 `#[derive(Debug)]` 적용 시 사용 O

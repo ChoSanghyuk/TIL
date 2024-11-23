@@ -104,9 +104,14 @@
 
 ### 큰 수 : big
 
+```go
+import  "math/big"
+```
+
 - 큰 정수
   - 생성
-    - `big.NewInt(0)`
+    - `big.NewInt(0)` :bulb: 인자는 int64로 넣어야 함
+  - 곱셈 : `rtn.Mul(rtn, big.NewInt(i))` - 인자로 받은 bigInt 곱해서 현재 값에 부여
 
 
 
