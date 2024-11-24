@@ -2,7 +2,11 @@
 
 
 
-## 목차
+[TOC]
+
+
+
+
 
 
 
@@ -51,8 +55,9 @@ let vector:Vec<String> =  Vec::with_capacity(3); // 배열 크기 미리 지정
 ```
 
 - 메소드
-  - 요소 추가 : `vector.push(element);`
-  - 합산 : `vector.iter().sum();`
+  - 요소 추가 : `{vector}.push(element);`
+  - 합산 : `{vector}.iter().sum();`
+  - 길이 : `{vector}.len()`
 
 
 
@@ -82,57 +87,6 @@ deque.push_back(inputs[i]); // 우측 push
 deque.pop_front().unwrap(); // 좌측 pop (Option 반환)
 deque.pop_back().unwrap(); // 좌측 pop (Option 반환)
 ```
-
-
-
-
-
-## IO
-
-### Console 읽기
-
-- 한 줄 읽어오기
-
-```rust
-let mut store= String::new();
-// 1안
-io::stdin().read_line(&mut store).unwrap();
-// 2안
-io::stdin().read_line(&mut store).ok().expect("read error");
-```
-
-- buffer에 console 전체 읽어오기
-
-```rust
-let buf = io::read_to_string(io::stdin()).unwrap(); // console에 모두 입력 후 EOF(window는 crtl+z) 입력 필요
-```
-
-:bulb: buffer를 공백단위로 나누어, Integer / Vec로 변환하기
-
-```rust
-let buf = io::read_to_string(io::stdin()).unwrap(); // buffer에 저장
-let mut input  = buf.split_ascii_whitespace();	// 공백 단위로 쪼갬. SplitAsciiWhitespace라는 struc 구조로 반환
-let n:usize = input.next().unwrap().parse().unwrap(); // 개별 String parsing
-let is_queue:Vec<u32> = (0..n).map(|_| input.next().unwrap().parse().unwrap()).collect(); // Vec으로 변환
-```
-
-
-
-
-
-### Buffer Write
-
-```rust
-use std::io::Write;
-```
-
-- `writeln!`
-  - Writes formatted data into a buffer, with a newline appended
-  - ex) `writeln!(&mut fptr, "{}", result).ok();`
-
-
-
-
 
 
 
@@ -188,6 +142,51 @@ println!("{:#?}", puzzle)	// Pretty Debug
 
 
 
+## IO
+
+### Console 읽기
+
+- 한 줄 읽어오기
+
+```rust
+let mut store= String::new();
+// 1안
+io::stdin().read_line(&mut store).unwrap();
+// 2안
+io::stdin().read_line(&mut store).ok().expect("read error");
+```
+
+- buffer에 console 전체 읽어오기
+
+```rust
+let buf = io::read_to_string(io::stdin()).unwrap(); // console에 모두 입력 후 EOF(window는 crtl+z) 입력 필요
+```
+
+:bulb: buffer를 공백단위로 나누어, Integer / Vec로 변환하기
+
+```rust
+let buf = io::read_to_string(io::stdin()).unwrap(); // buffer에 저장
+let mut input  = buf.split_ascii_whitespace();	// 공백 단위로 쪼갬. SplitAsciiWhitespace라는 struc 구조로 반환
+let n:usize = input.next().unwrap().parse().unwrap(); // 개별 String parsing
+let is_queue:Vec<u32> = (0..n).map(|_| input.next().unwrap().parse().unwrap()).collect(); // Vec으로 변환
+```
+
+
+
+
+
+### Buffer Write
+
+```rust
+use std::io::Write;
+```
+
+- `writeln!`
+  - Writes formatted data into a buffer, with a newline appended
+  - ex) `writeln!(&mut fptr, "{}", result).ok();`
+
+
+
 
 
 
@@ -204,6 +203,31 @@ for i in 0..n{
 }
 ```
 
+
+
+
+
+## Trait
+
+### TryInto
+
+```rust
+pub trait TryInto<T>: Sized {
+    type Error;
+
+    fn try_into(self) -> Result<T, Self::Error>;
+}
+```
+
+- 형변환에 사용
+
+- consumes self
+
+- 예시
+
+  ```rust
+  let range_x:usize = (max_x - min_x +1).try_into().unwrap(); // i64 => usize
+  ```
 
 
 
@@ -250,32 +274,6 @@ let is_queue:Vec<u32> = is_queue.trim().split_whitespace().map(|s| s.parse().unw
 
 
 
-
-
-## Trait
-
-### TryInto
-
-```rust
-pub trait TryInto<T>: Sized {
-    type Error;
-
-    fn try_into(self) -> Result<T, Self::Error>;
-}
-```
-
-- 형변환에 사용
-
-- consumes self
-
-- 예시
-
-  ```rust
-  let range_x:usize = (max_x - min_x +1).try_into().unwrap(); // i64 => usize
-  ```
-
-  
-
 ## 선언
 
 ```rust
@@ -285,10 +283,43 @@ let (mut max_x,mut min_x,mut max_y,mut min_y) = (1,2,3,4);
 
 
 
-## 정수
+## 숫자
 
-```rust
-i64::MAX // 최대 값
-i64::MIN // 최소 값
-```
+### 최대/최소
+
+- 범위
+
+  | 타입  | 최소                           | 최대 |
+  | ----- | ------------------------------ | ----|
+  | `i32` | -2_147_483_648  | 2_147_483_647 |
+  | `i64` | -9_223_372_036_854_775_808    | 9_223_372_036_854_775_807 |
+
+- 최대값/최소값
+
+  ```rust
+  i64::MAX // 최대 값
+  i64::MIN // 최소 값
+  ```
+
+
+
+### 형변환
+
+- 높은 범위로 이동
+
+  ```rust
+  i32::from(v) // v: i8
+  ```
+
+- 낮은 범위로 이동
+
+  ```rust
+  i8::try_from(v).ok() // v:i32
+  ```
+
+  
+
+
+
+
 
