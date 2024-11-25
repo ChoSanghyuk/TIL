@@ -122,8 +122,14 @@ deque.pop_back().unwrap(); // 좌측 pop (Option 반환)
       - right-justify text with a specified width (총 5칸을 만드는 것으로, 4칸 공백 추가됨)
     - `println!("{number:0>5}", number=1);` => `00001`
     - `println!("{number:0<5}", number=1);` => `10000`
+  - 소수점 반올림
+    - `println!("{:.2}", 0.66666);` => `0.67`
   - named arguments
     - `println!("{number:0>width$}", number=1, width=5);` 
+  - numbered arguments
+    - `println!("{number:0>1$}", number=1, 5);` 
+  
+  
 
 
 
@@ -245,13 +251,12 @@ let mut s = String::with_capacity(3); // 문자열 크기 미리 지정
 ```
 
 - 메소드
+  - 문자열 이어 붙이기 : `{s}.push_str("문자열": &str );`
+  - 길이 : `{s}.len()`
+  - 치환 : `{s}.replace("orgn", "dest")` (일치 문자열 전체 교환)
+  - 뒤집기 : `{s}.chars().rev().collect::<String>()` 
+  - 반복 : `{s}.repeat({n})`
 
-```rust
-s.push_str("문자열": &str ); // 문자열 이어 붙이기. &str 타입을 요구함
-s.len() // 문자열 길이
-s.replace("orgn", "dest") // 일치 문자열 전체 교환
-s.chars().rev().collect::<String>() // 문자열 뒤집기
-```
 
 - 비교
 
@@ -303,7 +308,13 @@ let (mut max_x,mut min_x,mut max_y,mut min_y) = (1,2,3,4);
 
 
 
-### 형변환
+
+
+## 형변환
+
+
+
+### associated function 사용
 
 - 높은 범위로 이동
 
@@ -319,7 +330,14 @@ let (mut max_x,mut min_x,mut max_y,mut min_y) = (1,2,3,4);
 
   
 
+### as
 
+- 개요
+  - `as` is most commonly used to turn primitive types into other primitive types
+  - has other uses that include turning pointers into addresses, addresses into pointers, and pointers into other pointers
+- 예시
+  - `let thing1: u8 = 89.0 as u8;`
+  - `true as u8`
 
 
 
