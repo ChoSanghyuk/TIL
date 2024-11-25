@@ -57,6 +57,7 @@ let vector:Vec<String> =  Vec::with_capacity(3); // 배열 크기 미리 지정
 - 메소드
   - 요소 추가 : `{vector}.push(element);`
   - 합산 : `{vector}.iter().sum();`
+  - 최대 : `{vector}.iter().max().unwrap();`
   - 길이 : `{vector}.len()`
 
 
@@ -256,6 +257,8 @@ let mut s = String::with_capacity(3); // 문자열 크기 미리 지정
   - 치환 : `{s}.replace("orgn", "dest")` (일치 문자열 전체 교환)
   - 뒤집기 : `{s}.chars().rev().collect::<String>()` 
   - 반복 : `{s}.repeat({n})`
+  - 분리 : `{s}.split("{separator}")`
+    - gives an iterator
 
 
 - 비교
@@ -264,18 +267,49 @@ let mut s = String::with_capacity(3); // 문자열 크기 미리 지정
 s1 == s2 // PartialEq는 String 타입에는 정의되지 않았음.
 ```
 
-- parse (String => int)
+- 형변환
+    - parse (String => int)
+
+    ```rust
+    let n:usize = n.trim().parse().unwrap(); // n은 console에서 받아온 문자열
+    ```
+
+    - String => Int Vec
+
+    ```rust
+    // is_queue은 console에서 받아온 문자열
+    let is_queue:Vec<u32> = is_queue.trim().split_whitespace().map(|s| s.parse().unwrap()).collect();
+    ```
+
+    - `Vec<String>` => `String`
+
+    ```rust
+    ~.join(":") // 사이사이 : 넣으면서 합치기
+    ```
+
+
+
+### str
+
+- 개요
+  - String Slice
+  - *string slice* is a reference to part of a `String`
+    - :bulb: `&` 사용 필수
+    - `str`은 참조만 가능하기에 소유권을 가져올 수 있는 `str` 타입 자체로 사용 X. `&str` 타입으로 사용
+- 사용
+  - `&s[starting_index..ending_index]`
+      - starting_index 생략 시, 0
+      - ending_index 생략 시, `s.len()`
+
+
+:bulb: 비고
 
 ```rust
-let n:usize = n.trim().parse().unwrap(); // n은 console에서 받아온 문자열
+let s = "07:05:45PM"; // s : &str
+let s = "07:05:45PM"[..]; // s : str 타입으로 사용 불가
 ```
 
-- String => Int Vec
 
-```rust
-// is_queue은 console에서 받아온 문자열
-let is_queue:Vec<u32> = is_queue.trim().split_whitespace().map(|s| s.parse().unwrap()).collect();
-```
 
 
 
