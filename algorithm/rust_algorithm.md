@@ -54,11 +54,18 @@ let vector: Vec<[i64;3]> = vec![[2, -1, 4], [-2, -1, 4], [0, -1, 1], [5, -8, -12
 let vector:Vec<String> =  Vec::with_capacity(3); // 배열 크기 미리 지정
 ```
 
-- 메소드
+- 기본 메소드
   - 요소 추가 : `{vector}.push(element);`
+  - 길이 : `{vector}.len()`
   - 합산 : `{vector}.iter().sum();`
   - 최대 : `{vector}.iter().max().unwrap();`
-  - 길이 : `{vector}.len()`
+- 정렬
+  - `{vector}.sort()`
+    - 요소 간 값이 같을 경우, 원래 자리 유지
+  
+  - `{vector}.sort_unstable()`
+    - 요소 간 값이 같을 경우, 원래 자리 보장 X
+  
 
 
 

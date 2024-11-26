@@ -2,19 +2,7 @@
 
 
 
-:green_apple: 목차
-
-- 주의사항
-- 닉네임 등록
-- 연결
-- 업로드
-- 다운로드
-- 내역 취소
-- Local / Head Replace
-- 비교
-- 상태 확인
-- gitignore
-- Git 에러 해결
+[TOC]
 
 
 
@@ -385,7 +373,6 @@ git rm -r --cached .
   - `git merge --no-ff`
   - `git pull origin main`
   - `git push origin main`
-
 
 
 
