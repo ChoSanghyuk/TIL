@@ -212,6 +212,27 @@ for i in 0..n{
 
 
 
+## Map
+
+
+
+### HashMap
+
+```rust
+use std::collections::HashMap;
+```
+
+- 생성 : `let mut h: HashMap<u8, bool> = HashMap::new();`
+
+- 메소드
+  - 추가 : `{map}.insert({k}, {v});`
+  - 삭제 : `{map}.remove(&{k});`
+    - 삭제 후 값 반환 : `{map}.remove(&{k}).unwrap();`
+
+
+
+
+
 
 
 ## Trait
@@ -341,6 +362,25 @@ let (mut max_x,mut min_x,mut max_y,mut min_y) = (1,2,3,4);
   ```
 
 
+
+### 주요 메소드
+
+- 절대값
+  - `{i32}.abs()`
+    - `i32`, `i64`, `f32`, `f64` O
+
+
+
+### 비교
+
+```rust
+use std::cmp;
+```
+
+- 큰 값
+  - `cmp::max(a, b);`
+- 작은 값
+  - `cmp::min(a, b);`
 
 
 
