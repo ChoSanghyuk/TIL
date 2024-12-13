@@ -339,6 +339,51 @@ let s = "07:05:45PM"[..]; // s : str 타입으로 사용 불가
 
 
 
+### Regex
+
+```rust
+use regex::Regex;
+```
+
+- 치환
+
+  ```rust
+  let re = Regex::new(r"{regexp}").unwrap();
+  let result = re.replace_all("Hello World!", "x");
+  ```
+
+- raw string literal : `r#"..."#`
+
+  ```rust
+  r#"..."#
+  ```
+
+  - 안에서 `"` escape 필요없이 자유롭게 쓸 수 있음
+
+- 캡처
+
+  - regexp안에 `()`로 그룹을 나누고, 각 그룹에 접근할 수 있음
+
+  - `replace`
+
+    ```rust
+    let row = ele_re.replace(input, "$1").to_string();
+    ```
+
+    - input에서 ele_re의 첫번째 그룹과 매칭되는 영역을 반환
+    - `$0`은 정규표현식과 매칭되는 전체 영역을 의미
+
+  - `captures`
+
+    ```rust
+    let class_selector = class_re
+                          .captures(&row)
+                          .map(|cap| cap[1].split_whitespace().collect::<Vec<_>>().join(".") );
+    ```
+
+    - `captures`는 `Option<Captures<'h>>`으로 반환하기 때문에 `map`을 사용해서 값이 있을때만 받아옴
+    - `[0]`은 정규표현식과 매칭되는 전체 영역을 의미하며, 이후 숫자부터 해당 번째의 영역을 반환
+
 
 
 ## 선언
