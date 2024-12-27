@@ -326,9 +326,11 @@ $ git show <commit hash>
 
 ```sh
 git rm -r --cached .
+git commit -m "Remove tracked files now ignored"
 ```
 
 - .gitignore 적용 안 될 시, 캐시 삭제
+- 삭제 후 commit까지 해줘야 이후 정상 반영
 
 
 
