@@ -22,6 +22,9 @@
 - 강제 종료 : `cmd + opt + esc`
 - caps lock : `한영 키` 꾸욱
 - 현재 finder에서 터미널 열기 : `ctrl` + click
+- 숨긴 파일/폴더 : `cmd + shift + .`
+
+
 
 
 
