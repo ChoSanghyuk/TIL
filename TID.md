@@ -6,10 +6,27 @@
 
 ### 1월
 
-#### 8일
-
 - [ ] SPE 노드 파라미터
 - [ ] SPE 단일 노드 vs 멀티 노드
+
+#### 10일
+
+- [ ] code-server 자동 실행
+
+#### 9일
+
+- [ ] 도커 재설치
+- [x] Linux 서버 연결
+- [x] SPE 노드 실행 및 기본 트랜잭션 테스트
+- [ ] 테스트 시나리오 작성 및 코드 작성
+  - [ ] confirmed 조정 시, signature 성공 여부 확인
+  - [ ] mint, transfer, query
+- [ ] aws 접속
+
+#### 8일
+
+- [x] SPE client 코드 분석
+- [x] confirmed 조정
 
 #### 7일
 
