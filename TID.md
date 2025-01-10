@@ -8,20 +8,38 @@
 
 - [ ] SPE 노드 파라미터
 - [ ] SPE 단일 노드 vs 멀티 노드
+- [ ] solana explorer로 원격 서버 연결
+- [ ] aws 접속
+
+#### 11일
+
+- [ ] 도커 재설치
+- [ ] code-server 자동 실행
+- [ ] 모듈 작성
+  - [ ] transfer
+
+- [ ] fiber routing
+- [ ] config화
+- [ ] solana 내용 정리
 
 #### 10일
 
-- [ ] code-server 자동 실행
+- [x] 테스트 시나리오 작성
+- [x] 모듈 작성
+  - [x] mint
+  - [x] query
+  - [x] account
+- [x] confirmed 조정 시, signature 성공 여부 확인
 
 #### 9일
 
-- [ ] 도커 재설치
 - [x] Linux 서버 연결
-- [x] SPE 노드 실행 및 기본 트랜잭션 테스트
-- [ ] 테스트 시나리오 작성 및 코드 작성
-  - [ ] confirmed 조정 시, signature 성공 여부 확인
-  - [ ] mint, transfer, query
-- [ ] aws 접속
+- [x] SPE 노드 실행
+- [x] 기본 트랜잭션 테스트
+  - [x] account 생성 및 airdrop
+  - [x] mint
+  - [x] query
+
 
 #### 8일
 
