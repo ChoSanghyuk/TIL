@@ -125,8 +125,6 @@ N개의 mint ac 생성
 
 M개의 user ac 생성
 
-// M개의 token ac 생성 getOrCreateAssociatedTokenAccount 활용
-
 
 
 mint 시나리오

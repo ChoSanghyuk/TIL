@@ -7,20 +7,37 @@
 ### 1월
 
 - [ ] SPE 노드 파라미터
+
 - [ ] SPE 단일 노드 vs 멀티 노드
+
 - [ ] solana explorer로 원격 서버 연결
-- [ ] aws 접속
+
+- [ ] 도커 재설치
+
+- [ ] code-server 자동 실행
+
+  
+
+#### 13일
+
+- [ ] SetTransfer api 생성
+- [ ] api refactoring (c.Local부분)
+- [ ] 테스트 수행
+- [ ] solana 내용 정리
+
+#### 12일
+
+- [x] transfer, query api 생성
+- [x] aws 접속
+- [x] 샘플 테스트 수행
 
 #### 11일
 
-- [ ] 도커 재설치
-- [ ] code-server 자동 실행
-- [ ] 모듈 작성
-  - [ ] transfer
+- [x] 모듈 작성
+  - [x] transfer
 
-- [ ] fiber routing
-- [ ] config화
-- [ ] solana 내용 정리
+- [x] fiber routing
+- [x] config화
 
 #### 10일
 
