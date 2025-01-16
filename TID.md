@@ -7,25 +7,33 @@
 ### 1월
 
 - [ ] SPE 노드 파라미터
-
 - [ ] SPE 단일 노드 vs 멀티 노드
-
 - [ ] solana explorer로 원격 서버 연결
-
 - [ ] 도커 재설치
-
 - [ ] code-server 자동 실행
-
-  
-
-#### 13일
-
-- [ ] SetTransfer api 생성
-- [ ] api refactoring (c.Local부분)
-- [ ] 테스트 수행
 - [ ] solana 내용 정리
 
-#### 12일
+
+
+#### 16일
+
+- [ ] 테스트 케이스별 수치 측정
+- [ ] 1시에 인장... 작업
+- [ ] 솔라나 관련 학습 내용 정리
+- [ ] Token Contract anchor로 작성
+- [ ] 당근 거래 알아보기
+
+#### 15일
+
+- [x] 윈도우 aws ssh 환경 구축
+- [x] 테스트 수행
+
+#### 14일
+
+- [x] SetTransfer api 생성
+- [x] api refactoring (c.Local부분)
+
+#### 13일
 
 - [x] transfer, query api 생성
 - [x] aws 접속

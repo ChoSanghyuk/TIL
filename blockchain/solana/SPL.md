@@ -4,6 +4,39 @@
 
 
 
+The derivation of a PDA requires 3 inputs.
+
+- **Optional seeds**: Predefined inputs (e.g. string, number, other account addresses) used to derive a PDA. These inputs are converted to a buffer of bytes.
+- **Bump seed**: An additional input (with a value between 255-0) that is used to guarantee that a valid PDA (off curve) is generated. This bump seed (starting with 255) is appended to the optional seeds when generating a PDA to "bump" the point off the Ed25519 curve. The bump seed is sometimes referred to as a "nonce".
+- **Program ID**: The address of the program the PDA is derived from. This is also the program that can "sign" on behalf of the PDA
+
+
+
+https://solana.com/docs/core/tokens
+
+
+
+
+
+Mint Account stores data such as:
+
+- Supply: Total supply of the token
+- Decimals: Decimal precision of the token
+- Mint authority: The account authorized to create new units of the token, thus increasing the supply
+- Freeze authority: The account authorized to freeze tokens from being transferred from "token accounts"
+
+
+
+Token account stores data
+
+- Mint: The type of token the Token Account holds units of
+- Owner: The account authorized to transfer tokens out of the Token Account
+- Amount: Units of the token the Token Account currently holds
+
+
+
+
+
 account를 사전에 생성한 뒤에, 해당 account를 새로 mint하는 토큰의 account(data 보관소)로 사용
 
 해당 account가 기본적인 authority를 가짐
@@ -86,118 +119,6 @@ This is similar to how cryptocurrencies like Bitcoin or Ethereum have a smallest
 
 - Bitcoin: `decimals = 8` (1 BTC = 100,000,000 satoshis)
 - Ethereum: `decimals = 18` (1 ETH = 10^18 wei)
-
-
-
-
-
-
-
-
-
----
-
-
-
-테스트 시나리오
-
-
-
-필요 계정 종류
-
-- funding ac
-- freeze auth ac
-- mint auth ac
-- payer ac
-- mint ac (= token itself)
-- user ac (= owner)
-- token ac (= ata)
-
-
-
-
-
-사전 세팅
-
-1개의 payer = funding = freezeAuth = mintAuth account 생성
-
-N개의 mint ac 생성
-
-M개의 user ac 생성
-
-
-
-mint 시나리오
-
-case 1) 단일 token에 대한 복수 minting 수행
-
-(ex. 1개의 mintAccount에서 8000개의 user Ac에 minting)
-
-case 2) 복수 token에 대한 개별 minting 수행
-
-(ex. 8000개의 mintAccount에서 1:1로 매핑되는 8000개의 user Ac에 minting)
-
-
-
-transfer 시나리오
-
-case 1) 단일 송신 account에서 복수 수신 account에 transfer
-
-case 2) 다수 송신 account에서 복수 수신 account에 transfer (1:1)
-
-
-
-query 시나리오
-
-token balance 조회
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
