@@ -32,6 +32,10 @@ The [BPF Loader](https://github.com/solana-labs/solana/tree/27eff8408b7223bb3c4a
 
 
 
+- **Program Account**: The main account representing an on-chain program. This account stores the address of an executable data account (which stores the compiled program code) and the update authority for the program (address authorized to make changes to the program).
+- **Program Executable Data Account**: An account that contains the executable byte code of the program.
+- **Buffer Account**: A temporary account that stores byte code while a program is being actively deployed or upgraded. Once the process is complete, the data is transferred to the Program Executable Data Account and the buffer account is closed.
+
 
 
 Sysvar accounts are special accounts located at predefined addresses that provide access to cluster state data.
@@ -56,6 +60,18 @@ creating a data account for a custom program requires two steps:
 
 1. Invoke the System Program to create an account, which then transfers ownership to a custom program
 2. Invoke the custom program, which now owns the account, to then initialize the account data as defined in the program code
+
+
+
+:bulb: **Solana 주요 프로그램 종류**
+
+- Native Program
+  - System Program : Account의 생성 및 Owner Program 지정 수행
+  - BPF Loader : Native Program이 아닌 모든 Program의 owner로, program의 배포, 수정, 실행을 담당
+- SPL Program : Solana 커뮤니티가 관리하는 표준 프로그램들의 집합
+- Custom Program : 사용자 정의 프로그램
+
+
 
 
 
