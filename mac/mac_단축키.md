@@ -54,8 +54,8 @@
   - `⌥ + ⇧ + A` : 선택영역 주석
 - 위치 이동
 
-  - `⌘ + U` : 이전에 커서가 있던 자리로 이동
+  - `⌃ - / ⌃ ⇧ -` : 이전 위치, 다음 위치
 
 
 
-:link: [mac vscode 단축키](https://mansu.tistory.com/31)
+:link: [mac vscode 단축키](https://zuyo.tistory.com/902)
