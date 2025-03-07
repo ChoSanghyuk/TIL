@@ -124,6 +124,17 @@ $ git remote update
 
 
 
+### 원격 브랜치 로컬에 가져오기
+
+```bash
+$ git fetch origin
+$ git checkout -b {branch} origin/{remote-branch}
+```
+
+
+
+
+
 ### 변경사항 타 브랜치에 반영하기
 
 ```bash
