@@ -56,7 +56,7 @@
 - `code . `  : 해당 디렉토리로 visual studio code 열기
 - `vim <filename>` : 파일 오픈 (없으면 파일 생성)
 - `vi <filename>` : 파일 오픈 
-
+- `lsof -i :<port_number>` : 해당 포트 사용 중인 프로세스 찾기
 - `cat <filename>` : 파일 내용 출력
 
 
