@@ -211,6 +211,18 @@ $ git merge <branch>
 
 
 
+### 일부 파일만 merge
+
+```bash
+git checkout {target branch} -- ./configs/dev/ ./configs/dev/
+```
+
+- merge처럼 반영될 브랜치가 현재 브랜치로 세팅
+
+
+
+
+
 ## branch 강제 엎어치기
 
 
@@ -256,7 +268,7 @@ git checkout origin/{브랜치} {파일경로}
 
 
 
-## Commit간 변경된 파일 목록 조회
+## Commit간 변경된 파일 목록 조회H
 
 
 
@@ -302,7 +314,7 @@ $ git diff -- [path1] [path2] #  -- 옵션 뒤에 적은 내용은 항상 경로
 
 ```bash
 $ git diff [commit1] [commit2] -- [file]
-$ git diff HEAD HEAD~5 -- src/aaa.cpp
+$ git diff HEAD~5 HEAD -- src/aaa.cpp
 ```
 
 

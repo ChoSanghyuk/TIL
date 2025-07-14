@@ -717,6 +717,62 @@ payable
 
 
 
+### 기타 문법
+
+- Assembly Block
+
+  - 개요
+
+    - allows for low-level operations
+
+  - 예시
+
+    ```solidity
+    assembly ("memory-safe") {
+        mstore(0, 0xd0e30db0) // deposit()
+        success := call(gas(), wnative, amount, 28, 4, 0, 0)
+    }
+    ```
+
+    - memory-safe is a mode that helps prevent memory corruption.
+    - `mstore(0, 0xd0e30db0)` stores the function selector for `deposit()` at memory position 0.
+      - `0xd0e30db0` is the first 4 bytes of the Keccak-256 hash of the string "deposit()"
+
+  - low-level opcodes
+
+    - `sstore(slot, value)`
+
+      - stores `value` at the `slot` in storage
+      - **gas cost**: High
+
+    - `mstore(offset, value)`
+
+      - stores `value` at memory position `offset`
+      - **gas cost**: Low
+
+    - `calldatacopy(memOffset, dataOffset, length)`
+
+      - copies raw input (`calldata`) into memory
+      - copies `length` bytes from `calldata[dataOffset:]` into `memory[memOffset:]`
+
+    - `call(gas, to, value, in_offset, in_size, out_offset, out_size)`
+
+      - `gas` : Amount of gas to forward to the call.
+
+      - `to` : Address to call (the target contract).
+
+      - `value` : Amount of ETH/AVAX (native token) to send (0 here).
+
+      - `in_offset `: Memory offset where input data starts.
+
+      - `in_size` : Size of input data in bytes.
+
+      - `out_offset` : Memory offset where output data should be stored.
+
+      - `out_size` : Size of output buffer in bytes.
+
+
+
 ## Style Guide
 
 ### Function
@@ -756,6 +812,32 @@ payable
 
 - 동작
 
-  - 특정 데이터 타입의 변수에서 해당 타입에 연관된 **라이브러리 함수**를 **인스턴스 메서드처럼 호출** 가능. `value.functionName()`
+  - The first argument is automatically set to the variable you call the function on
 
+  - 특정 데이터 타입의 변수에서 해당 타입에 연관된 **라이브러리 함수**를 **인스턴스 메서드처럼 호출** 가능. `value.functionName()`
+  
     =  `LibraryName.functionName(value)`
+
+- 예시
+
+  ```solidity
+  // Library: SafeERC20
+  function safeTransferFrom(IERC20 token, address from, address to, uint256 value) internal {...}
+  ```
+
+  ```solidity
+  using SafeERC20 for IERC20;
+  // ...
+  erc20.safeTransferFrom(from, address(this), amount);
+  ```
+
+  
+
+
+
+
+
+
+
+
+

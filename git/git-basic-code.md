@@ -162,6 +162,8 @@ $ git fetch origin master
 
 ## 내역 취소
 
+### 전 커밋으로 되돌리기
+
 ```
 $ git reset --hard HEAD^
 ```
@@ -176,6 +178,8 @@ $ git reset --hard HEAD^
 
 
 
+### 특정 commit으로 되돌리기
+
 ```
 $ git revert <commit hash>
 ```
@@ -183,6 +187,14 @@ $ git revert <commit hash>
 - 해당 commit 내용으로 되돌림
 - 다음 commit 내역이 과거의 commit이 됨
   - reset의 경우, 이력 삭제
+
+#### commit 내역 확인
+
+```bash
+git reflog
+```
+
+
 
 
 

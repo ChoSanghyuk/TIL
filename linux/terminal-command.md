@@ -30,8 +30,6 @@
 
 
 
-
-
 ### 변수 접근 기호
 
 - `0` : stdin(표준 입력)
@@ -155,6 +153,12 @@
 
 ### 압축
 
+- zip
+  - `zip 파일명.zip 대상파일`
+  - flag
+    - `-e` : 비밀번호 설정
+    - `-r` : 하위 폴더까지 전부 대상
+  
 - gz
   - `gzip [파일명]` : 파일 압축하기
   - `gzip -d [파일명].gz` : 압축풀기
@@ -181,6 +185,24 @@
 - `df [옵션]`
   - -h : 보기 편한 용량 크기로 출력
 
+
+
+### process 확인
+
+- `lsof -i :<port>` 
+  - 해당 port에서 동작 중인 프로세스 확인
+
+
+
+### crontab
+
+- `crontab -e`
+  - crontab 설정 파일 열기/수정
+- `@reboot /bin/bash {실행 파일}.sh >> /tmp/startup.log 2>&1`
+  - 재부팅 시 실행 파일 자동 실행 및 에러 로그 저장
+
+
+
 ### maven 실행
 
 - mvn 실행
@@ -192,6 +214,10 @@
   - `java -jar -Dserver.port=9004 ./target/user-service-0.0.1-SNAPSHOT.jar`
 - 종료
   - crtl + c
+
+
+
+
 
 ## Command Mode
 

@@ -125,6 +125,10 @@
 
 🔗[https://chainstack.com/solana-transaction-commitment-levels/](https://chainstack.com/solana-transaction-commitment-levels/)
 
+:bulb: Logs :  `msg!`
+
+
+
 ## Node
 
 ### **Validator Node**
@@ -250,3 +254,4 @@ Prioritization Fees : 트랜잭션을 우선적으로 처리하기 위한 추가
 Rent : data를 Solana Blockchian 상에 유지하기 위해서는 쓰는 비용
 
 [https://solana.com/docs/core/fees](https://solana.com/docs/core/fees)
+
