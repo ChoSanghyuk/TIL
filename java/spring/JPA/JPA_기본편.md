@@ -387,10 +387,27 @@
 
   <img src="JPA_기본편.assets/image-20231112103649098.png" alt="image-20231112103649098" style="zoom:50%;" />
 
-  - 비영속(new/transient) : 영속성 컨텍스트와 전혀 관계가 없는 새로운 상태
-  - 영속(managed) : 영속성 컨텍스에 관리되는 상태
-  - 준영속(detached) : 영속성 컨텍스트 저장되었다가 분리된 상태
-  - 삭제(removed) : 삭제된 상태
+  - 상태
+    - 비영속(new/transient) : 영속성 컨텍스트와 전혀 관계가 없는 새로운 상태
+    - 영속(managed) : 영속성 컨텍스에 관리되는 상태
+    - 준영속(detached) : 영속성 컨텍스트 저장되었다가 분리된 상태
+    - 삭제(removed) : 삭제된 상태
+  - 상태 전이
+    - Detach
+      - not associated with a hibernate session
+    - Merge
+      - When detached, merge will reattach to session
+      - reattach a detached entity back to the persistence context and synchronize its state with the database.
+    - Persist
+      - Transitions new instances to managed state
+      - used to make a new entity managed by the persistence context and persist it to the database for the first time
+      - Next flush / commit will save in db
+    - Remove
+      - Transitions managed entity to be removed
+      - Next flush / commit will delete from db
+    - Refresh
+      - Reload / synch object with data from db
+      - Prevents stale data
 
 - 장점
 
@@ -1280,6 +1297,37 @@
     1. 특수한 경우에 대해서만 즉시 로딩 사용
     2. FETCH JOIN : 동적으로 원하는 테이블들 선택해서 조인해서 가져옴
     3. 엔티티 그래프 기능
+
+
+
+### N+1 문제
+
+- 개요
+
+  - 연관관계가 설정된 엔티티를 조회할 때, 처음 1개의 쿼리로 N개의 데이터를 가져온 후, 각각의 데이터에 대해 연관된 엔티티를 조회하는 N개의 추가 쿼리가 발생하는 성능 문제
+
+- 발생 이유
+
+  - JPQL은 연관관계를 무시하고 해당 엔티티만을 기준으로 쿼리를 조회
+
+    => 먼저 주 엔티티를 조회하는 1개의 쿼리 실행 & 각 주 엔티티와 연관된 데이터를 조회하기 위해 N개의 추가 쿼리 실행
+
+- 해결방법: `Fetch Join`
+
+  ```java
+  @Query("select o from Owner o join fetch o.cats")
+  List<Owner> findAllJoinFetch();
+  ```
+
+  - 장점 : 연관된 엔티티를 한 번의 쿼리로 모두 가져와서 N+1 문제를 해결
+
+  - 주의사항 : Fetch Join 사용 시 다음과 같은 제약 존재
+
+    - JpaRepository에서 기본 제공되지 않아 직접 JPQL을 작성해야 함
+
+    - 데이터 호출 시점에 모든 연관관계 데이터를 즉시 로딩하므로, 미리 설정한 `FetchType.LAZY`가 무시됨
+
+    - 따라서 지연 로딩의 이점을 활용할 수 없어 메모리 사용량이 증가할 수 있음
 
 
 

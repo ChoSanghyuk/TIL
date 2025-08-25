@@ -321,11 +321,48 @@ $ git diff HEAD~5 HEAD -- src/aaa.cpp
 
 
 
+## rebase
+
+### 개요
+
+- `git rebase` is a Git command that **moves or reapplies your commits on top of another branch**, creating a **clean, linear history**.
 
 
 
+### git pull 시 오류 상황 해결
+
+**Git doesn't know how to reconcile divergent branches** — meaning your local and remote branches have **both made different commits**.
+
+| 옵션              | only once              | current scope                  | global scope                            |
+| ----------------- | ---------------------- | ------------------------------ | --------------------------------------- |
+| merge (default)   | `git pull --no-rebase` | `git config pull.rebase false` | `git config --global pull.rebase false` |
+| rebase            | `git pull --rebase`    | `git config pull.rebase true`  | `git config --global pull.rebase true`  |
+| Fast-forward only | `git pull --ff-only`   | `git config pull.ff only`      | `git config --global pull.ff only`      |
 
 
 
+### merge vs rebase
+
+```
+A---B      (main)
+     \
+      C---D   (feature)
+```
+
+- merge
+
+  ```
+  A---B----------M   (feature)
+       \        /
+        C---D---
+  ```
+
+- rebase : your commits are **re-applied** on top of `main`:
+
+  ```
+  A---B---C'---D'   (feature)
+  ```
 
 
+
+:warning: **Never rebase shared/public branches** — it rewrites history and can confuse collaborators.

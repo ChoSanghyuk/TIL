@@ -338,6 +338,7 @@ contract Mutex {
   - function parameters
 
     - Function parameters are declared the same way as variables, and the name of unused parameters can be omitted.
+    - :bulb: `bytes calldata` 타입으로 파라미터를 받는 경우 **그 자체가 동적 데이터의 “내용” 부분만 가리킴**
 
   - return variables
 
@@ -484,24 +485,36 @@ contract Mutex {
     
       => Calling `f(50)` would create a type error since `50` can be implicitly converted both to `uint8` and `uint256` types
 
+- 키워드
+
+  - virtual
+
+    - 함수가 자식 contract에서 재정의 될 수 있음을 나타냄
 
 
-virtual
-
-- 함수가 자식 contract에서 재정의 될 수 있음을 나타냄
-
-- virtual 키워드가 붙은 함수는 상속받은 계약에서 `override` 키워드를 사용하여 재정의할 수 있음
-
-payable
-
-- 함수가 이더를 받을 수 있음을 나타냄
-  - payable이 붙은 함수는 호출할 때 이더를 전송할 수 있음
-
-- 이더를 받지 않는 함수에 이더를 보내려고 하면 트랜잭션이 실패함
-
-- 따라서, 이더를 받아야 하는 함수에는 반드시 payable 키워드를 붙여야 함
+    - virtual 키워드가 붙은 함수는 상속받은 계약에서 `override` 키워드를 사용하여 재정의할 수 있음
 
 
+  - payable
+
+    - 함수가 이더를 받을 수 있음을 나타냄
+      - payable이 붙은 함수는 호출할 때 이더를 전송할 수 있음
+
+
+    - 이더를 받지 않는 함수에 이더를 보내려고 하면 트랜잭션이 실패함
+
+
+    - 따라서, 이더를 받아야 하는 함수에는 반드시 payable 키워드를 붙여야 함
+
+
+- 토큰 전송 컨트랙트 정의
+
+  - To make a smart contract move **native tokens (ETH/AVAX/etc.)**, you must explicitly write logic that **sends value from the contract’s balance** — using one of Solidity’s built-in methods.
+
+  - 메소드
+    1. `address.transfer()`
+    2. ``address.call{value: amount}("")`
+    3. `address.send()`
 
 
 
@@ -715,61 +728,110 @@ payable
   - As the compiler does not know the address where the library will be deployed, the compiled hex code will contain placeholders of the form `__$30bbc0abd4d6364515865950d3e0d10953$__`
   -  [Library Linking](https://docs.soliditylang.org/en/v0.8.28/using-the-compiler.html#library-linking)
 
+:memo: Claude Answer - Key Properties of a Library
+
+1. **No storage state**
+
+   - Libraries cannot store state variables (except constants and immutables).
+   - They cannot hold Ether.
+
+2. **Reusable logic**
+
+   - Functions in libraries can be called from contracts without duplicating code.
+
+3. **Two ways to use libraries**
+
+   - **Embedded (internal)**: If the function is internal, the library code is copied into the contract at compile time.
+   - **Deployed separately (external)**: If the function is public or external, the library is deployed once, and contracts use DELEGATECALL to run its code.
+
+4. **No inheritance**
+
+   - Contracts cannot inherit from libraries.
+
+   
 
 
-### 기타 문법
 
-- Assembly Block
+## 기타 문법
 
-  - 개요
+### Assembly Block
 
-    - allows for low-level operations
+- 개요
 
-  - 예시
+  - allows for low-level operations
 
-    ```solidity
-    assembly ("memory-safe") {
-        mstore(0, 0xd0e30db0) // deposit()
-        success := call(gas(), wnative, amount, 28, 4, 0, 0)
-    }
-    ```
+- 예시
 
-    - memory-safe is a mode that helps prevent memory corruption.
-    - `mstore(0, 0xd0e30db0)` stores the function selector for `deposit()` at memory position 0.
-      - `0xd0e30db0` is the first 4 bytes of the Keccak-256 hash of the string "deposit()"
+  ```solidity
+  assembly ("memory-safe") {
+      mstore(0, 0xd0e30db0) // deposit()
+      success := call(gas(), wnative, amount, 28, 4, 0, 0)
+  }
+  ```
 
-  - low-level opcodes
+  - memory-safe is a mode that helps prevent memory corruption.
+  - `mstore(0, 0xd0e30db0)` stores the function selector for `deposit()` at memory position 0.
+    - `0xd0e30db0` is the first 4 bytes of the Keccak-256 hash of the string "deposit()"
 
-    - `sstore(slot, value)`
+- low-level opcodes
 
-      - stores `value` at the `slot` in storage
-      - **gas cost**: High
+  - `sstore(slot, value)`
 
-    - `mstore(offset, value)`
+    - stores `value` at the `slot` in storage
+    - **gas cost**: High
 
-      - stores `value` at memory position `offset`
-      - **gas cost**: Low
+  - `mstore(offset, value)`
 
-    - `calldatacopy(memOffset, dataOffset, length)`
+    - stores `value` at memory position `offset`
+    - **gas cost**: Low
 
-      - copies raw input (`calldata`) into memory
-      - copies `length` bytes from `calldata[dataOffset:]` into `memory[memOffset:]`
+  - `calldatacopy(memOffset, dataOffset, length)`
+- copies raw input (`calldata`) into memory
+    - copies `length` bytes from `calldata[dataOffset:]` into `memory[memOffset:]`
 
-    - `call(gas, to, value, in_offset, in_size, out_offset, out_size)`
+- `call(gas, to, value, in_offset, in_size, out_offset, out_size)`
 
-      - `gas` : Amount of gas to forward to the call.
+  - `gas` : Amount of gas to forward to the call.
+    
+  - `to` : Address to call (the target contract).
+    
+  - `value` : Amount of ETH/AVAX (native token) to send (0 here).
+    
+  - `in_offset `: Memory offset where input data starts.
+    
+  - `in_size` : Size of input data in bytes.
+    
+  - `out_offset` : Memory offset where output data should be stored.
+    
+  - `out_size` : Size of output buffer in bytes.
 
-      - `to` : Address to call (the target contract).
 
-      - `value` : Amount of ETH/AVAX (native token) to send (0 here).
 
-      - `in_offset `: Memory offset where input data starts.
+### opcodes
 
-      - `in_size` : Size of input data in bytes.
+- `abi.encode`
 
-      - `out_offset` : Memory offset where output data should be stored.
+  ```solidity
+  function encode(...) pure returns (bytes memory)
+  ```
 
-      - `out_size` : Size of output buffer in bytes.
+  - It pads each argument to 32 bytes and maintains type information, making it suitable for function calls and storage
+
+- `abi.encodePacked`
+
+  ```solidity
+  function encodePacked(...) pure returns (bytes memory)
+  ```
+
+  - Performs packed encoding without padding, concatenating arguments directly without maintaining 32-byte boundaries
+
+- `ecrecover`
+
+  ```solidity
+  function ecrecover(bytes32 hash, uint8 v, bytes32 r, bytes32 s) pure returns (address)
+  ```
+
+  - Recovers the Ethereum address that was used to create a given signature
 
 
 

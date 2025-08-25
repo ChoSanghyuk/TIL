@@ -19,15 +19,13 @@ https://medium.com/@aiden.p/%EC%97%85%EA%B7%B8%EB%A0%88%EC%9D%B4%EB%8D%94%EB%B8%
   - 사용자가 프록시 컨트랙트를 통해 어떠한 함수를 호출하면, 프록시 컨트랙트에 저장되어 있는 주소를 이용하여 로직 컨트랙트를 호출
   - `delegatecall`은 다른 컨트랙트 어카운트의 code를 사용하되, storage는 기존 컨트랙트 어카운트의 그것을 사용
 
-  
-
   :bulb: 솔리디티는 다른 컨트랙트를 호출할 때, 크게 `call`과 `delegatecall` 이다.
 
   -  `call`이 바로 우리가 통상적으로 컨트랙트를 호출할 때 사용하는 opcode
      -  opcode(operation code) : low-level instruction used in EVM to perform arithmetic calculations, data storage and retrieval, control flow
   -  `delegatecall`은 다른 컨트랙트의 코드를 사용하되, 실행 환경(Context)은 기존 컨트랙트에서 수행될 수 있도록 한다.
     - A 컨트랙트가 B 컨트랙트를 호출할 때, `delegatecall`을 이용하게 되면 B 컨트랙트의 Code를 사용하지만, Storage는 A 컨트랙트를 사용하게 된다. 트랜잭션 실행의 컨텍스트(Context)가 그대로 유지되는것이 `delegatecall`의 핵심이다.
-
+  
 - 문제점
   - 슬롯 충돌
   - 생성자 실행으로 인한 값 초기화

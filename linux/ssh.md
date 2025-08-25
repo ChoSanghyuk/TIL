@@ -1,8 +1,8 @@
-# ssh
+# SSH (Secure Shell)
+
+
 
 ## Server
-
-
 
 ### open ssh 기본 설정
 
@@ -28,6 +28,9 @@
 
 3. 포트 포워딩
 
+   https://generalcoder.tistory.com/29
+
+
 
 
 ### ssh key 설정
@@ -45,6 +48,16 @@ ssh-keygen [-t <keygen-algorithm>] [-C <comment>]
 - 진행
   1. 키를 저장할 장소: 기본값은 홈의 `.ssh` 디렉터리
   2. 암호(Passphrase): 기본값은 암호 없음 (**ssh key passphrase는 꼭 설정하는 것을 권장**)
+- public 키 authorized_keys에 등록
+
+  ```
+  cat {pub key} >> ~/.ssh/authorized_keys
+  ```
+
+  :bulb: Private key는 pem 파일로 만들어 SSH 서버 접속 시에 사용하고, Public key는 서버의 authorized_keys 파일에 추가해 놓아야 SSH 접속
+
+
+
 
 
 
@@ -61,7 +74,7 @@ sudo vim /etc/ssh/sshd_config
   - 비밀번호 인증을 막기 위해 주석 해제 후  `no`로 설정
 
 - `PermitRootLogin`
-  - root 로그인 허영 설정
+  - root 로그인 허용 설정
   -  `no` 로 설정
 - 기타
   - `MaxAuthTries`: 한 번에 가능한 인증 시도 횟수 입니다. 기본 값은 6번입니다. 4회 이하로 바꾸셔도 좋습니다.
@@ -79,6 +92,22 @@ sudo service ssh restart
 
 
 
+:bulb: Permission denied (publickey) 문제 발생 시, 서버의 파일 권한이 너무 널널해서 발생하는 것. 아래처럼 조정 필요
+
+```bash
+# 홈 디렉토리 소유자 및 권한 확인 및 수정
+sudo chown cho:cho /home/cho
+chmod 755 /home/cho
+
+# .ssh 디렉토리 및 파일 권한 수정
+chmod 700 /home/cho/.ssh
+chmod 600 /home/cho/.ssh/authorized_keys
+```
+
+
+
+
+
 ## Client
 
 ### 접속
@@ -88,6 +117,8 @@ ssh -i {key file}.pem {user}@{instance ip}
 ```
 
 - 접속 및 실행 : `ssh -i {key file}.pem {user}@{instance ip} "{command}"`
+  - 포트 생략 (default 22 포트 사용 시)
+  - `-p {port}` 
 
 
 

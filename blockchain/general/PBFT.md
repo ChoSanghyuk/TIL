@@ -18,7 +18,7 @@
 
 - 합의 알고리즘 특성
 
-  - **Safety** : 노드 간 합의가 발생했다면, 어느 노드가 접근하든 그 값은 동일해야 한다
+  - **Safety** : 노드들은 **같은 체인의 상태**를 공유한다. (노드들이 **동일한 블록 또는 상태**에 대해 **서로 충돌하지 않는 결정을 내리는 것**)
   - **Liveness** : 합의 대상(Transaction 또는 블록체인에서 블록)에 문제가 없다면, 네트워크 내에서 반드시 합의가 이루어진다
 
   => 어떤 합의 알고리즘이 네트워크에서 통용되기 위해선 **Safety**와 **Liveness**라는 특성을 가지고 있어야 함
@@ -57,7 +57,7 @@
        - D(m) : 요청 메시지 m의 요약본
   3. Backup 노드 i가 Pre-prepare 메시지를 받고  검증 결과가 참이라면, Prepare 메시지를 생성해 네트워크의 나머지 모든 노드에게 전송
   4. 각각의 노드는 Pre-prepare 메시지와 Prepare 메시지를 수집합니다. 수집한 Pre-prepare 메시지 개수가 2f+1개이고 Prepare 메시지가 2f개 이상인 경우 `prepared certificate`라 하며, 노드는 `prepared the request` 상태가 됨
-  5. prepared certificate" 조건을 만족한 노드는 네트워크의 모든 노드에게 Commit 메시지를 전송
+  5. prepared certificate 조건을 만족한 노드는 네트워크의 모든 노드에게 Commit 메시지를 전송
   6. 각각의 노드는 Commit 메시지를 수집합니다. Commit 메시지가 2f+1개 모이면 해당 노드는 `commit certificate` 상태
 
 - 특징
