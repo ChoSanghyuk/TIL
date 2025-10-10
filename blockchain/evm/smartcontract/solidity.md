@@ -786,6 +786,10 @@ contract Mutex {
     - **gas cost**: Low
 
   - `calldatacopy(memOffset, dataOffset, length)`
+  
+  - `calldataload(offset)`
+    - Solidity의 **inline assembly에서 사용하는 opcode**로, 트랜잭션의 calldata에서 offset에서부터 **32바이트를 직접 읽어오는** 저수준 명령어
+  
 - copies raw input (`calldata`) into memory
     - copies `length` bytes from `calldata[dataOffset:]` into `memory[memOffset:]`
 

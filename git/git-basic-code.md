@@ -171,6 +171,7 @@ $ git reset --hard HEAD^
 - 옵션
   - --hard HEAD^ : 수정한 내용까지 모두
   - --mixed HEAD^ : add한 내용까지 취소 (default)
+    - `add` 한 것만 취소하려면 `git reset HEAD`
   - --soft HEAD^ : commit한 내용까지 취소
 - ^
   - 가장 최근 커밋으로부터 하나 전으로 되돌림

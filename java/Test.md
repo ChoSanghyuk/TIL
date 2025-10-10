@@ -2,69 +2,6 @@
 
 
 
-## 개요
-
-
-
-### General Flow
-
-- Red => Green => Refactor
-  - :red_circle: A new test will initially fail
-  - :green_apple: We work to get the test to pass
-  - :large_blue_circle: We finnaly optimize our code, and test
-
-
-
-### what to test
-
-- each test will cover a single scenario for a single piece of logic
-
-
-
-## General Rules
-
-
-
-### Rules of TDD
-
-1. Start with failing test
-   -  새로 추가한 테스트가 테스트 케이스에 제대로 들어갔는지 확인
-
-2. Test the expected outcome of an example
-3. Don't pre-judge design. Let your tests drive it
-4. Write the mininum code required to get you tests to pass
-5. Each test should validate one single piece of logic
-
-
-
-### Rules of Testing
-
-- test one item of functionality only
-  - one `assert` for each test
-- test business logic, not methods
-- tests must be repeatable, and consistent
-  - 코드가 변경되었다면, 이전 테스트들까지 재실행
-  - 테스트 결과는 언제 실행되어도 결과가 동일해야 함
-- test must be thorough
-  - 모든 조건을 테스트할 수 있어야 함
-
-
-
-### What tests should I write
-
-- What should the logic be?
-- What is the opposite to that logic?
-- Are there any edge cases?
-- Are there any error conditions?
-
-
-
-:bulb: Extra Tip
-
-- 테스트 케이스(Input)의 종류별로 메소드를 새로 생성하는 것이 오류 발견 지점 찾기 쉬움
-
-
-
 ## JUnit
 
 
@@ -406,9 +343,9 @@
 
     => Mock 객체의 메서드가 알맞은 값을 리턴하는 스텁을 만들 수 있는 기능을 제공
 
-- 특정 상황 설정
+- 특정 상황 설정 : `when`
 
-  - `when`
+  - when은 Stub을 만들 수 있는 강력한 무기로, mock 객체의 메소드가 호출 했을 때 특정한 응답을 주도록 만들 수 있음
   - ex) ViewModel이 Repository로부터 더미 데이터를 받아올 때
 
 - 해당 상황에서의 Mock 객체의 행동을 설정
@@ -416,17 +353,16 @@
   - `thenReturn`
 
     - 해당 상황에서, 특정 값 반환
+      - 특정한 입력에 대해 한가지 응답만이 가능
     - `when(myClass.myMethod(params)).thenReturn(retrun-value);`
-
-  - `thenThrow`
-
-    - 해당 상황에서, 특정 예외 발생
 
   - `thenAnswer`
 
     - 유연하게 Stub
-    - 직접 Mock 동작 방식을 구현
+      - 하나의 입력에 대해 매번 바뀌는 응답 O
 
+    - 직접 Mock 동작 방식을 구현
+    
     ```java
     // getNextId()가 호출 될 때 마다, 1씩 증가된 값 반환
     when(mockedGenerator.getNextId()).thenAnswer(new Answer<Integer>() {
@@ -436,7 +372,7 @@
         }
     });
     ```
-
+    
     ```java
     // 파라미터로 전달 값 사용 경우 InvocationOnMock 객체 활용
     when(authenticator.authenticate(anyString(), anyString())).thenAnswer(new Answer<Object> (){
@@ -450,11 +386,25 @@
         }
     });
     ```
-
+    
+    :bulb: mock이 첫 호출에서 null을 반환한다면, 이후 호출에서는 아예 동작하지 않음 (effectively stop working"
+    
     :bulb: method가 void 타입일 때에는  형태가 바뀜
     
     - `when(mockedObject.play(Matchers.<Class<T>>any())).thenReturn(object);` 
     - Matchers.<T>any() 는 deprecated 되었지만, 버전에 따라 사용이 필요해 보임
+    
+  - `thenThrow`
+
+    - 해당 상황에서, 특정 예외 발생
+    - 값을 반환하는 메서드에 사용
+    - `when(myService.doSomething()).thenThrow(exception);`
+    
+  - `doThrow`
+
+    - 예외를 발생시키는 Mock 메서드를 **실행하기 전에 예외를 발생**시킴
+    - void 메서드에 사용
+  - `doThrow(exception).when(myService).doSomething();`
 
 - 검증하기
 
@@ -506,3 +456,59 @@
 
 
 
+## TDD
+
+
+
+### General Flow
+
+- Red => Green => Refactor
+  - :red_circle: A new test will initially fail
+  - :green_apple: We work to get the test to pass
+  - :large_blue_circle: We finnaly optimize our code, and test
+
+
+
+### what to test
+
+- each test will cover a single scenario for a single piece of logic
+
+
+
+### Rules of TDD
+
+1. Start with failing test
+   -  새로 추가한 테스트가 테스트 케이스에 제대로 들어갔는지 확인
+
+2. Test the expected outcome of an example
+3. Don't pre-judge design. Let your tests drive it
+4. Write the mininum code required to get you tests to pass
+5. Each test should validate one single piece of logic
+
+
+
+### Rules of Testing
+
+- test one item of functionality only
+  - one `assert` for each test
+- test business logic, not methods
+- tests must be repeatable, and consistent
+  - 코드가 변경되었다면, 이전 테스트들까지 재실행
+  - 테스트 결과는 언제 실행되어도 결과가 동일해야 함
+- test must be thorough
+  - 모든 조건을 테스트할 수 있어야 함
+
+
+
+### What tests should I write
+
+- What should the logic be?
+- What is the opposite to that logic?
+- Are there any edge cases?
+- Are there any error conditions?
+
+
+
+:bulb: Extra Tip
+
+- 테스트 케이스(Input)의 종류별로 메소드를 새로 생성하는 것이 오류 발견 지점 찾기 쉬움

@@ -103,7 +103,13 @@
 
   - `sudo usermod -aG {group} {user}`
 
-  
+- 그룹 조회
+  - `cat /etc/group` : 전체 그룹 조회
+  - `groups` : 현재 사용자가 속한 그룹 조회
+  - `groups {사용자}` : 해당 사용자의 속한 그룹 조회
+
+
+
 
 
 

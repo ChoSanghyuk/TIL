@@ -198,8 +198,28 @@
 
 - `crontab -e`
   - crontab 설정 파일 열기/수정
-- `@reboot /bin/bash {실행 파일}.sh >> /tmp/startup.log 2>&1`
-  - 재부팅 시 실행 파일 자동 실행 및 에러 로그 저장
+  - 예시
+    - `@reboot /bin/bash {실행 파일}.sh >> /tmp/startup.log 2>&1`
+    - 재부팅 시 실행 파일 자동 실행 및 에러 로그 저장
+- `crontab -l`
+  - 조회
+  
+
+#### :bulb: vs `systemctl`
+
+- **Cron** is about *when* to run something
+  - it's a scheduler that executes tasks at predetermined times.
+
+- **Systemctl** is about *how* to manage running services
+
+  - it controls processes that typically run continuously.
+
+  - `sudo systemctl {명령} nginx`
+    - 명령 : `start`, `stop`, `restart`, `enable`, `disable`
+
+
+
+
 
 
 
@@ -251,6 +271,16 @@
 
 
 
+### nano
+
+- 명령어
+  - `^` : ctrl
+  - `M` : alt
+- 저장 방법
+  - `ctrl + o`  ⇒ `enter` ⇒ `ctrl + x`
+
+
+
 ## 시스템 환경 변수 등록하기
 
 ### PATH 등록
@@ -266,13 +296,20 @@
   - .bashrc 파일 open
 
     - `vim ~/.bashrc`
-
   - Path 등록 및 저장
-
+  
     1. i로 수정모드 시작
     2. 입력 : `export PATH=$PATH:/mnt/c/Users/chosh/lecture_code/besu-24.1.0/bin`
-
+  
     3. `:w`로 저장
+  
+  
+  :bulb: `.bashrc` vs `.bash_profile` vs `.profile` vs `.zshrc` 
+  
+  - `~/.bashrc`  : for most Linux distributions
+  - `~/.bash_profile` :for macOS and some systems
+  - `~/.profile` : Universal shell configuration(bash, zsh, dash, etc) but only for **login shells**
+  -  `~/.zshrc` : zsh(common on newer macOS)
 
 :bulb: `$PATH` 
 

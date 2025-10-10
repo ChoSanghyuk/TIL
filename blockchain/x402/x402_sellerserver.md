@@ -168,7 +168,7 @@ func main() {
   }
   ```
 
-#### Full `X-PAYMENT` header
+#### Full `X-PAYMENT` header 예시
 
 ```json
 {

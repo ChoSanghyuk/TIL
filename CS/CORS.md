@@ -13,6 +13,10 @@
   - 교차 출처 리소스 공유에 대한 허용/비허용 정책
   - 서로 다른 출처의 웹 페이지나 서버가 자원에 접근할 수 있도록 허용하는 보안 메커니즘
 
+  :bulb: **Cross-Origin** : 프론트랑 백엔드가 서로 다른 출처(origin)로 요청을 받는 경우. 
+
+    (ex. 프론트는 myserver.com:80으로 접근했지만 백엔드는 192.168.xx.x:3000 으로 요청이 감
+
 - XMLHttpRequest, Fetch API 스크립트는 기본적으로 Same-Origin 정책을 따름
 
   - js에서의 요청은 기본적으로 서로 다른 도메인에 대한 요청을 보안상 제한함
@@ -23,6 +27,10 @@
   - Protocol + Host + Port
 
     <img src="./assets/image-20250512083250142.png" alt="image-20250512083250142" style="zoom:50%;" />
+
+- 주요 해결법
+  1. nginx proxy로 프론트와 백엔드의 origin을 맞춤
+  2. 서버(웹서버 혹은 백엔드)에서 프론트의 origin을 허용시킴
 
 
 
@@ -35,6 +43,8 @@
    <img src="./assets/image-20250512084201899.png" alt="image-20250512084201899" style="zoom:33%;" />
 
    - `Access-Control-Max-Age` : 예비 요청이 브라우저에 캐시 될 수 있는 시간을 초 단위로 설정
+
+   :bulb: **Browser** checks "Does the server allow this origin?"
 
 2. 단순요청
 

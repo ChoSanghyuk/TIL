@@ -22,6 +22,7 @@
   ```bash
   sudo ufw enable
   sudo ufw allow 22
+  sudo ufw status # 방화벽 확인
   ```
 
   - 22번 포트를 방화벽에서 열어줌
@@ -142,6 +143,12 @@ ssh -i {key file}.pem {user}@{instance ip}
 scp -i {key file}.pem {local path} {user}@{instance ip}:{instance path}
 ```
 
+### 파일 가져오기
+
+```bash
+scp -i {key file}.pem {user}@{instance ip}:{instance path} {local path}
+```
+
 
 
 ### 편의성 설정
@@ -154,3 +161,23 @@ HOST {name}
     Port {instance port}
     User {user}
 ```
+
+
+
+## 오류 케이스
+
+
+
+### 기존 22 port 접속 서버와 2022 port 접속 서버의 포트 접속 정보 변경
+
+```
+It is also possible that a host key has just been changed.
+The fingerprint for the ED25519 key sent by the remote host is
+SHA256:......
+Please contact your system administrator.
+Add correct host key in /Users/84455/.ssh/known_hosts to get rid of this message.
+```
+
+- ssh client는 `/Users/84455/.ssh/known_hosts` 에 접속한 서버의 host key를 저장해두고, 재접속할 때마다 일치하는 지 비교를 함
+- 기존에 접속한 이력이 있던 서버의 키 정보가 바뀌었다면, `known_hosts` 파일에도 똑같이 반영해줘야 함.
+- 내 경우에는 기존 20022포트로 접속하던 서버를 22 포트로 접속하는 것으로 변경한 케이스라, 22 포트(default)로 되어있던 정보는 삭제하고 20022 포트를 22로 변경해줌

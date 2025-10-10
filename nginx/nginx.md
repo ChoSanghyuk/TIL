@@ -72,19 +72,20 @@
 - 종류
 
   - `user` - Defines which user and group NGINX worker processes run as
-
+    - nginx.conf 파일에 nginx의 계정 설정되어 있음. 주로 `user www-data;` 
+  
   - `worker_processes` - Specifies the number of worker processes
-
+  
   - `error_log` - Defines the global error log file
-
+  
   - `pid` - Specifies the file where NGINX stores its process ID
-
+  
   - `events` - A block directive that configures connection processing
-
+  
   - `http` - A block directive that contains HTTP server configuration
-
+  
   - `mail` - A block directive for mail proxy configuration
-
+  
   - `stream` - A block directive for TCP/UDP proxy configuration
 
 
@@ -187,13 +188,42 @@
 
 
 
-### 설정 파일 기본 위치
+### 기본적인 폴더 구조
+
+```
+/etc/nginx/
+├── nginx.conf (main config)
+├── sites-available/ (all site configs)
+├── sites-enabled/ (symlinks to active sites)
+├── conf.d/ (additional configs)
+└── snippets/ (reusable config snippets)
+```
+
+
+
+### main config
 
 ```
 /etc/nginx/nginx.conf
 ```
 
 - 해당 conf 파일 안에는 `include /etc/nginx/sites-enabled/*;` 가 설정되어 있어 추가 설정파일들을 반영함 
+
+  ```nginx
+  http {
+      # Include all enabled sites
+      include /etc/nginx/sites-enabled/*;
+
+      # Include additional configs
+      include /etc/nginx/conf.d/*.conf;
+  }
+  ```
+
+- Create snippets for common configs (SSL settings, security headers)
+
+  - `include /etc/nginx/snippets/ssl.conf;`
+
+  :memo: snippet : 재사용 가능한 소스 코드, 기계어, 텍스트의 작은 부분
 
 
 
@@ -206,13 +236,19 @@
 2. `/etc/nginx/sites-enabled/`
 
    - contains symlinks to files in the sites-available folder
-   - allows you to **selectively disable** vhosts by removing the symlink
+   - **allows you to selectively disable vhosts by removing the symlink**
 
    - symlink 추가 : `sudo ln -s /etc/nginx/sites-available/{file} /etc/nginx/sites-enabled/{file}`
 
-3. conf.d
-   - sites-enabled와 같이 nginx에 반영되는 작업들이 있지만 비활성해야 하는 경우 삭제하거나 변경해야 함
+   :memo: symlink : symbolic link. = 바로가기
+
+3. `/etc/nginx/conf.d`
+  
+   - ~~sites-enabled와 같이 nginx에 반영되는 작업들이 있지만 비활성해야 하는 경우 삭제하거나 변경해야 함~~
+   
+   - 추가적인 설정 파일
 4. `/etc/nginx/sys-available`
+  
    - 서버 블록 구성을 저장하는 디렉토리입니다. Nginx는 서버 블록이 사이트 사용 디렉토리에 연결된 경우에만 사용
 5. `/etc/nginx/http` 지원
    - 디렉터리에는 이미 활성화된 사이트별 Nginx 서버 블록이 포함되어 있음
