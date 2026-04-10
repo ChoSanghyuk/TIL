@@ -1,5 +1,9 @@
 # Test Driven Development
 
+[TOC]
+
+
+
 
 
 ## JUnit
@@ -425,6 +429,35 @@
   
   - 오직 해당 함수만 실행되었는가
     - `verify(myClass, only()).myMethod(params);`
+
+
+
+### MockedStatic
+
+- 개요
+
+  - 소스에서 특정 클래스의 static 함수를 쓰고 있지만, test 환경에서는 해당 static 함수를 mock 처리하고 싶을 때 사용
+
+- 방식
+
+  ```java
+  // static 함수가 인자를 필요로 하지 않을 때
+  try (MockedStatic<B> mockedB = mockStatic(B.class)) {
+      mockedB.when(B::myStaticFunc).thenReturn("Mocked Value");
+      // ... rest of your test ...
+  }
+  ```
+
+  ```java
+  // static 함수가 인자를 받을 때
+  try (MockedStatic<B> mockedB = mockStatic(B.class)) {
+      mockedB.when(() -> B.myStaticFunc(anyString()))
+             .thenReturn("Mocked Value");
+      // ... rest of your test ...
+  }
+  ```
+
+  
 
 
 

@@ -39,6 +39,16 @@ $ git branch -a
 
 
 
+### 특정 브랜치 history 보기
+
+```bash
+git reflog show {branch-name}
+```
+
+
+
+
+
 ## branch 정보 갱신
 
 ```
@@ -220,6 +230,54 @@ git checkout {target branch} -- ./configs/dev/ ./configs/dev/
 - merge처럼 반영될 브랜치가 현재 브랜치로 세팅
 
 
+
+### 특정 commit만 merge
+
+```bash
+# target branch인 상태에서 수행
+git cherry-pick <commit-hash>
+```
+
+- `git log source-branch` : View commit history of the source branch
+
+- 옵션
+
+  - `-m {parent-number}` : merge commit 처리
+
+    - merge에는 from 브랜치와 to 브랜치가 존재. 따라서 커밋 기준을 어느 것에 둘 것이냐 명시.
+      - **`1`** - First parent (usually the branch you merged INTO - the mainline)
+      - **`2`** - Second parent (usually the branch you merged FROM)
+
+    :memo: 2를 기준으로 하면 어떻게 다른지 확인 필요. 
+
+
+
+### conflict 날 시, 특정 브랜치로 엎어치기
+
+```bash
+# Accept "theirs" (the current branch you're on) for specific files
+git checkout --ours path/to/file
+
+# Or accept "ours" (the branch being merged in) for specific files  
+git checkout --theirs path/to/file
+```
+
+
+
+
+
+### 타 레포리토리의 브랜치 변경사항 적용하기
+
+```bash
+# Add the other repository as a remote
+git remote add upstream <other-repo-url>
+
+# Fetch changes from it
+git fetch upstream
+
+# Cherry-pick specific commits
+git cherry-pick <commit-hash>
+```
 
 
 

@@ -2,6 +2,36 @@
 
 
 
+## 개요
+
+### hardhat
+
+- 개념
+
+  - Ethereum development environment
+  - help developers build, test, and deploy smart contracts and dApps
+
+- key features
+
+  - Hardhat Network (The Local Blockchain)
+
+    - When you run Hardhat, it automatically spins up a **local Ethereum network instance** on your machine.
+    - Fast deploy & test / Built-in Debugging / "fork" a live public network
+
+  - Compilation and Artifacts
+
+    - turn human-readable Solidity code into machine-readable bytecode and generating essential metadata
+
+  - Testing
+
+    - unit tests for your smart contracts
+      - Integrated Testing Framework (javaScript testing libraries like **Mocha** and **Chai**)
+      - `ethers.js` Integration:
+
+    
+
+
+
 ## 설치
 
 ### npm 및 hardhat 설치
@@ -18,18 +48,70 @@ npx hardhat init
 
 
 
+**:bulb: npm vs npx**
+
+| npm                                             | npx                                             |
+| ----------------------------------------------- | ----------------------------------------------- |
+| package installer and manager                   | package **executor**                            |
+| **install, manage, share, and update** packages | **execute** Node.js package executables (CLIs). |
+
+npx became bundled with npm starting with version 5.2.0.
+
+
+
 ### hardhat.config.ts
 
 ```tsx
 module.exports = {
-  solidity: "0.8.20",
+  // 1. Solidity Compiler Configuration
+  solidity: {
+    compilers: [
+      {
+        version: "0.8.13", // 프로젝트에서 사용할 solidity compiler 버전 명시.
+        settings: {
+          optimizer: {
+            enabled: true, 	// true => optimizer 실행.
+            runs: 200,			// 컨트랙트의 예상 효출 횟수	
+          },
+          metadata: {
+              useLiteralContent: true
+          }
+        },
+      },
+    ],
+  },
+  
+  // 2. Network Configuration (Crucial for deployment/interaction)
   networks: {
+    // Hardhat's own integrated EVM (Default)
+    hardhat: {
+      // Configuration specific to the built-in Hardhat Network
+    },
+    // Local development network (별도로 로컬 노드 띄웠을 경우)
     localhost: {
       url: "<http://127.0.0.1:8545>",
     },
+    // Example Testnet Configuration
+    sepolia: {
+      url: "YOUR_SEPOLIA_RPC_URL", // Public RPC endpoint
+      accounts: ["YOUR_PRIVATE_KEY_HERE"], // Private key for the deployment account
+      chainId: 11155111, // Optional but good practice
+    },
+  },
+  
+  // 3. Path Configuration (Usually left as default)
+  paths: {
+    sources: "./contracts", // default
+    tests: "./test",
+    cache: "./cache",
+    artifacts: "./artifacts",
   },
 };
 ```
+
+- `solidity.settings.optimizer.runs`
+  - It tells the compiler **how many times** you expect the contract's functions to be executed over the contract's lifetime.
+  - 높은 숫자 => 실행 가스에 최적화. 낮은 숫자 => 배포 가스에 최적화
 
 
 
@@ -49,13 +131,46 @@ npx hardhat node #서명자 불러오는 용도
 
 
 
-:bulb: 컨트랙트들은 hardhat-project 위치에서 contracts 폴더 밑에 있어야 함
+## Compile
+
+```bash
+npx hardhat compile
+```
 
 
 
-## 테스트 스크립트
 
-### ignition/modules/Upgradeable.ts
+
+## 테스트
+
+### harthat test 명령어
+
+```bash
+# Run All Tests
+npx hardhat test 
+# Run Specific Test File
+npx hardhat test test/TickMath.test.js 
+# Run Tests with Gas Reporter
+REPORT_GAS=true npx hardhat test
+# Run Tests with Coverage
+npx hardhat coverage
+# Clean Build Artifacts
+npx hardhat clean
+# Run Hardhat Console
+npx hardhat console
+# Run Tests with Verbose Output
+npx hardhat test --verbose
+# Run Specific Test Case (using grep)
+npx hardhat test --grep "MIN_TICK"
+# Run Tests on Specific Network
+npx hardhat test --network fuji
+```
+
+
+
+### 스크립트 예제
+
+- ignition/modules/Upgradeable.ts
 
 ```tsx
 import { ethers } from "hardhat";
@@ -138,3 +253,4 @@ dependency 버전 불일치
 - 원인 : 처음 proxy를 `upgrades` 라이브러리를 사용 안해서 프록시로 인식을 못 해서 발생
 - 해결 1: 강제 프록시임을 주입. `await upgrades.forceImport(proxyAddress, Implementation);`
 - 해결 2 : 처음부터 `upgrades` 통해서 프록시 생성
+

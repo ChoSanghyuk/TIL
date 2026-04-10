@@ -71,6 +71,23 @@ $ git remote -v
 
 
 
+### fetch / push 별도 설정
+
+```bash
+# Set the fetch URL
+git remote set-url origin <fetch-url>
+
+# Set a different push URL
+git remote set-url --push origin <push-url>
+
+# View the configuration
+git remote -v
+```
+
+
+
+
+
 ## 업로드
 
 
@@ -160,6 +177,22 @@ $ git fetch origin master
 
 
 
+### remote 연결 없이 pull하기 : git bundle
+
+- git bundle 생성
+
+  ```
+  git bundle create {파일명}.bundle {from branch}...{to branch}
+  ```
+
+- git bundle pull
+
+  ```
+  git pull {파일명}.bundle {to branch}
+  ```
+
+
+
 ## 내역 취소
 
 ### 전 커밋으로 되돌리기
@@ -185,7 +218,7 @@ $ git reset --hard HEAD^
 $ git revert <commit hash>
 ```
 
-- 해당 commit 내용으로 되돌림
+- 해당 commit 내용을 취소시킴
 - 다음 commit 내역이 과거의 commit이 됨
   - reset의 경우, 이력 삭제
 
@@ -197,25 +230,29 @@ git reflog
 
 
 
+### 이전 commit에서 삭제된 파일 복원하기
 
-
-### 특정 파일에만 revert 적용
-
-```
-$ git revert <commit hash> -n
-```
-
-- `-n` (`--no-commit`) : revert 결과 commit X
-
-```
-$ git reset
-$ git add <file1> <file2>
+```bash
+git restore <file_path> # 직전 commit
+git restore --source=<commit_hash> <file_path> # 예전 commit
 ```
 
-- `git reset`의 default mode가 `--mixed`
+:bulb: 파일이 삭제되었던 commit을 입력하면 안됨. 해당 commit에서는 파일이 삭제되어 찾을 수 없음. 삭제한 commit의 직전 commit hash값 입력
+
+
+
+### 특정 파일만 되돌리기
+
+- **To restore a file to its state at a specific commit**
 
 ```
-git commit -m ".."
+git restore --source <commit-hash> path/to/file.txt
+```
+
+- To restore a file to the state BEFORE a specific commit (the "revert" effect)
+
+```
+git restore --source <commit-hash>~1 path/to/file.txt
 ```
 
 
@@ -285,7 +322,7 @@ $ git diff <비교대상 branch 이름> <기준 branch 이름>
 
 
 
-## 상태 확인
+## 상태
 
 
 ```
@@ -310,11 +347,21 @@ $ git log --oneline
 
 
 
+### 특정 커밋 내역 확인
+
 ```
 $ git show <commit hash>
 ```
 
-- 해당 commit의 변경사항 보여줌
+
+
+### 커밋 문구 변경
+
+```
+git commit --amend -m "{commit message}"
+```
+
+- 가장 최신 커밋의 문구 변경
 
 
 
@@ -344,6 +391,14 @@ git commit -m "Remove tracked files now ignored"
 
 - .gitignore 적용 안 될 시, 캐시 삭제
 - 삭제 후 commit까지 해줘야 이후 정상 반영
+
+
+
+### gitignore 등록 전 git add 및 commit 한 경우
+
+1. 캐시 삭제
+2. **.gitignore에 등록** (캐시 삭제 전에 .gitignore에 등록하면 캐시 삭제할 때에도 빠져버림)
+3. git add 및 commit
 
 
 

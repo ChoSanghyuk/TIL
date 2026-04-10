@@ -121,6 +121,9 @@ ssh -i {key file}.pem {user}@{instance ip}
   - 포트 생략 (default 22 포트 사용 시)
   - `-p {port}` 
 
+- 디버깅 : `-vvv`
+  - 오류 발생 시, 상세한 흐름 볼 수 있음
+
 
 
 :bulb: `" "` vs `' '`  

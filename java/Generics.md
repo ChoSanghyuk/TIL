@@ -68,6 +68,19 @@ public class class1<T>{
 
 
 
+### 입력된 타입을 리턴 타입으로 가지는 method 정의
+
+```java
+/*
+* Makes a GET request to a URL and returns the response mapped to the specified DTO type. 
+*/
+public <T> T callGetApi(String url, Class<T> responseType) { ... }
+```
+
+
+
+
+
 ### 요구사항
 
 ```java
