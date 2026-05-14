@@ -370,6 +370,8 @@ contract Mutex {
 
   :bulb:  For library `view` functions `DELEGATECALL` is used, because there is no combined `DELEGATECALL` and `STATICCALL` [:link:](https://docs.soliditylang.org/en/v0.8.28/contracts.html#view-functions)
 
+  ​	(https://gemini.google.com/app/36437bcb0ef47285)
+
   - `view` function
 
     - in case they promise not to modify the state
@@ -405,7 +407,7 @@ contract Mutex {
       - 어차피 `view`나 `pure`은 상태 변화 못 하니, revert가 의미 없어짐. try-catch로 revert 잡고 트랜잭션 전파 X는 방법도 사용
       - in line with the `STATICCALL` opcode.
 
-  :warning:It is not possible to prevent functions from reading the state at the level of the EVM (only `view` can be enforced at the EVM level, `pure` can not).
+  :warning:It is not possible to prevent functions from reading the state at the level of the EVM (only `view` can be enforced at the EVM level, `pure` can not). (Solidity는 compliler로 언어의 동작을 제한할 순 있지만, EVM의 엔진 레벨에선 `STATICCALL`를 통해 변경만 막을 수 있을 뿐 읽기 자체를 막는 기능은 없음)
 
 - Special Functions
 
@@ -490,31 +492,26 @@ contract Mutex {
   - virtual
 
     - 함수가 자식 contract에서 재정의 될 수 있음을 나타냄
-
-
     - virtual 키워드가 붙은 함수는 상속받은 계약에서 `override` 키워드를 사용하여 재정의할 수 있음
 
 
   - payable
 
     - 함수가 이더를 받을 수 있음을 나타냄
-      - payable이 붙은 함수는 호출할 때 이더를 전송할 수 있음
+      - 이더를 받지 않는 함수에 이더를 보내려고 하면 트랜잭션이 실패함
+      - 따라서, 이더를 받아야 하는 함수에는 반드시 payable 키워드를 붙여야 함
 
 
-    - 이더를 받지 않는 함수에 이더를 보내려고 하면 트랜잭션이 실패함
-
-
-    - 따라서, 이더를 받아야 하는 함수에는 반드시 payable 키워드를 붙여야 함
-
-
-- 토큰 전송 컨트랙트 정의
+- 코인 전송 컨트랙트 정의
 
   - To make a smart contract move **native tokens (ETH/AVAX/etc.)**, you must explicitly write logic that **sends value from the contract’s balance** — using one of Solidity’s built-in methods.
 
   - 메소드
     1. `address.transfer()`
-    2. ``address.call{value: amount}("")`
+    2. `address.call{value: amount}("")`
     3. `address.send()`
+  
+  **💡 Rule of thumb:** Always use `.call{value: amount}("")` + `require(ok, ...)` + a **reentrancy guard** (e.g. OpenZeppelin's `nonReentrant` modifier).
 
 
 
@@ -598,7 +595,8 @@ contract Mutex {
   - State variable shadowing : 상속 관계에 있는 계약 간에 동일한 이름의 상태 변수(State Variable)가 선언
 - 동일한 함수를 가진 두 컨트랙트를 상속받아서 `super.함수`할 경우에는, 최종 상속 그래프에서 다음 기본 계약의 함수를 호출함
   - 최종 상속 그래프 : solidity에서 다중 상속을 지원할 때 C3 선형화 알고리즘으로, 상속 관계를 단일 선형 순서로 정리
-  - 다음 기본 계약 : 상속에서 더 먼저 나열된 계약 `contract A is B, C` 일 경우, B가 다음 기본 계약
+  - **가장 오른쪽(Right)**에 있는 부모부터 실행되어 왼쪽(Left) 방향으로 부모들을 순차적으로 방문
+  - ~~다음 기본 계약 : 상속에서 더 먼저 나열된 계약 `contract A is B, C` 일 경우, B가 다음 기본 계약~~
 
 #### Function Overriding
 
@@ -643,7 +641,7 @@ contract Mutex {
   - You have to list the direct base contracts in the order **from “most base-like” to “most derived”**
 
   - when a function is called that is defined multiple times in different contracts, the given bases are searched from right to left
-    - :bulb: 같은 이름의 함수 override할 때에는 right-to-left이지만, 앞선 `super.함수` 일 때는 left-to-right임
+    - ~~같은 이름의 함수 override할 때에는 right-to-left이지만, 앞선 `super.함수` 일 때는 left-to-right임~~
 
 - The constructors will always be executed in the linearized order, regardless of the order in which their arguments are provided in the inheriting contract’s constructor.
 
@@ -763,13 +761,14 @@ contract Mutex {
 - 예시
 
   ```solidity
-  assembly ("memory-safe") {
+  	assembly ("memory-safe") {
       mstore(0, 0xd0e30db0) // deposit()
       success := call(gas(), wnative, amount, 28, 4, 0, 0)
   }
   ```
 
   - memory-safe is a mode that helps prevent memory corruption.
+    - 단순히, solidity한테 solidity가 사용하고 있는 메모리 영역을 건드리지 않겠다는 약속일 뿐, runtime guard 또는 firewall이 되지는 못함.
   - `mstore(0, 0xd0e30db0)` stores the function selector for `deposit()` at memory position 0.
     - `0xd0e30db0` is the first 4 bytes of the Keccak-256 hash of the string "deposit()"
 
@@ -779,35 +778,29 @@ contract Mutex {
 
     - stores `value` at the `slot` in storage
     - **gas cost**: High
-
   - `mstore(offset, value)`
-
+  
     - stores `value` at memory position `offset`
     - **gas cost**: Low
-
   - `calldatacopy(memOffset, dataOffset, length)`
-  
+    - copies raw input (`calldata`) into memory
+    - copies `length` bytes from `calldata[dataOffset:]` into `memory[memOffset:]`
   - `calldataload(offset)`
     - Solidity의 **inline assembly에서 사용하는 opcode**로, 트랜잭션의 calldata에서 offset에서부터 **32바이트를 직접 읽어오는** 저수준 명령어
+  - `call(gas, to, value, in_offset, in_size, out_offset, out_size)`
+    - `gas` : Amount of gas to forward to the call.
   
-- copies raw input (`calldata`) into memory
-    - copies `length` bytes from `calldata[dataOffset:]` into `memory[memOffset:]`
-
-- `call(gas, to, value, in_offset, in_size, out_offset, out_size)`
-
-  - `gas` : Amount of gas to forward to the call.
-    
-  - `to` : Address to call (the target contract).
-    
-  - `value` : Amount of ETH/AVAX (native token) to send (0 here).
-    
-  - `in_offset `: Memory offset where input data starts.
-    
-  - `in_size` : Size of input data in bytes.
-    
-  - `out_offset` : Memory offset where output data should be stored.
-    
-  - `out_size` : Size of output buffer in bytes.
+    - `to` : Address to call (the target contract).
+  
+    - `value` : Amount of ETH/AVAX (native token) to send (0 here).
+  
+    - `in_offset `: Memory offset where input data starts.
+  
+    - `in_size` : Size of input data in bytes.
+  
+    - `out_offset` : Memory offset where output data should be stored.
+  
+    - `out_size` : Size of output buffer in bytes.
 
 
 
@@ -850,7 +843,7 @@ contract Mutex {
   4. Override
   5. Custom modifiers
 - For short function declarations, it is recommended for the opening brace of the function body to be kept on the same line as the function declaration
-- For long function declarations, it is recommended to drop each argument onto its own line at the same indentation level as the function body
+- For long function declarations, it is recommended to drop each argument onto its own line at the same indentation(block) level as the function body
   - The closing parenthesis and opening bracket should be placed on their own line as well at the same indentation level as the function declaration.
 
 #### function Signatures and Selectors in Libraries

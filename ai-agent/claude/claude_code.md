@@ -76,6 +76,9 @@ claude
   | Developer environment quirks (required env vars)     | File-by-file descriptions of the codebase          |
   | Common gotchas or non-obvious behaviors              | Self-evident practices like “write clean code”     |
 
+- 참고 CLAUDE.md
+  - https://github.com/forrestchang/andrej-karpathy-skills/blob/main/README.md
+
 
 
 ### 주요 명세 문서
@@ -145,17 +148,58 @@ specs/001-liquidity-repositioning-agent/
 - 전체 권한 허용
 
   - `claude --dangerously-skip-permissions` (claude 기동할 때 옵션 부여) 
+  
+- mode 실행
+
+  - 개요
+    - Each mode makes a different tradeoff between convenience and oversight. 
+    - The table below shows what Claude can do without a permission prompt in each mode.
+
+
+| Mode                                                         | What runs without asking                                     | Best for                                |
+| :----------------------------------------------------------- | :----------------------------------------------------------- | :-------------------------------------- |
+| `default`                                                    | Reads only                                                   | Getting started, sensitive work         |
+| [`acceptEdits`](https://code.claude.com/docs/en/permission-modes#auto-approve-file-edits-with-acceptedits-mode) | Reads, file edits, and common filesystem commands (`mkdir`, `touch`, `mv`, `cp`, etc.) | Iterating on code you’re reviewing      |
+| [`plan`](https://code.claude.com/docs/en/permission-modes#analyze-before-you-edit-with-plan-mode) | Reads only                                                   | Exploring a codebase before changing it |
+| [`auto`](https://code.claude.com/docs/en/permission-modes#eliminate-prompts-with-auto-mode) | Everything, with background safety checks                    | Long tasks, reducing prompt fatigue     |
+| [`dontAsk`](https://code.claude.com/docs/en/permission-modes#allow-only-pre-approved-tools-with-dontask-mode) | Only pre-approved tools                                      | Locked-down CI and scripts              |
+| [`bypassPermissions`](https://code.claude.com/docs/en/permission-modes#skip-all-checks-with-bypasspermissions-mode) | Everything except protected paths                            | Isolated containers and VMs only        |
+
+- 실행
+  - `claude --permission-mode plan`
+  - **During a session**: press `Shift+Tab` to cycle 
 
 
 
-### 명령어 등록
+### Skills vs. Commands
 
-- `.claude/commands`  파일 아래에 {명령어}.md 로 파일 생성 후 파일 안에 명령어에 대한 설명 작성
+- **Skills (e.g., in `~/.claude/skills/`):**
+  - These are meant to be long-term, contextual capabilities that **persist in the session**, automatically triggering when necessary.
+- **Slash Commands (e.g., in `.claude/commands/`):** 
+  - These are usually manual, one-off instructions that perform a task at that specific moment (명령어 등록)
+  - `.claude/commands`  파일 아래에 {명령어}.md 로 파일 생성 후 파일 안에 명령어에 대한 설명 작성 
+  - 클로드 스킬 활성화 되어있어야 함
+    - 설정 > 기능 > 스킬 > skill-creator 활성
 
-- 클로드 스킬 활성화 되어있어야 함
-  - 설정 > 기능 > 스킬 > skill-creator 활성
 
 
+
+### Commands Vs Cluade.md
+
+- Commands
+  - injected into the **conversation history** (as a message), not the system prompt
+  - 첫 명령어때는 Claude.md 파일과 같은 효과를 보지만, 점차 요청이 쌓일 수록 희석되며 compaction이 발생함
+  - 반복적으로 commands를 사용할 때는 토큰 소모가 누적으로 발생
+- Cluade.md
+  - is loaded into the **system prompt** at session start. 
+    - It stays there the entire session, survives compaction, and Claude sees it on every single turn
+
+| CLAUDE.md              | Invoke once at start                |                                                              |
+| ---------------------- | ----------------------------------- | ------------------------------------------------------------ |
+| **Persistence**        | Permanent, survives compaction      | Degrades over compaction cycles                              |
+| **Context cost**       | Fixed cost every turn, all session  | Initially same cost, but cumulated cost per requests <br />(freed up after compaction) |
+| **Fidelity over time** | Full instructions always intact     | Details may be summarized away                               |
+| **Best for**           | Rules you need enforced all session | Knowledge useful mainly for early tasks                      |
 
 
 
@@ -201,3 +245,57 @@ commit
   - 반복적인 작업은 메시지가 아닌 skills 혹은 파일로 별로 관리
   - 작업에 필요한 파일 및 명령만 들어가도록 관리 필요
   - 신규 작업 시작 시 `/clear`로 context 초기화 필요
+
+
+
+### Resume conversations
+
+Claude Code saves conversations locally. When a task spans multiple sessions, you don’t have to re-explain the context:
+
+```
+claude --continue    # Resume the most recent conversation
+claude --resume      # Select from recent conversations
+```
+
+
+
+### subagents
+
+`/agents` 명령어로 실행
+
+Subagents are specialized AI assistants that handle specific types of tasks. Use one when a side task would flood your main conversation with search results, logs, or file contents you won’t reference again: the subagent does that work in its own context and returns only the summary.
+
+https://code.claude.com/docs/en/sub-agents
+
+
+
+### agent teams
+
+자연어로 agent 모드 실행
+
+```
+I'm designing a CLI tool that helps developers track TODO comments across
+their codebase. Create an agent team to explore this from different angles: one
+teammate on UX, one on technical architecture, one playing devil's advocate.
+```
+
+Agent teams support two display modes:
+
+- **In-process**: all teammates run inside your main terminal. Use Shift+Down to cycle through teammates and type to message them directly. Works in any terminal, no extra setup required.
+- **Split panes**: each teammate gets its own pane. You can see everyone’s output at once and click into a pane to interact directly. Requires tmux, or iTerm2.
+
+https://code.claude.com/docs/en/agent-teams
+
+
+
+### Fan out across files
+
+- Loop through tasks calling `claude -p` for each. Use `--allowedTools` to scope permissions for batch operations.
+
+```bash
+for file in $(cat files.txt); do
+  claude -p "Migrate $file from React to Vue. Return OK or FAIL." \
+    --allowedTools "Edit,Bash(git commit *)"
+done
+```
+
